@@ -1,9 +1,12 @@
 <?php
 
-namespace IDCI\Bundle\KeyclockSecurityBundle\Security\Authenticator;
+namespace IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator;
 
+use IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUser;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
+use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;
+use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,7 +47,7 @@ class KeycloakAuthenticator extends SocialAuthenticator
         return $this->fetchAccessToken($this->getKeycloakClient());
     }
 
-    public function getUser($credentials, UserProviderInterface $userProvider): KeycloackUser
+    public function getUser($credentials, UserProviderInterface $userProvider): KeycloakUser
     {
         return $userProvider->loadUserByUsername($credentials);
     }

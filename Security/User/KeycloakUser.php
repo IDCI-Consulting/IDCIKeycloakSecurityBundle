@@ -6,7 +6,7 @@ use KnpU\OAuth2ClientBundle\Security\User\OAuthUser;
 use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class KeycloackUser extends OAuthUser
+class KeycloakUser extends OAuthUser
 {
     /**
      * @var AccessToken
@@ -46,7 +46,7 @@ class KeycloackUser extends OAuthUser
         string $email,
         string $displayName,
         string $accountUrl,
-        string $preferredLanguage = 'en'
+        ?string $preferredLanguage = 'en'
     ) {
         $this->accessToken = $accessToken;
         $this->id = $id;

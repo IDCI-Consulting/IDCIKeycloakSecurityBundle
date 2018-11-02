@@ -21,7 +21,12 @@ class Keycloak extends AbstractProvider
     /**
      * @var string
      */
-    public $authServerUrl = null;
+    public $authServerPublicUrl = null;
+
+    /**
+     * @var string
+     */
+    public $authServerPrivateUrl = null;
 
     /**
      * @var string
@@ -40,7 +45,8 @@ class Keycloak extends AbstractProvider
 
     public function __construct(array $options = [], array $collaborators = [])
     {
-        $this->authServerUrl = $options['auth_server_url'];
+        $this->authServerPublicUrl = $options['auth_server_public_url'];
+        $this->authServerPrivateUrl = $options['auth_server_private_url'];
         $this->realm = $options['realm'];
         $this->encryptionAlgorithm = isset($options['encryption_algorithm']) ? $options['encryption_algorithm'] : null;
         $this->encryptionKey = isset($options['encryption_key']) ? $options['encryption_key'] : null;
@@ -77,17 +83,17 @@ class Keycloak extends AbstractProvider
 
     public function getBaseAuthorizationUrl(): string
     {
-        return sprintf('%s/protocol/openid-connect/auth', $this->getBaseUrlWithRealm());
+        return sprintf('%s/protocol/openid-connect/auth', $this->getPublicBaseUrlWithRealm());
     }
 
     public function getBaseAccessTokenUrl(array $params): string
     {
-        return sprintf('%s/protocol/openid-connect/token', $this->getBaseUrlWithRealm());
+        return sprintf('%s/protocol/openid-connect/token', $this->getPrivateBaseUrlWithRealm());
     }
 
     public function getResourceOwnerDetailsUrl(AccessToken $token): string
     {
-        return sprintf('%s/protocol/openid-connect/userinfo', $this->getBaseUrlWithRealm());
+        return sprintf('%s/protocol/openid-connect/userinfo', $this->getPrivateBaseUrlWithRealm());
     }
 
     public function getLogoutUrl(array $options = [])
@@ -101,22 +107,27 @@ class Keycloak extends AbstractProvider
 
     public function getAccountUrl(): string
     {
-        return sprintf('%s/account', $this->getBaseUrlWithRealm());
+        return sprintf('%s/account', $this->getPublicBaseUrlWithRealm());
     }
 
-    public function getBaseUrlWithRealm(): string
+    public function getPublicBaseUrlWithRealm(): string
     {
-        return sprintf('%s/realms/%s', $this->authServerUrl, $this->realm);
+        return sprintf('%s/realms/%s', $this->authServerPublicUrl, $this->realm);
+    }
+
+    public function getPrivateBaseUrlWithRealm(): string
+    {
+        return sprintf('%s/realms/%s', $this->authServerPrivateUrl, $this->realm);
     }
 
     public function getBaseApiUrlWithRealm(): string
     {
-        return sprintf('%s/admin/realms/%s', $this->authServerUrl, $this->realm);
+        return sprintf('%s/admin/realms/%s', $this->authServerPrivateUrl, $this->realm);
     }
 
     private function getBaseLogoutUrl(): string
     {
-        return sprintf('%s/protocol/openid-connect/logout', $this->getBaseUrlWithRealm());
+        return sprintf('%s/protocol/openid-connect/logout', $this->getPublicBaseUrlWithRealm());
     }
 
     protected function getDefaultScopes(): array

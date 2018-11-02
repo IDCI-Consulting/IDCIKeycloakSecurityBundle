@@ -3,12 +3,13 @@
 namespace IDCI\Bundle\KeycloakSecurityBundle\Security\User;
 
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
+use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUserProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class KeycloackUserProvider extends OAuthUserProvider
+class KeycloakUserProvider extends OAuthUserProvider
 {
     /**
      * @var ClientRegistry
@@ -23,15 +24,15 @@ class KeycloackUserProvider extends OAuthUserProvider
     /**
      * {@inheritdoc}
      */
-    public function loadUserByUsername($accessToken): KeycloackUser
+    public function loadUserByUsername($accessToken): KeycloakUser
     {
         if (!$accessToken instanceof AccessToken) {
-            throw new \LogicException('Could not load a KeycloackUser without an AccessToken.');
+            throw new \LogicException('Could not load a KeycloakUser without an AccessToken.');
         }
 
         $keycloakUser = $this->getKeycloakClient()->fetchUserFromToken($accessToken);
 
-        return new KeycloackUser(
+        return new KeycloakUser(
             $keycloakUser->getPreferredUsername(),
             $keycloakUser->getRoles(),
             $accessToken,
@@ -43,9 +44,9 @@ class KeycloackUserProvider extends OAuthUserProvider
         );
     }
 
-    public function refreshUser(UserInterface $user): KeycloackUser
+    public function refreshUser(UserInterface $user): keycloakUser
     {
-        if (!$user instanceof KeycloackUser) {
+        if (!$user instanceof keycloakUser) {
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_class($user)));
         }
 
@@ -65,7 +66,7 @@ class KeycloackUserProvider extends OAuthUserProvider
 
     public function supportsClass($class): bool
     {
-        return KeycloackUser::class === $class;
+        return keycloakUser::class === $class;
     }
 
     protected function getKeycloakClient(): OAuth2Client
