@@ -1,0 +1,41 @@
+{
+    "name": "idci/keycloak-security-bundle",
+    "type": "symfony-bundle",
+    "description": "Allows you to easily handle you application security thanks to keycloak.",
+    "keywords": [],
+    "authors": [
+        {
+            "name": "Benjamin Boudier",
+            "email": "benjamin.boudier@idci-consulting.fr"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "symfony/dependency-injection": "^3.3 || ^4.0",
+        "symfony/framework-bundle": "^3.0 || ^4.0",
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0",
+        "symfony/expression-language": "^3.0 || ^4.0",
+        "symfony/finder": "^3.0 || ^4.0",
+        "symfony/form": "^3.0 || ^4.0",
+        "symfony/stopwatch": "^3.0 || ^4.0",
+        "symfony/twig-bundle": "*",
+        "symfony/validator": "^3.0 || ^4.0",
+        "symfony/yaml": "^3.0 || ^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "IDCI\\Bundle\\KeycloakSecurityBundle\\": ""
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "IDCI\\Bundle\\KeycloakSecurityBundle\\Tests\\": "Tests"
+        }
+    }
+}
