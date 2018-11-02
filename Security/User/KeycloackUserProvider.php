@@ -31,32 +31,15 @@ class KeycloackUserProvider extends OAuthUserProvider
 
         $keycloakUser = $this->getKeycloakClient()->fetchUserFromToken($accessToken);
 
-        $roles = array_map(
-            function ($role) {
-                return strtoupper($role);
-            },
-            $keycloakUser->getRoles()
-        );
-
-        $accessibleManagers = array_map(
-            function ($role) {
-                if (preg_match('/_access$/i', $role)) {
-                    return str_replace('_access', '', $role);
-                }
-            },
-            $keycloakUser->getDigifidRoles()
-        );
-
         return new KeycloackUser(
             $keycloakUser->getPreferredUsername(),
-            $roles,
+            $keycloakUser->getRoles(),
             $accessToken,
             $keycloakUser->getId(),
             $keycloakUser->getEmail(),
             $keycloakUser->getName(),
             $this->getKeycloakClient()->getOAuth2Provider()->getAccountUrl(),
-            $keycloakUser->getLocale(),
-            array_filter($accessibleManagers)
+            $keycloakUser->getLocale()
         );
     }
 

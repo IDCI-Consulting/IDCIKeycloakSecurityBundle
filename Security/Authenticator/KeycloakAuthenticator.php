@@ -1,6 +1,6 @@
 <?php
 
-namespace Tms\Bundle\SecurityBundle\Security\Authenticator;
+namespace IDCI\Bundle\KeyclockSecurityBundle\Security\Authenticator;
 
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;

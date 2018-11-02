@@ -15,8 +15,13 @@ class IDCIKeycloakSecurityExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
+        $loader->load('services.yaml');
 
-        $container->setParameter('idci_keycloak.default_target_path', $config['default_target_path']);
+        $container->setParameter('idci_keycloak_security.default_target_path', $config['default_target_path']);
+    }
+
+    public function getAlias()
+    {
+        return 'idci_keycloak_security';
     }
 }

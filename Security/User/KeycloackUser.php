@@ -38,11 +38,6 @@ class KeycloackUser extends OAuthUser
      */
     private $preferredLanguage;
 
-    /**
-     * @var string
-     */
-    private $accessibleManagers;
-
     public function __construct(
         string $username,
         array $roles,
@@ -51,8 +46,7 @@ class KeycloackUser extends OAuthUser
         string $email,
         string $displayName,
         string $accountUrl,
-        string $preferredLanguage = 'en',
-        array $accessibleManagers = []
+        string $preferredLanguage = 'en'
     ) {
         $this->accessToken = $accessToken;
         $this->id = $id;
@@ -60,7 +54,6 @@ class KeycloackUser extends OAuthUser
         $this->displayName = $displayName;
         $this->accountUrl = $accountUrl;
         $this->preferredLanguage = $preferredLanguage;
-        $this->accessibleManagers = $accessibleManagers;
 
         parent::__construct($username, $roles);
     }
@@ -93,11 +86,6 @@ class KeycloackUser extends OAuthUser
     public function getPreferredLanguage(): ?string
     {
         return $this->preferredLanguage;
-    }
-
-    public function getAccessibleManagers(): ?array
-    {
-        return $this->accessibleManagers;
     }
 
     public function isEqualTo(UserInterface $user): bool

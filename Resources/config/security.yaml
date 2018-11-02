@@ -1,0 +1,4 @@
+security:
+    providers:
+        idci_keycloak_security_provider:
+            id: IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUserProvider

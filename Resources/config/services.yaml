@@ -14,7 +14,7 @@ services:
     IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUserProvider:
         arguments: ["@knpu.oauth2.registry"]
         tags:
-            - { name: idci_keycloak.user_provider, alias: oauth }
+            - { name: idci_keycloak_security.user_provider, alias: oauth }
 
     IDCI\Bundle\KeycloakSecurityBundle\EventListener\ExceptionListener:
         arguments: ["@router"]

@@ -12,12 +12,12 @@ class KeycloakController extends Controller
 {
     public function connectAction()
     {
-        return $this->get('oauth2.registry')->getClient('keycloak')->redirect();
+        return $this->getKeycloakClient()->redirect();
     }
 
     public function connectCheckAction(Request $request)
     {
-        $routeName = $this->container->getParameter('idci_keycloak.default_target_path');
+        $routeName = $this->container->getParameter('idci_keycloak_security.default_target_path');
 
         return new RedirectResponse($this->container->get('router')->generate($routeName));
     }
@@ -34,7 +34,7 @@ class KeycloakController extends Controller
         $this->container->get('security.token_storage')->setToken(null);
         $request->getSession()->invalidate();
 
-        $routeName = $this->container->getParameter('idci_keycloak.default_target_path');
+        $routeName = $this->container->getParameter('idci_keycloak_security.default_target_path');
         $values = $user->getAccessToken()->getValues();
         $oAuth2Provider = $this->getKeycloakClient()->getOAuth2Provider();
 

@@ -1,0 +1,11 @@
+idci_security_auth_connect_keycloak:
+    path: /auth/connect/keycloak
+    defaults: { _controller: IDCIKeyclockSecurityBundle:Keycloak:connect }
+
+idci_security_auth_connect_check_keycloak:
+    path: /auth/connect-check/keycloak
+    defaults: { _controller: IDCIKeyclockSecurityBundle:Keycloak:connectCheck }
+
+idci_security_auth_logout:
+    path: /auth/logout
+    defaults: { _controller: IDCIKeyclockSecurityBundle:Keycloak:logout }

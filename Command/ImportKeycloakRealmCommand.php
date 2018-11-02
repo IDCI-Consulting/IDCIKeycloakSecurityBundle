@@ -65,8 +65,20 @@ EOT
         }
 
         $client = new Client([
-            'base_uri' => 'http://keycloak.maier.docker',
+            'base_url' => 'http://keycloak.maier.docker:8080/auth',
         ]);
+
+        $response = $client->request('POST', '/realms/Maier/protocol/openid-connect/token', [
+            'form_params' => [
+                'username' => 'admin',
+                'password' => 'admin',
+                'grant_type' => 'password',
+                'client_id' => 'product-manager',
+                'client_secret' => 'df90e11a-608e-427f-b6db-92642bc5ca19',
+            ],
+        ]);
+
+        dump($response);
 
         $response = $client->request('POST', '/admin/realms', [
             'json' => $options['realm'],
