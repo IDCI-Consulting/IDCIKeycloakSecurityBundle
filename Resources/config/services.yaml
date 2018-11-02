@@ -7,3 +7,16 @@ services:
     IDCI\Bundle\KeycloakSecurityBundle\:
         resource: '../../*'
         exclude: '../../{Entity,Migrations,Tests}'
+
+    IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator:
+        arguments: ["@knpu.oauth2.registry", "@router"]
+
+    IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUserProvider:
+        arguments: ["@knpu.oauth2.registry"]
+        tags:
+            - { name: idci_keycloak.user_provider, alias: oauth }
+
+    IDCI\Bundle\KeycloakSecurityBundle\EventListener\ExceptionListener:
+        arguments: ["@router"]
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
