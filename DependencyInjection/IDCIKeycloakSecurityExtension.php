@@ -23,13 +23,6 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
 
     public function prepend(ContainerBuilder $container)
     {
-        $configs = $container->getExtensionConfig($this->getAlias());
-        $config = $this->processConfiguration(new Configuration(), $configs);
-
-        if (!isset($config['clients']) || count($config['clients']) < 1) {
-            return;
-        }
-
         $bundles = $container->getParameter('kernel.bundles');
 
         if (!isset($bundles['KnpUOAuth2ClientBundle'])) {
@@ -38,7 +31,33 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
             );
         }
 
-        $container->prependExtensionConfig('knpu_oauth2_client', ['clients' => $config['clients']]);
+        $configs = $container->getExtensionConfig($this->getAlias());
+        $config = $this->processConfiguration(new Configuration(), $configs);
+
+        $container->prependExtensionConfig('knpu_oauth2_client', $this->generateKeycloakAuthConfiguration($container));
+    }
+
+    protected function generateKeycloakAuthConfiguration(ContainerBuilder $container)
+    {
+        return [
+            'clients' => [
+                'keycloak' => [
+                    'type' => 'generic',
+                    'provider_class' => 'IDCI\Bundle\KeycloakSecurityBundle\Provider\Keycloak',
+                    'client_id' => $container->getParameter('keycloak_client_id'),
+                    'client_secret' => $container->getParameter('keycloak_client_secret'),
+                    'redirect_route' => 'idci_security_auth_connect_check_keycloak',
+                    'redirect_params' => [],
+                    'provider_options' => [
+                        'auth_server_private_url' => $container->hasParameter('keycloak_server_private_url') ?
+                            $container->getParameter('keycloak_server_private_url') : null,
+                        'auth_server_public_url' => $container->hasParameter('keycloak_server_public_url') ?
+                            $container->getParameter('keycloak_server_public_url') : null,
+                        'realm' => $container->getParameter('keycloak_realm'),
+                    ],
+                ],
+            ],
+        ];
     }
 
     public function getAlias()

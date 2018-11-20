@@ -18,13 +18,6 @@ class Configuration implements ConfigurationInterface
                     ->isRequired()
                     ->cannotBeEmpty()
                 ->end()
-                ->arrayNode('clients')
-                    ->normalizeKeys(false)
-                    ->useAttributeAsKey('variable')
-                    ->prototype('array')
-                        ->prototype('variable')->end()
-                    ->end()
-                ->end()
             ->end()
         ;
 
