@@ -34,26 +34,36 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
         $configs = $container->getExtensionConfig($this->getAlias());
         $config = $this->processConfiguration(new Configuration(), $configs);
 
-        $container->prependExtensionConfig('knpu_oauth2_client', $this->generateKeycloakAuthConfiguration($container));
+        $container->prependExtensionConfig('knpu_oauth2_client', $this->generateKeycloakAuthConfiguration($config));
     }
 
-    protected function generateKeycloakAuthConfiguration(ContainerBuilder $container)
+    protected function generateKeycloakAuthConfiguration(array $config)
     {
+        if (
+            !isset($config['server_private_url']) && !isset($config['server_url']) ||
+            !isset($config['server_public_url']) && !isset($config['server_url'])
+        ) {
+            throw new \UnexpectedValueException(
+                'If "server_private_url" or "server_public_url" is not defined in the bundle configuration'.
+                ', you must define "server_url" configuration parameter.'
+            );
+        }
+
         return [
             'clients' => [
                 'keycloak' => [
                     'type' => 'generic',
                     'provider_class' => 'IDCI\Bundle\KeycloakSecurityBundle\Provider\Keycloak',
-                    'client_id' => $container->getParameter('keycloak_client_id'),
-                    'client_secret' => $container->getParameter('keycloak_client_secret'),
+                    'client_id' => $config['client_id'],
+                    'client_secret' => $config['client_secret'],
                     'redirect_route' => 'idci_security_auth_connect_check_keycloak',
                     'redirect_params' => [],
                     'provider_options' => [
-                        'auth_server_private_url' => $container->hasParameter('keycloak_server_private_url') ?
-                            $container->getParameter('keycloak_server_private_url') : null,
-                        'auth_server_public_url' => $container->hasParameter('keycloak_server_public_url') ?
-                            $container->getParameter('keycloak_server_public_url') : null,
-                        'realm' => $container->getParameter('keycloak_realm'),
+                        'auth_server_private_url' => isset($config['server_private_url']) ?
+                            $config['server_private_url'] : $config['server_url'],
+                        'auth_server_public_url' => isset($config['server_public_url']) ?
+                            $config['server_public_url'] : $config['server_url'],
+                        'realm' => $config['realm'],
                     ],
                 ],
             ],
