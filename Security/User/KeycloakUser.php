@@ -43,8 +43,8 @@ class KeycloakUser extends OAuthUser
         array $roles,
         AccessToken $accessToken,
         string $id,
-        string $email,
-        string $displayName,
+        ?string $email = null,
+        ?string $displayName = null,
         string $accountUrl,
         ?string $preferredLanguage = 'en'
     ) {
