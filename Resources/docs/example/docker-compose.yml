@@ -1,0 +1,69 @@
+---
+version: '3.3'
+
+services:
+
+  keycloak:
+    image: jboss/keycloak:master
+    volumes:
+      - data:/opt/jboss/keycloak
+    command: ["-b", "0.0.0.0","-Dkeycloak.profile.feature.docker=enabled"]
+    environment:
+      KEYCLOAK_USER: user
+      KEYCLOAK_PASSWORD: password
+      KEYCLOAK_HOSTNAME: keycloak.docker
+      KEYCLOAK_HTTP_PORT: 80
+      PROXY_ADDRESS_FORWARDING: "true"
+      DB_VENDOR: mariadb
+      DB_ADDR: mariadb
+      DB_DATABASE: keycloak
+      DB_USER: root
+      DB_PASSWORD: toor
+    deploy:
+      labels:
+        traefik.frontend.rule: "Host:keycloak.docker" # keycloak will be accesible via http://keycloak.docker (mak sure to have change /etc/hosts)
+        traefik.docker.network: reverse_proxy
+        traefik.port: 8080
+    networks:
+      keycloak_db: ~
+      keycloak_public: ~
+      reverse_proxy: ~
+
+  mariadb:
+    image: mariadb:10.2
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: keycloak
+      MYSQL_ROOT_PASSWORD: toor
+    networks:
+      keycloak_db: ~
+
+  traefik:
+    image: traefik:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
+    command: --api --docker --docker.swarmMode --docker.watch
+    ports:
+      - "80:80"     # The HTTP port
+      - "443:443"   # The HTTPS port
+      - "8080:8080" # The Web UI (enabled by --api)
+    configs:
+      - source: traefik_config
+        target: /etc/traefik/traefik.toml
+    networks:
+      reverse_proxy: ~
+
+configs:
+  traefik_config:
+    file: ./config/traefik.toml
+
+volumes:
+  data:
+  dbdata:
+
+networks:
+  keycloak_public:
+    driver: overlay
+  keycloak_db: ~ # attach your php container to this container, so it will have access to keycloak
+  reverse_proxy: ~
