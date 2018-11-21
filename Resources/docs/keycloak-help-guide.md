@@ -48,7 +48,7 @@ Make sure to have make ADMIN_ROLE a composite role of USER_ROLE to inherit permi
 
 Mapper are used to retrieve information from keycloak about the user (ex: email, firstname, address, ...).
 
-MAppers are available in ```Configure > Clients > [Your client] > Mappers```
+Mappers are available in ```Configure > Clients > [Your client] > Mappers```
 
 You should have activate these mappers:
 
