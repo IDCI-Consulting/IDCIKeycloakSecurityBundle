@@ -77,7 +77,7 @@ security:
 
     firewalls:
 
-        # Authorize everyone to try connecting
+        # Authorize everyone to try connecting (this route is imported from our bundle routing configuration)
         auth_connect:
             pattern: ^/auth/connect/.*
             security: false
