@@ -77,26 +77,24 @@ security:
 
     firewalls:
 
-        dev: # disable security for debug functionnalities and assets
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
-
-        auth_connect: # authorize everyone to try connecting
+        # Authorize everyone to try connecting
+        auth_connect:
             pattern: ^/auth/connect/.*
             security: false
 
+        # This bundle is using security guard provided by symfony
         secured_area:
-            pattern: ^/admin # ensure user if connected if he want to access routes starting with /admin
+            pattern: ^/admin
             guard:
                 provider: idci_keycloak_security_provider
                 authenticators:
                     - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator
 
     role_hierarchy:
-        ROLE_ADMIN: ROLE_USER # make ROLE_ADMIN composite
+        ROLE_ADMIN: ROLE_USER
 
     access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN } # Only accept user with role admin to access /admin/* routes
+        - { path: ^/admin, roles: ROLE_ADMIN }
 ```
 
 ## Keycloak configuration

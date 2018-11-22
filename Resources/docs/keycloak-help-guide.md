@@ -1,6 +1,8 @@
 # Keycloak help guide
 
-Go to http://localhost:8080/auth (or http://keycloak.docker/auth by default if you're using docker stack sample given in the main README)
+We are basing this guide on the main configuration for [local](../../#basic) and [docker](../../#docker) environment provided in main the documentation.
+
+Go to http://localhost:8080/auth (or http://keycloak.docker/auth by default if you're using docker stack sample)
 
 Once in, go to Administration console and connect yourself with the default super admin user and password you've set in keycloak docker stack environment variables or in the welcome page if your using keycloak locally.
 
@@ -40,7 +42,7 @@ You can configure it in ```Configure > Clients > [Your client] > Roles```
 
 ![Create a role](screenshots/create-a-role.png)
 
-Make sure to have make ADMIN_ROLE a composite role of USER_ROLE to inherit permissions for your client (you must create them before).
+You can also make ADMIN_ROLE a composite role of USER_ROLE to inherit permissions for your client (you must create them before).
 
 ![Make composite role](screenshots/make-composite-role.png)
 
@@ -54,7 +56,7 @@ You should have activate these mappers:
 
 ![Activate user mappers](screenshots/activate-user-mappers.png)
 
-We advise you tu use builtin mappers, that are already configured.
+We advise you to use builtin mappers, that are already configured.
 
 ### Create users
 
