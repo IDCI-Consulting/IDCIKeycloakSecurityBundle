@@ -1,6 +1,6 @@
 # Keycloak help guide
 
-We are basing this guide on the main configuration for [local](../../#basic) and [docker](../../#docker) environment provided in main the documentation.
+We are basing this guide on the main configuration for [local](../../../../#basic) and [docker](../../../../#docker) environment provided in main the documentation.
 
 Go to http://localhost:8080/auth (or http://keycloak.docker/auth by default if you're using docker stack sample)
 
