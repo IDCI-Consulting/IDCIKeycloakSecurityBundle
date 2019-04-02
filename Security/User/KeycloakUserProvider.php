@@ -32,9 +32,17 @@ class KeycloakUserProvider extends OAuthUserProvider
 
         $keycloakUser = $this->getKeycloakClient()->fetchUserFromToken($accessToken);
 
+        $roles = array_map(
+            function ($role) {
+                return strtoupper($role);
+            },
+            $keycloakUser->getRoles()
+        );
+
+
         return new KeycloakUser(
             $keycloakUser->getPreferredUsername(),
-            $keycloakUser->getRoles(),
+            $roles,
             $accessToken,
             $keycloakUser->getId(),
             $keycloakUser->getEmail(),
