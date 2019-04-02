@@ -39,7 +39,9 @@ class KeycloakUserProvider extends OAuthUserProvider
             $keycloakUser->getId(),
             $keycloakUser->getEmail(),
             $keycloakUser->getName(),
-            $this->getKeycloakClient()->getOAuth2Provider()->getAccountUrl(),
+            $keycloakUser->getFirstName(),
+            $keycloakUser->getLastName(),
+            $this->getKeycloakClient()->getOAuth2Provider()->getResourceOwnerManageAccountUrl(),
             $keycloakUser->getLocale()
         );
     }

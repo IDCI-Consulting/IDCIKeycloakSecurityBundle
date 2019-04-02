@@ -31,6 +31,15 @@ class KeycloakUser extends OAuthUser
     /**
      * @var string
      */
+    private $firstName;
+    /**
+     * @var string
+     */
+    private $lastName;
+
+    /**
+     * @var string
+     */
     private $accountUrl;
 
     /**
@@ -45,6 +54,8 @@ class KeycloakUser extends OAuthUser
         string $id,
         ?string $email = null,
         ?string $displayName = null,
+        ?string $firstName = null,
+        ?string $lastName = null,
         string $accountUrl,
         ?string $preferredLanguage = 'en'
     ) {
@@ -52,6 +63,8 @@ class KeycloakUser extends OAuthUser
         $this->id = $id;
         $this->email = $email;
         $this->displayName = $displayName;
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
         $this->accountUrl = $accountUrl;
         $this->preferredLanguage = $preferredLanguage;
 
@@ -73,9 +86,25 @@ class KeycloakUser extends OAuthUser
         return $this->id;
     }
 
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
     public function getDisplayName(): ?string
     {
         return $this->displayName;
+    }
+
+    public function getFirstName()
+    {
+        return $this->email;
+        return $this->firstName;
+    }
+
+    public function getLastName()
+    {
+        return $this->lastName;
     }
 
     public function getAccountUrl(): ?string

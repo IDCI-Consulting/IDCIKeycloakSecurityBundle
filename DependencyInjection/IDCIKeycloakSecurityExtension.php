@@ -39,16 +39,6 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
 
     protected function generateKeycloakAuthConfiguration(array $config)
     {
-        if (
-            !isset($config['server_private_url']) && !isset($config['server_url']) ||
-            !isset($config['server_public_url']) && !isset($config['server_url'])
-        ) {
-            throw new \UnexpectedValueException(
-                'If "server_private_url" or "server_public_url" is not defined in the bundle configuration'.
-                ', you must define "server_url" configuration parameter.'
-            );
-        }
-
         return [
             'clients' => [
                 'keycloak' => [
@@ -59,10 +49,9 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
                     'redirect_route' => 'idci_security_auth_connect_check_keycloak',
                     'redirect_params' => [],
                     'provider_options' => [
-                        'auth_server_private_url' => isset($config['server_private_url']) ?
-                            $config['server_private_url'] : $config['server_url'],
-                        'auth_server_public_url' => isset($config['server_public_url']) ?
-                            $config['server_public_url'] : $config['server_url'],
+                        'auth_server_private_url' => isset($config['server_private_url']) ? $config['server_private_url'] : null,
+                        'auth_server_public_url' => isset($config['server_public_url']) ? $config['server_public_url'] : null,
+                        'auth_server_url' => isset($config['server_url']) ? $config['server_url'] : null,
                         'realm' => $config['realm'],
                     ],
                 ],

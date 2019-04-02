@@ -19,6 +19,16 @@ class Keycloak extends AbstractProvider
     const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'keycloak';
 
     /**
+     * @var string use to identify the "public"" way to call the auth server
+     */
+    const MODE_PUBLIC = 'public';
+
+    /**
+     * @var string use to identify the "private"" way to call the auth server
+     */
+    const MODE_PRIVATE = 'private';
+
+    /**
      * @var string
      */
     public $authServerPublicUrl = null;
@@ -33,28 +43,11 @@ class Keycloak extends AbstractProvider
      */
     public $realm = null;
 
-    /**
-     * @var string
-     */
-    public $encryptionAlgorithm = null;
-
-    /**
-     * @var string
-     */
-    public $encryptionKey = null;
-
     public function __construct(array $options = [], array $collaborators = [])
     {
-        $this->authServerPublicUrl = $options['auth_server_public_url'];
-        $this->authServerPrivateUrl = $options['auth_server_private_url'];
+        $this->authServerPublicUrl = isset($options['auth_server_public_url']) ? $options['auth_server_public_url'] : $options['auth_server_url'];
+        $this->authServerPrivateUrl = isset($options['auth_server_private_url']) ? $options['auth_server_private_url'] : $options['auth_server_url'];
         $this->realm = $options['realm'];
-        $this->encryptionAlgorithm = isset($options['encryption_algorithm']) ? $options['encryption_algorithm'] : null;
-        $this->encryptionKey = isset($options['encryption_key']) ? $options['encryption_key'] : null;
-
-        if (isset($options['encryption_key_path'])) {
-            $this->setEncryptionKeyPath($options['encryption_key_path']);
-            unset($options['encryption_key_path']);
-        }
 
         parent::__construct($options, $collaborators);
     }
@@ -65,35 +58,58 @@ class Keycloak extends AbstractProvider
             return $response;
         }
 
-        if (!$this->usesEncryption()) {
-            throw EncryptionConfigurationException::undeterminedEncryption();
+        throw new \Exception('Encryption is not yet supported');
+    }
+
+    /**
+     * Creates base url from provider configuration.
+     *
+     * @param string $mode ("MODE_PUBLIC" / "MODE_PRIVATE")
+     *
+     * @return string
+     */
+    public function getBaseUrl($mode = self::MODE_PUBLIC)
+    {
+        if (self::MODE_PRIVATE === $mode) {
+            return $this->authServerPrivateUrl;
         }
 
-        return json_decode(
-            json_encode(
-                JWT::decode(
-                    $response,
-                    $this->encryptionKey,
-                    [$this->encryptionAlgorithm]
-                )
-            ),
-            true
-        );
+        return $this->authServerPublicUrl;
+    }
+
+    public function getBaseUrlWithRealm($mode = self::MODE_PUBLIC)
+    {
+        return sprintf('%s/realms/%s', $this->getBaseUrl($mode), $this->realm);
+    }
+
+    public function getResourceOwnerManageAccountUrl()
+    {
+        return sprintf('%s/account', $this->getBaseUrlWithRealm(self::MODE_PUBLIC));
     }
 
     public function getBaseAuthorizationUrl(): string
     {
-        return sprintf('%s/protocol/openid-connect/auth', $this->getPublicBaseUrlWithRealm());
+        return sprintf('%s/protocol/openid-connect/auth', $this->getBaseUrlWithRealm(self::MODE_PUBLIC));
     }
 
     public function getBaseAccessTokenUrl(array $params): string
     {
-        return sprintf('%s/protocol/openid-connect/token', $this->getPrivateBaseUrlWithRealm());
+        return sprintf('%s/protocol/openid-connect/token', $this->getBaseUrlWithRealm(self::MODE_PRIVATE));
     }
 
     public function getResourceOwnerDetailsUrl(AccessToken $token): string
     {
-        return sprintf('%s/protocol/openid-connect/userinfo', $this->getPrivateBaseUrlWithRealm());
+        return sprintf('%s/protocol/openid-connect/userinfo', $this->getBaseUrlWithRealm(self::MODE_PRIVATE));
+    }
+
+    private function getBaseLogoutUrl(): string
+    {
+        return sprintf('%s/protocol/openid-connect/logout', $this->getBaseUrlWithRealm(self::MODE_PUBLIC));
+    }
+
+    public function getBaseApiUrlWithRealm(): string
+    {
+        return sprintf('%s/admin/realms/%s', $this->getBaseUrl(self::MODE_PRIVATE), $this->realm);
     }
 
     public function getLogoutUrl(array $options = [])
@@ -105,29 +121,12 @@ class Keycloak extends AbstractProvider
         return $this->appendQuery($base, $query);
     }
 
-    public function getAccountUrl(): string
+    public function getResourceOwner(AccessToken $token): KeycloakResourceOwner
     {
-        return sprintf('%s/account', $this->getPublicBaseUrlWithRealm());
-    }
+        $response = $this->fetchResourceOwnerDetails($token);
+        $response = $this->decryptResponse($response);
 
-    public function getPublicBaseUrlWithRealm(): string
-    {
-        return sprintf('%s/realms/%s', $this->authServerPublicUrl, $this->realm);
-    }
-
-    public function getPrivateBaseUrlWithRealm(): string
-    {
-        return sprintf('%s/realms/%s', $this->authServerPrivateUrl, $this->realm);
-    }
-
-    public function getBaseApiUrlWithRealm(): string
-    {
-        return sprintf('%s/admin/realms/%s', $this->authServerPrivateUrl, $this->realm);
-    }
-
-    private function getBaseLogoutUrl(): string
-    {
-        return sprintf('%s/protocol/openid-connect/logout', $this->getPublicBaseUrlWithRealm());
+        return $this->createResourceOwner($response, $token);
     }
 
     protected function getDefaultScopes(): array
@@ -147,43 +146,5 @@ class Keycloak extends AbstractProvider
     protected function createResourceOwner(array $response, AccessToken $token): KeycloakResourceOwner
     {
         return new KeycloakResourceOwner($response, $token);
-    }
-
-    public function getResourceOwner(AccessToken $token): KeycloakResourceOwner
-    {
-        $response = $this->fetchResourceOwnerDetails($token);
-        $response = $this->decryptResponse($response);
-
-        return $this->createResourceOwner($response, $token);
-    }
-
-    public function setEncryptionAlgorithm($encryptionAlgorithm): self
-    {
-        $this->encryptionAlgorithm = $encryptionAlgorithm;
-
-        return $this;
-    }
-
-    public function setEncryptionKey($encryptionKey): self
-    {
-        $this->encryptionKey = $encryptionKey;
-
-        return $this;
-    }
-
-    public function setEncryptionKeyPath($encryptionKeyPath): self
-    {
-        try {
-            $this->encryptionKey = file_get_contents($encryptionKeyPath);
-        } catch (Exception $e) {
-            // Not sure how to handle this yet.
-        }
-
-        return $this;
-    }
-
-    public function usesEncryption(): bool
-    {
-        return (bool) $this->encryptionAlgorithm && $this->encryptionKey;
     }
 }
