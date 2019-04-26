@@ -2,7 +2,6 @@
 
 namespace IDCI\Bundle\KeycloakSecurityBundle\Provider;
 
-use Firebase\JWT\JWT;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
@@ -102,6 +101,11 @@ class Keycloak extends AbstractProvider
         return sprintf('%s/protocol/openid-connect/userinfo', $this->getBaseUrlWithRealm(self::MODE_PRIVATE));
     }
 
+    public function getTokenIntrospectionUrl(): string
+    {
+        return sprintf('%s/protocol/openid-connect/token/introspect', $this->getBaseUrlWithRealm(self::MODE_PRIVATE));
+    }
+
     private function getBaseLogoutUrl(): string
     {
         return sprintf('%s/protocol/openid-connect/logout', $this->getBaseUrlWithRealm(self::MODE_PUBLIC));
@@ -127,6 +131,16 @@ class Keycloak extends AbstractProvider
         $response = $this->decryptResponse($response);
 
         return $this->createResourceOwner($response, $token);
+    }
+
+    public function getClientId()
+    {
+        return $this->clientId;
+    }
+
+    public function getClientSecret()
+    {
+        return $this->clientSecret;
     }
 
     protected function getDefaultScopes(): array
