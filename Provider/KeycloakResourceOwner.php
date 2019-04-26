@@ -63,11 +63,6 @@ class KeycloakResourceOwner implements ResourceOwnerInterface
         return isset($this->response['roles']) ? $this->response['roles'] : [];
     }
 
-    public function getDigifidRoles(): array
-    {
-        return isset($this->response['digifid_roles']) ? $this->response['digifid_roles'] : [];
-    }
-
     public function toArray(): array
     {
         return $this->response;
