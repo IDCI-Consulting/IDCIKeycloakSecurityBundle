@@ -49,7 +49,7 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
 
         $jwt = json_decode($response->getBody(), true);
 
-        if (!$jwt['active']) {
+        if (!$jwt['active'] || !isset($jwt['resource_access'][$provider->getClientId()])) {
             return null;
         }
 
