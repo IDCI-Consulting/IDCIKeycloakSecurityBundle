@@ -98,7 +98,6 @@ class KeycloakUser extends OAuthUser
 
     public function getFirstName()
     {
-        return $this->email;
         return $this->firstName;
     }
 
