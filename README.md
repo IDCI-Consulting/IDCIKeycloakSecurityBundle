@@ -83,12 +83,21 @@ security:
             security: false
 
         # This bundle is using security guard provided by symfony
+        # Login form authentication
         secured_area:
             pattern: ^/admin
             guard:
                 provider: idci_keycloak_security_provider
                 authenticators:
                     - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator
+
+        # Bearer token authentication
+        api:
+            pattern: ^/api
+            guard:
+                provider: idci_keycloak_bearer_security_provider
+                authenticators:
+                    - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakBearerAuthenticator
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER
