@@ -2,78 +2,71 @@
 
 namespace IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator;
 
-use IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUser;
-use IDCI\Bundle\KeycloakSecurityBundle\Validator\BearerTokenValidator;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
-use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;
-use League\OAuth2\Client\Token\AccessToken;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
+use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
+use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
 
-class KeycloakBearerAuthenticator extends SocialAuthenticator
+class KeycloakBearerAuthenticator implements SimplePreAuthenticatorInterface, AuthenticationFailureHandlerInterface
 {
     /**
      * @var ClientRegistry
      */
     protected $clientRegistry;
 
-    /**
-     * @var Router
-     */
-    protected $router;
-
-    public function __construct(ClientRegistry $clientRegistry, UrlMatcherInterface $router)
+    public function __construct(ClientRegistry $clientRegistry)
     {
         $this->clientRegistry = $clientRegistry;
-        $this->router = $router;
     }
 
-    public function supports(Request $request)
+    public function createToken(Request $request, $providerKey)
     {
-        return 'idci_security_auth_connect_check_keycloak' === $request->attributes->get('_route');
-    }
+        $token = $request->headers->get('Authorization');
 
-    public function getCredentials(Request $request): ?AccessToken
-    {
-        if (!$this->supports($request)) {
-            return null;
+        if (!$token) {
+            throw new BadCredentialsException();
         }
 
-        return $this->fetchAccessToken($this->getKeycloakClient());
+        return new PreAuthenticatedToken(
+            'anon.',
+            trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $token)),
+            $providerKey
+        );
     }
 
-    public function getUser($credentials, UserProviderInterface $userProvider): KeycloakUser
+    public function supportsToken(TokenInterface $token, $providerKey)
     {
-        return $userProvider->loadUserByUsername($credentials);
+        return $token instanceof PreAuthenticatedToken && $token->getProviderKey() === $providerKey;
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
     {
-        return null;
+        $user = $userProvider->loadUserByUsername($token->getCredentials());
+
+        if (!$user) {
+            throw new CustomUserMessageAuthenticationException(
+                sprintf('Token does not exist.')
+            );
+        }
+
+        return new PreAuthenticatedToken(
+            $user,
+            $token->getCredentials(),
+            $providerKey,
+            $user->getRoles()
+        );
     }
 
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        $message = strtr($exception->getMessageKey(), $exception->getMessageData());
-
-        return new Response($message, Response::HTTP_FORBIDDEN);
-    }
-
-    public function start(Request $request, AuthenticationException $authException = null): Response
-    {
-        $validator = new BearerTokenValidator();
-        $result = $validator->validate($request, $this->getKeycloakClient()->getOAuth2Provider());
-
-        dump($result);
-        die();
-
-        die($request->headers->get('Authorization'));
+        return new JsonResponse(['error' => $exception->getMessage()], 403);
     }
 
     protected function getKeycloakClient(): OAuth2Client

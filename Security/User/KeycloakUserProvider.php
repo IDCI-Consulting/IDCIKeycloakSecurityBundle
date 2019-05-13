@@ -39,7 +39,6 @@ class KeycloakUserProvider extends OAuthUserProvider
             $keycloakUser->getRoles()
         );
 
-
         return new KeycloakUser(
             $keycloakUser->getPreferredUsername(),
             $roles,
@@ -56,7 +55,7 @@ class KeycloakUserProvider extends OAuthUserProvider
 
     public function refreshUser(UserInterface $user): keycloakUser
     {
-        if (!$user instanceof keycloakUser) {
+        if (!$user instanceof KeycloakUser) {
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_class($user)));
         }
 
@@ -76,7 +75,7 @@ class KeycloakUserProvider extends OAuthUserProvider
 
     public function supportsClass($class): bool
     {
-        return keycloakUser::class === $class;
+        return KeycloakUser::class === $class;
     }
 
     protected function getKeycloakClient(): OAuth2Client
