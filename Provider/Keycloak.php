@@ -44,8 +44,14 @@ class Keycloak extends AbstractProvider
 
     public function __construct(array $options = [], array $collaborators = [])
     {
-        $this->authServerPublicUrl = isset($options['auth_server_public_url']) ? $options['auth_server_public_url'] : $options['auth_server_url'];
-        $this->authServerPrivateUrl = isset($options['auth_server_private_url']) ? $options['auth_server_private_url'] : $options['auth_server_url'];
+        $this->authServerPublicUrl = isset($options['auth_server_public_url']) ?
+            $options['auth_server_public_url'] :
+            $options['auth_server_url']
+        ;
+        $this->authServerPrivateUrl = isset($options['auth_server_private_url']) ?
+            $options['auth_server_private_url'] :
+            $options['auth_server_url']
+        ;
         $this->realm = $options['realm'];
 
         parent::__construct($options, $collaborators);
@@ -69,16 +75,12 @@ class Keycloak extends AbstractProvider
      */
     public function getBaseUrl($mode = self::MODE_PUBLIC)
     {
-        if (self::MODE_PRIVATE === $mode) {
-            return $this->authServerPrivateUrl;
-        }
-
-        return $this->authServerPublicUrl;
+        return self::MODE_PRIVATE === $mode ? $this->authServerPrivateUrl : $this->authServerPublicUrl;
     }
 
-    public function getBaseUrlWithRealm($mode = self::MODE_PUBLIC)
+    public function getBaseUrlWithRealm()
     {
-        return sprintf('%s/realms/%s', $this->getBaseUrl($mode), $this->realm);
+        return sprintf('%s/realms/%s', $this->getBaseUrl(self::MODE_PUBLIC), $this->realm);
     }
 
     public function getResourceOwnerManageAccountUrl()

@@ -2,6 +2,7 @@
 
 namespace IDCI\Bundle\KeycloakSecurityBundle\Security\User;
 
+use IDCI\Bundle\KeycloakSecurityBundle\Provider\Keycloak;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUserProvider;
@@ -30,7 +31,14 @@ class KeycloakUserProvider extends OAuthUserProvider
             throw new \LogicException('Could not load a KeycloakUser without an AccessToken.');
         }
 
+        $provider = $this->getKeycloakClient()->getOAuth2Provider();
         $keycloakUser = $this->getKeycloakClient()->fetchUserFromToken($accessToken);
+
+        if (!$provider instanceof Keycloak) {
+            throw new \RuntimeException(
+                sprintf('The OAuth2 client provider must be an instance of %s', Keycloak::class)
+            );
+        }
 
         $roles = array_map(
             function ($role) {
@@ -48,7 +56,7 @@ class KeycloakUserProvider extends OAuthUserProvider
             $keycloakUser->getName(),
             $keycloakUser->getFirstName(),
             $keycloakUser->getLastName(),
-            $this->getKeycloakClient()->getOAuth2Provider()->getResourceOwnerManageAccountUrl(),
+            $provider->getResourceOwnerManageAccountUrl(),
             $keycloakUser->getLocale()
         );
     }

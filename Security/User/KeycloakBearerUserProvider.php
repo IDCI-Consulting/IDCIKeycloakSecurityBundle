@@ -3,6 +3,7 @@
 namespace IDCI\Bundle\KeycloakSecurityBundle\Security\User;
 
 use GuzzleHttp\Client;
+use IDCI\Bundle\KeycloakSecurityBundle\Provider\Keycloak;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUserProvider;
@@ -29,6 +30,12 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
     {
         $provider = $this->getKeycloakClient()->getOAuth2Provider();
 
+        if (!$provider instanceof Keycloak) {
+            throw new \RuntimeException(
+                sprintf('The OAuth2 client provider must be an instance of %s', Keycloak::class)
+            );
+        }
+
         try {
             $response = (new Client())->request('POST', $provider->getTokenIntrospectionUrl(), [
                 'auth' => [$provider->getClientId(), $provider->getClientSecret()],
@@ -46,14 +53,9 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
             return null;
         }
 
-        $roles = array_merge(
-            $jwt['realm_access']['roles'],
-            $jwt['resource_access'][$provider->getClientId()]['roles']
-        );
-
         return new KeycloakBearerUser(
             $jwt['clientId'],
-            $roles,
+            $jwt['resource_access'][$provider->getClientId()]['roles'],
             $accessToken
         );
     }

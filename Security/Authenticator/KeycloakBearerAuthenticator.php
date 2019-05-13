@@ -6,6 +6,7 @@ use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -51,9 +52,7 @@ class KeycloakBearerAuthenticator implements SimplePreAuthenticatorInterface, Au
         $user = $userProvider->loadUserByUsername($token->getCredentials());
 
         if (!$user) {
-            throw new CustomUserMessageAuthenticationException(
-                sprintf('Token does not exist.')
-            );
+            throw new CustomUserMessageAuthenticationException('Invalid token.');
         }
 
         return new PreAuthenticatedToken(
@@ -66,7 +65,7 @@ class KeycloakBearerAuthenticator implements SimplePreAuthenticatorInterface, Au
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        return new JsonResponse(['error' => $exception->getMessage()], 403);
+        return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_FORBIDDEN);
     }
 
     protected function getKeycloakClient(): OAuth2Client
