@@ -41,8 +41,8 @@ Here is a stack example configuration for docker swarm:
 ```yaml
 # config/packages/idci_keycloak_security.yaml
 idci_keycloak_security:
-    public_server_url: 'http://keycloak.docker/auth' # your keycloak url accessible via your navigator
-    private_server_url: 'http://keycloak:8080/auth' # your keycloak container reference in the network
+    server_public_url: 'http://keycloak.docker/auth' # your keycloak url accessible via your navigator
+    server_private_url: 'http://keycloak:8080/auth' # your keycloak container reference in the network
     realm: 'MyRealm'
     client_id: 'my-client'
     client_secret: '21d4cc5c-9ed6-4bf8-8528-6d659b66f216'
