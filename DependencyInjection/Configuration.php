@@ -10,7 +10,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('idci_keycloak_security_security');
+        $rootNode = $treeBuilder->root('idci_keycloak_security');
 
         $rootNode
             ->children()
