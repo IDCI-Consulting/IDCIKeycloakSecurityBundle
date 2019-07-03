@@ -94,16 +94,16 @@ security:
         # Bearer token authentication
         api:
             pattern: ^/api
-            guard:
-                provider: idci_keycloak_bearer_security_provider
-                authenticators:
-                    - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakBearerAuthenticator
+            provider: idci_keycloak_security_provider
+            simple_preauth:
+                authenticator: IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER
 
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
+	- { path: ^/api, roles: ROLE_API }
 ```
 
 ## Keycloak configuration
