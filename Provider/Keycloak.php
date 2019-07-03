@@ -78,9 +78,9 @@ class Keycloak extends AbstractProvider
         return self::MODE_PRIVATE === $mode ? $this->authServerPrivateUrl : $this->authServerPublicUrl;
     }
 
-    public function getBaseUrlWithRealm()
+    public function getBaseUrlWithRealm($mode)
     {
-        return sprintf('%s/realms/%s', $this->getBaseUrl(self::MODE_PUBLIC), $this->realm);
+        return sprintf('%s/realms/%s', $this->getBaseUrl($mode), $this->realm);
     }
 
     public function getResourceOwnerManageAccountUrl()
