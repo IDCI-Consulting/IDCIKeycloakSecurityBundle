@@ -103,7 +103,7 @@ security:
 
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
-	- { path: ^/api, roles: ROLE_API }
+        - { path: ^/api, roles: ROLE_API }
 ```
 
 ## Keycloak configuration
