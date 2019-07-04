@@ -8,6 +8,10 @@ services:
         resource: '../../*'
         exclude: '../../{Entity,Migrations,Tests,Provider/KeycloakResourceOwner.php}'
 
+    IDCI\Bundle\KeycloakSecurityBundle\Controller\:
+        resource: '../../Controller'
+        tags: ['controller.service_arguments']
+
     IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator:
         arguments: ["@knpu.oauth2.registry", "@router"]
 

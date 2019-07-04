@@ -2,8 +2,6 @@
 
 namespace IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator;
 
-use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
-use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,55 +11,42 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
-use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
-class KeycloakBearerAuthenticator implements SimplePreAuthenticatorInterface, AuthenticationFailureHandlerInterface
+class KeycloakBearerAuthenticator extends AbstractGuardAuthenticator
 {
-    /**
-     * @var ClientRegistry
-     */
-    protected $clientRegistry;
-
-    public function __construct(ClientRegistry $clientRegistry)
+    public function supports(Request $request)
     {
-        $this->clientRegistry = $clientRegistry;
+        return $request->headers->has('Authorization');
     }
 
-    public function createToken(Request $request, $providerKey)
+    public function getCredentials(Request $request)
     {
-        $token = $request->headers->get('Authorization');
+        return [
+            'token' => $request->headers->get('Authorization')
+        ];
+    }
+
+    public function getUser($credentials, UserProviderInterface $userProvider)
+    {
+        $token = $credentials['token'];
 
         if (!$token) {
-            throw new BadCredentialsException();
+            return;
         }
 
-        return new PreAuthenticatedToken(
-            'anon.',
-            trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $token)),
-            $providerKey
-        );
+        return $userProvider->loadUserByUsername($token);
     }
 
-    public function supportsToken(TokenInterface $token, $providerKey)
+    public function checkCredentials($credentials, UserInterface $user)
     {
-        return $token instanceof PreAuthenticatedToken && $token->getProviderKey() === $providerKey;
+        return true;
     }
 
-    public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        $user = $userProvider->loadUserByUsername($token->getCredentials());
-
-        if (!$user) {
-            throw new CustomUserMessageAuthenticationException('Invalid token.');
-        }
-
-        return new PreAuthenticatedToken(
-            $user,
-            $token->getCredentials(),
-            $providerKey,
-            $user->getRoles()
-        );
+        return null;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
@@ -69,8 +54,17 @@ class KeycloakBearerAuthenticator implements SimplePreAuthenticatorInterface, Au
         return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_FORBIDDEN);
     }
 
-    protected function getKeycloakClient(): OAuth2Client
+    public function start(Request $request, AuthenticationException $authException = null)
     {
-        return $this->clientRegistry->getClient('keycloak');
+        $data = [
+            'message' => 'Authentication Required',
+        ];
+
+        return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function supportsRememberMe()
+    {
+        return false;
     }
 }
