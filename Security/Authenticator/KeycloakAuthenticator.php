@@ -7,13 +7,13 @@ use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;
 use League\OAuth2\Client\Token\AccessToken;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class KeycloakAuthenticator extends SocialAuthenticator
 {
@@ -23,14 +23,14 @@ class KeycloakAuthenticator extends SocialAuthenticator
     protected $clientRegistry;
 
     /**
-     * @var Router
+     * @var UrlGeneratorInterface
      */
-    protected $router;
+    protected $urlGenerator;
 
-    public function __construct(ClientRegistry $clientRegistry, Router $router)
+    public function __construct(ClientRegistry $clientRegistry, UrlGeneratorInterface $urlGenerator)
     {
         $this->clientRegistry = $clientRegistry;
-        $this->router = $router;
+        $this->urlGenerator = $urlGenerator;
     }
 
     public function supports(Request $request)
@@ -67,7 +67,7 @@ class KeycloakAuthenticator extends SocialAuthenticator
     public function start(Request $request, AuthenticationException $authException = null): RedirectResponse
     {
         return new RedirectResponse(
-            $this->router->generate('idci_security_auth_connect_keycloak'),
+            $this->urlGenerator->generate('idci_security_auth_connect_keycloak'),
             Response::HTTP_TEMPORARY_REDIRECT
         );
     }

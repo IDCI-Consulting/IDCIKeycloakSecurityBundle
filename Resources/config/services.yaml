@@ -8,19 +8,18 @@ services:
         resource: '../../*'
         exclude: '../../{Entity,Migrations,Tests,Provider/KeycloakResourceOwner.php}'
 
-    IDCI\Bundle\KeycloakSecurityBundle\Controller\:
-        resource: '../../Controller'
+    IDCI\Bundle\KeycloakSecurityBundle\Controller\KeycloakController:
+        public: true
+        bind:
+            $defaultTargetPath: '%idci_keycloak_security.default_target_path%'
         tags: ['controller.service_arguments']
 
     IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator:
-        arguments: ["@knpu.oauth2.registry", "@router"]
 
     IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUserProvider:
-        arguments: ["@knpu.oauth2.registry"]
         tags:
             - { name: idci_keycloak_security.user_provider, alias: oauth }
 
     IDCI\Bundle\KeycloakSecurityBundle\EventListener\ExceptionListener:
-        arguments: ["@router"]
         tags:
             - { name: kernel.event_listener, event: kernel.exception }

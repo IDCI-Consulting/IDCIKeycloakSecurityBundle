@@ -7,7 +7,8 @@ use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class KeycloakController extends AbstractController
 {
@@ -16,32 +17,34 @@ class KeycloakController extends AbstractController
         return $clientRegistry->getClient('keycloak')->redirect();
     }
 
-    public function connectCheckAction(Request $request)
+    public function connectCheckAction(Request $request, string $defaultTargetPath)
     {
-        $routeName = $this->container->getParameter('idci_keycloak_security.default_target_path');
-
-        return new RedirectResponse($this->container->get('router')->generate($routeName));
+        return $this->redirectToRoute($defaultTargetPath);
     }
 
-    public function logoutAction(Request $request, ClientRegistry $clientRegistry)
-    {
-        $token = $this->container->get('security.token_storage')->getToken();
+    public function logoutAction(
+        Request $request,
+        ClientRegistry $clientRegistry,
+        TokenStorageInterface $tokenStorage,
+        UrlGeneratorInterface $urlGenerator,
+        string $defaultTargetPath
+    ) {
+        $token = $tokenStorage->getToken();
         $user = $token->getUser();
 
         if (!$user instanceof KeycloakUser) {
             throw new \RuntimeException('The user must be an instance of KeycloakUser');
         }
 
-        $this->container->get('security.token_storage')->setToken(null);
+        $tokenStorage->setToken(null);
         $request->getSession()->invalidate();
 
-        $routeName = $this->container->getParameter('idci_keycloak_security.default_target_path');
         $values = $user->getAccessToken()->getValues();
         $oAuth2Provider = $clientRegistry->getClient('keycloak')->getOAuth2Provider();
 
         return new RedirectResponse($oAuth2Provider->getLogoutUrl([
             'state' => $values['session_state'],
-            'redirect_uri' => $this->container->get('router')->generate($routeName, [], Router::ABSOLUTE_URL),
+            'redirect_uri' => $urlGenerator->generate($defaultTargetPath, [], UrlGeneratorInterface::ABSOLUTE_URL),
         ]));
     }
 }

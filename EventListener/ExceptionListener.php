@@ -3,20 +3,20 @@
 namespace IDCI\Bundle\KeycloakSecurityBundle\EventListener;
 
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ExceptionListener
 {
     /**
-     * @var Router
+     * @var UrlGeneratorInterface
      */
-    private $router;
+    private $urlGenerator;
 
-    public function __construct(Router $router)
+    public function __construct(UrlGeneratorInterface $urlGenerator)
     {
-        $this->router = $router;
+        $this->urlGenerator = $urlGenerator;
     }
 
     public function onKernelException(GetResponseForExceptionEvent $event)
@@ -25,7 +25,11 @@ class ExceptionListener
 
         if ($exception instanceof IdentityProviderException) {
             $event->setResponse(new RedirectResponse(
-                $this->router->generate('idci_security_auth_connect_keycloak', [], Router::ABSOLUTE_URL)
+                $this->urlGenerator->generate(
+                    'idci_security_auth_connect_keycloak',
+                    [],
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                )
             ));
         }
     }
