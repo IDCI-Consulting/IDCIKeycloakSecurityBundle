@@ -6,7 +6,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -38,7 +37,7 @@ class KeycloakBearerAuthenticator extends AbstractGuardAuthenticator
         try {
             $user = $userProvider->loadUserByUsername($this->formatToken($token));
         } catch (\Exception $e) {
-            throw new AccessDeniedException(sprintf('Error when introspecting the token: %s', $e->getMessage()));
+            throw new BadCredentialsException(sprintf('Error when introspecting the token: %s', $e->getMessage()));
         }
 
         return $user;
