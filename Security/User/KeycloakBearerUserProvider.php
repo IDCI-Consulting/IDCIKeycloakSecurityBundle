@@ -36,21 +36,26 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
             );
         }
 
-        try {
-            $response = (new Client())->request('POST', $provider->getTokenIntrospectionUrl(), [
-                'auth' => [$provider->getClientId(), $provider->getClientSecret()],
-                'form_params' => [
-                    'token' => $accessToken,
-                ],
-            ]);
-        } catch (\Exception $e) {
-            return null;
-        }
+        $response = (new Client())->request('POST', $provider->getTokenIntrospectionUrl(), [
+            'auth' => [$provider->getClientId(), $provider->getClientSecret()],
+            'form_params' => [
+                'token' => $accessToken,
+            ],
+        ]);
 
         $jwt = json_decode($response->getBody(), true);
 
-        if (!$jwt['active'] || !isset($jwt['resource_access'][$provider->getClientId()])) {
-            return null;
+        if (!$jwt['active']) {
+            throw new \UnexpectedValueException('The token does not exist or is not valid anymore');
+        }
+
+        if (!isset($jwt['resource_access'][$provider->getClientId()])) {
+            throw new \UnexpectedValueException(
+                sprintf(
+                    'The token does not have the necessary permissions. Current ressource access : %s',
+                    json_encode($jwt['resource_access'])
+                )
+            );
         }
 
         return new KeycloakBearerUser(

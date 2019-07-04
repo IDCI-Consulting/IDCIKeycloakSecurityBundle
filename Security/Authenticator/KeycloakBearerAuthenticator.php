@@ -6,9 +6,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 class KeycloakBearerAuthenticator extends AbstractGuardAuthenticator
@@ -30,10 +32,16 @@ class KeycloakBearerAuthenticator extends AbstractGuardAuthenticator
         $token = $credentials['token'];
 
         if (!$token) {
-            return;
+            throw new BadCredentialsException('Token is not present in the request headers');
         }
 
-        return $userProvider->loadUserByUsername($this->formatToken($token));
+        try {
+            $user = $userProvider->loadUserByUsername($this->formatToken($token));
+        } catch (\Exception $e) {
+            throw new AccessDeniedException(sprintf('Error when introspecting the token: %s', $e->getMessage()));
+        }
+
+        return $user;
     }
 
     public function checkCredentials($credentials, UserInterface $user)
