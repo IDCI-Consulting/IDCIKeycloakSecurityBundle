@@ -94,9 +94,10 @@ security:
         # Bearer token authentication
         api:
             pattern: ^/api
-            provider: idci_keycloak_bearer_security_provider
-            simple_preauth:
-                authenticator: IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakBearerAuthenticator
+            guard:
+                provider: idci_keycloak_bearer_security_provider
+                authenticators:
+                    - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakBearerAuthenticator
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER
