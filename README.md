@@ -94,7 +94,7 @@ security:
         # Bearer token authentication
         api:
             pattern: ^/api
-            provider: idci_keycloak_security_provider
+            provider: idci_keycloak_bearer_security_provider
             simple_preauth:
                 authenticator: IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakBearerAuthenticator
 
