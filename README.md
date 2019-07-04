@@ -96,7 +96,7 @@ security:
             pattern: ^/api
             provider: idci_keycloak_security_provider
             simple_preauth:
-                authenticator: IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator
+                authenticator: IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakBearerAuthenticator
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER
