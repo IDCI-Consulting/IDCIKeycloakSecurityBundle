@@ -26,7 +26,6 @@ class KeycloakController extends AbstractController
         Request $request,
         ClientRegistry $clientRegistry,
         TokenStorageInterface $tokenStorage,
-        UrlGeneratorInterface $urlGenerator,
         string $defaultTargetPath
     ) {
         $token = $tokenStorage->getToken();
@@ -44,7 +43,7 @@ class KeycloakController extends AbstractController
 
         return new RedirectResponse($oAuth2Provider->getLogoutUrl([
             'state' => $values['session_state'],
-            'redirect_uri' => $urlGenerator->generate($defaultTargetPath, [], UrlGeneratorInterface::ABSOLUTE_URL),
+            'redirect_uri' => $this->generateUrl($defaultTargetPath, [], UrlGeneratorInterface::ABSOLUTE_URL),
         ]));
     }
 }
