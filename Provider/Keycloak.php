@@ -163,4 +163,9 @@ class Keycloak extends AbstractProvider
     {
         return new KeycloakResourceOwner($response, $token);
     }
+
+    protected function getAllowedClientOptions(array $options)
+    {
+        return ['timeout', 'proxy', 'verify'];
+    }
 }
