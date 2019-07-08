@@ -20,6 +20,10 @@ services:
         tags:
             - { name: idci_keycloak_security.user_provider, alias: oauth }
 
+    IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakBearerUserProvider:
+        arguments:
+            $sslVerification: '%idci_keycloak_security.ssl_verification%'
+
     IDCI\Bundle\KeycloakSecurityBundle\EventListener\ExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }

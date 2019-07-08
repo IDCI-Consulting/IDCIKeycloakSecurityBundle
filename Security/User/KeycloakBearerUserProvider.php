@@ -18,9 +18,15 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
      */
     protected $clientRegistry;
 
-    public function __construct(ClientRegistry $clientRegistry)
+    /**
+     * @var mixed
+     */
+    protected $sslVerification;
+
+    public function __construct(ClientRegistry $clientRegistry, $sslVerification)
     {
         $this->clientRegistry = $clientRegistry;
+        $this->sslVerification = $sslVerification;
     }
 
     /**
@@ -41,6 +47,7 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
             'form_params' => [
                 'token' => $accessToken,
             ],
+            'verify' => $this->sslVerification,
         ]);
 
         $jwt = json_decode($response->getBody(), true);

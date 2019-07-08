@@ -19,6 +19,7 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
         $loader->load('services.yaml');
 
         $container->setParameter('idci_keycloak_security.default_target_path', $config['default_target_path']);
+        $container->setParameter('idci_keycloak_security.ssl_verification', $config['ssl_verification']);
     }
 
     public function prepend(ContainerBuilder $container)
@@ -53,6 +54,7 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
                         'auth_server_public_url' => isset($config['server_public_url']) ? $config['server_public_url'] : null,
                         'auth_server_url' => isset($config['server_url']) ? $config['server_url'] : null,
                         'realm' => $config['realm'],
+                        'verify' => $config['ssl_verification'],
                     ],
                 ],
             ],
