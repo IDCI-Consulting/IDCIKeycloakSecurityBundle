@@ -32,7 +32,7 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
     /**
      * {@inheritdoc}
      */
-    public function loadUserByUsername($accessToken): ?KeycloakBearerUser
+    public function loadUserByUsername($accessToken): UserInterface
     {
         $provider = $this->getKeycloakClient()->getOAuth2Provider();
 
@@ -72,7 +72,7 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
         );
     }
 
-    public function refreshUser(UserInterface $user): ?KeycloakBearerUser
+    public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$user instanceof KeycloakBearerUser) {
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_class($user)));

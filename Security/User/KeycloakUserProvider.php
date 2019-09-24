@@ -25,7 +25,7 @@ class KeycloakUserProvider extends OAuthUserProvider
     /**
      * {@inheritdoc}
      */
-    public function loadUserByUsername($accessToken): KeycloakUser
+    public function loadUserByUsername($accessToken): UserInterface
     {
         if (!$accessToken instanceof AccessToken) {
             throw new \LogicException('Could not load a KeycloakUser without an AccessToken.');
@@ -61,7 +61,7 @@ class KeycloakUserProvider extends OAuthUserProvider
         );
     }
 
-    public function refreshUser(UserInterface $user): keycloakUser
+    public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$user instanceof KeycloakUser) {
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_class($user)));
