@@ -66,7 +66,7 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
         }
 
         return new KeycloakBearerUser(
-            $jwt['clientId'],
+            $jwt['client_id'],
             $jwt['resource_access'][$provider->getClientId()]['roles'],
             $accessToken
         );
