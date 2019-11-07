@@ -18,6 +18,7 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');
 
+        $container->setParameter('idci_keycloak_security.config', $config);
         $container->setParameter('idci_keycloak_security.default_target_path', $config['default_target_path']);
         $container->setParameter('idci_keycloak_security.ssl_verification', $config['ssl_verification']);
     }
