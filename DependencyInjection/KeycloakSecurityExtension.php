@@ -18,9 +18,9 @@ class KeycloakSecurityExtension extends Extension implements PrependExtensionInt
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');
 
-        $container->setParameter('idci_keycloak_security.config', $config);
-        $container->setParameter('idci_keycloak_security.default_target_path', $config['default_target_path']);
-        $container->setParameter('idci_keycloak_security.ssl_verification', $config['ssl_verification']);
+        $container->setParameter('nti_keycloak_security.config', $config);
+        $container->setParameter('nti_keycloak_security.default_target_path', $config['default_target_path']);
+        $container->setParameter('nti_keycloak_security.ssl_verification', $config['ssl_verification']);
     }
 
     public function prepend(ContainerBuilder $container)
@@ -29,7 +29,7 @@ class KeycloakSecurityExtension extends Extension implements PrependExtensionInt
 
         if (!isset($bundles['KnpUOAuth2ClientBundle'])) {
             throw new \LogicException(
-                'You must install knpuniversity/oauth2-client-bundle in order to use IDCIKeycloakSecurityBundle'
+                'You must install knpuniversity/oauth2-client-bundle in order to use KeycloakSecurityBundle'
             );
         }
 
@@ -48,7 +48,7 @@ class KeycloakSecurityExtension extends Extension implements PrependExtensionInt
                     'provider_class' => 'NTI\KeycloakSecurityBundle\Provider\Keycloak',
                     'client_id' => $config['client_id'],
                     'client_secret' => $config['client_secret'],
-                    'redirect_route' => 'idci_security_auth_connect_check_keycloak',
+                    'redirect_route' => 'nti_security_auth_connect_check_keycloak',
                     'redirect_params' => [],
                     'provider_options' => [
                         'auth_server_private_url' => isset($config['server_private_url']) ? $config['server_private_url'] : null,
@@ -64,6 +64,6 @@ class KeycloakSecurityExtension extends Extension implements PrependExtensionInt
 
     public function getAlias()
     {
-        return 'idci_keycloak_security';
+        return 'nti_keycloak_security';
     }
 }

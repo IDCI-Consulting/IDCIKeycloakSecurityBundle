@@ -11,18 +11,18 @@ services:
     NTI\KeycloakSecurityBundle\Controller\KeycloakController:
         public: true
         bind:
-            $defaultTargetPath: '%idci_keycloak_security.default_target_path%'
+            $defaultTargetPath: '%nti_keycloak_security.default_target_path%'
         tags: ['controller.service_arguments']
 
     NTI\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator:
 
     NTI\KeycloakSecurityBundle\Security\User\KeycloakUserProvider:
         tags:
-            - { name: idci_keycloak_security.user_provider, alias: oauth }
+            - { name: nti_keycloak_security.user_provider, alias: oauth }
 
     NTI\KeycloakSecurityBundle\Security\User\KeycloakBearerUserProvider:
         arguments:
-            $sslVerification: '%idci_keycloak_security.ssl_verification%'
+            $sslVerification: '%nti_keycloak_security.ssl_verification%'
 
     NTI\KeycloakSecurityBundle\EventListener\ExceptionListener:
         tags:

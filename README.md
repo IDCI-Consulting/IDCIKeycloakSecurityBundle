@@ -1,4 +1,4 @@
-IDCI Keycloak Security Bundle
+NTI Keycloak Security Bundle
 =============================
 
 This Symfony bundle is an alternative solution to FOSUserBundle, working with keycloak.
@@ -8,7 +8,7 @@ This Symfony bundle is an alternative solution to FOSUserBundle, working with ke
 With composer:
 
 ```
-$ composer require idci/keycloak-security-bundle
+$ composer require nti/keycloak-security-bundle
 ```
 
 ## Configuration
@@ -22,8 +22,8 @@ If you want to set up keycloak locally you can download it [here](https://www.ke
 In case of you already have keycloak running locally on your machine or is running remotely but without proxy, here is the default configuration you should use:
 
 ```yaml
-# config/packages/idci_keycloak_security.yaml
-idci_keycloak_security:
+# config/packages/nti_keycloak_security.yaml
+nti_keycloak_security:
     server_url: 'http://localhost:8080/auth' # your accessible keycloak url
     # server_url: 'http://keycloak.example.com/auth' # example with public url
     realm: 'MyRealm'
@@ -39,8 +39,8 @@ If you want to use keycloak in docker you can base your stack on this [sample](.
 Here is a stack example configuration for docker swarm:
 
 ```yaml
-# config/packages/idci_keycloak_security.yaml
-idci_keycloak_security:
+# config/packages/nti_keycloak_security.yaml
+nti_keycloak_security:
     server_public_url: 'http://keycloak.docker/auth' # your keycloak url accessible via your navigator
     server_private_url: 'http://keycloak:8080/auth' # your keycloak container reference in the network
     realm: 'MyRealm'
@@ -56,9 +56,9 @@ Make sure that your php container in the container is attached to a network with
 Create a new file in ```config/routes/``` to load pre configured bundle routes.
 
 ```yaml
-# config/routes/idci_keycloak_security.yaml
-IDCIKeycloakSecurityBundle:
-    resource: "@IDCIKeycloakSecurityBundle/Resources/config/routing.yaml"
+# config/routes/nti_keycloak_security.yaml
+KeycloakSecurityBundle:
+    resource: "@KeycloakSecurityBundle/Resources/config/routing.yaml"
     prefix: /
 ```
 
@@ -71,7 +71,7 @@ Here is a simple configuration that restrict access to ```/admin/*``` routes onl
 ```yaml
 # config/packages/security.yaml
 imports:
-    - { resource: '@IDCIKeycloakSecurityBundle/Resources/config/security.yaml' } # import our security provider
+    - { resource: '@KeycloakSecurityBundle/Resources/config/security.yaml' } # import our security provider
 
 security:
 
@@ -87,17 +87,17 @@ security:
         secured_area:
             pattern: ^/admin
             guard:
-                provider: idci_keycloak_security_provider
+                provider: nti_keycloak_security_provider
                 authenticators:
-                    - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator
+                    - NTI\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator
 
         # Bearer token authentication
         api:
             pattern: ^/api
             guard:
-                provider: idci_keycloak_bearer_security_provider
+                provider: nti_keycloak_bearer_security_provider
                 authenticators:
-                    - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakBearerAuthenticator
+                    - NTI\KeycloakSecurityBundle\Security\Authenticator\KeycloakBearerAuthenticator
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER

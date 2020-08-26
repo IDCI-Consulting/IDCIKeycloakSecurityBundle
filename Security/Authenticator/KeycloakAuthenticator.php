@@ -35,7 +35,7 @@ class KeycloakAuthenticator extends SocialAuthenticator
 
     public function supports(Request $request)
     {
-        return 'idci_security_auth_connect_check_keycloak' === $request->attributes->get('_route');
+        return 'nti_security_auth_connect_check_keycloak' === $request->attributes->get('_route');
     }
 
     public function getCredentials(Request $request): ?AccessToken
@@ -67,7 +67,7 @@ class KeycloakAuthenticator extends SocialAuthenticator
     public function start(Request $request, AuthenticationException $authException = null): RedirectResponse
     {
         return new RedirectResponse(
-            $this->urlGenerator->generate('idci_security_auth_connect_keycloak'),
+            $this->urlGenerator->generate('nti_security_auth_connect_keycloak'),
             Response::HTTP_TEMPORARY_REDIRECT
         );
     }
