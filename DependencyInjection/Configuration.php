@@ -1,6 +1,6 @@
 <?php
 
-namespace IDCI\Bundle\KeycloakSecurityBundle\DependencyInjection;
+namespace NTI\KeycloakSecurityBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;

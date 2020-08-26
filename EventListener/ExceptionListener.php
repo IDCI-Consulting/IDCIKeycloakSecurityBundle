@@ -1,6 +1,6 @@
 <?php
 
-namespace IDCI\Bundle\KeycloakSecurityBundle\EventListener;
+namespace NTI\KeycloakSecurityBundle\EventListener;
 
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Symfony\Component\HttpFoundation\RedirectResponse;

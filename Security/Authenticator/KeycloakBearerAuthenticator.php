@@ -1,6 +1,6 @@
 <?php
 
-namespace IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator;
+namespace NTI\KeycloakSecurityBundle\Security\Authenticator;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

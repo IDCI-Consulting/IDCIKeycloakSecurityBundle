@@ -4,26 +4,26 @@ services:
         autoconfigure: true
         public: false
 
-    IDCI\Bundle\KeycloakSecurityBundle\:
+    NTI\KeycloakSecurityBundle\:
         resource: '../../*'
         exclude: '../../{Entity,Migrations,Tests,Provider/KeycloakResourceOwner.php}'
 
-    IDCI\Bundle\KeycloakSecurityBundle\Controller\KeycloakController:
+    NTI\KeycloakSecurityBundle\Controller\KeycloakController:
         public: true
         bind:
             $defaultTargetPath: '%idci_keycloak_security.default_target_path%'
         tags: ['controller.service_arguments']
 
-    IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator:
+    NTI\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator:
 
-    IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUserProvider:
+    NTI\KeycloakSecurityBundle\Security\User\KeycloakUserProvider:
         tags:
             - { name: idci_keycloak_security.user_provider, alias: oauth }
 
-    IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakBearerUserProvider:
+    NTI\KeycloakSecurityBundle\Security\User\KeycloakBearerUserProvider:
         arguments:
             $sslVerification: '%idci_keycloak_security.ssl_verification%'
 
-    IDCI\Bundle\KeycloakSecurityBundle\EventListener\ExceptionListener:
+    NTI\KeycloakSecurityBundle\EventListener\ExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }

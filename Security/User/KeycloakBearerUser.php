@@ -1,6 +1,6 @@
 <?php
 
-namespace IDCI\Bundle\KeycloakSecurityBundle\Security\User;
+namespace NTI\KeycloakSecurityBundle\Security\User;
 
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUser;
 use League\OAuth2\Client\Token\AccessToken;

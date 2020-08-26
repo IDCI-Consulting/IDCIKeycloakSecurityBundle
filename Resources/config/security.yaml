@@ -1,6 +1,6 @@
 security:
     providers:
         idci_keycloak_security_provider:
-            id: IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUserProvider
+            id: NTI\KeycloakSecurityBundle\Security\User\KeycloakUserProvider
         idci_keycloak_bearer_security_provider:
-            id: IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakBearerUserProvider
+            id: NTI\KeycloakSecurityBundle\Security\User\KeycloakBearerUserProvider

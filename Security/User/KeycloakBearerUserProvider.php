@@ -1,9 +1,9 @@
 <?php
 
-namespace IDCI\Bundle\KeycloakSecurityBundle\Security\User;
+namespace NTI\KeycloakSecurityBundle\Security\User;
 
 use GuzzleHttp\Client;
-use IDCI\Bundle\KeycloakSecurityBundle\Provider\Keycloak;
+use NTI\KeycloakSecurityBundle\Provider\Keycloak;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUserProvider;

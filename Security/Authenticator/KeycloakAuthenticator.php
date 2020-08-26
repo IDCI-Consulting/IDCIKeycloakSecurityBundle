@@ -1,8 +1,8 @@
 <?php
 
-namespace IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator;
+namespace NTI\KeycloakSecurityBundle\Security\Authenticator;
 
-use IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUser;
+use NTI\KeycloakSecurityBundle\Security\User\KeycloakUser;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;

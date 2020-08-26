@@ -1,8 +1,8 @@
 <?php
 
-namespace IDCI\Bundle\KeycloakSecurityBundle\Controller;
+namespace NTI\KeycloakSecurityBundle\Controller;
 
-use IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUser;
+use NTI\KeycloakSecurityBundle\Security\User\KeycloakUser;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;

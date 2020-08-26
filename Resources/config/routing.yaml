@@ -1,11 +1,11 @@
 idci_security_auth_connect_keycloak:
     path:       /auth/connect/keycloak
-    controller: IDCI\Bundle\KeycloakSecurityBundle\Controller\KeycloakController::connectAction
+    controller: NTI\KeycloakSecurityBundle\Controller\KeycloakController::connectAction
 
 idci_security_auth_connect_check_keycloak:
     path:       /auth/connect-check/keycloak
-    controller: IDCI\Bundle\KeycloakSecurityBundle\Controller\KeycloakController::connectCheckAction
+    controller: NTI\KeycloakSecurityBundle\Controller\KeycloakController::connectCheckAction
 
 idci_security_auth_logout:
     path:       /auth/logout
-    controller: IDCI\Bundle\KeycloakSecurityBundle\Controller\KeycloakController::logoutAction
+    controller: NTI\KeycloakSecurityBundle\Controller\KeycloakController::logoutAction

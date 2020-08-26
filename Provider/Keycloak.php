@@ -1,6 +1,6 @@
 <?php
 
-namespace IDCI\Bundle\KeycloakSecurityBundle\Provider;
+namespace NTI\KeycloakSecurityBundle\Provider;
 
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
