@@ -3,6 +3,9 @@
     "type": "symfony-bundle",
     "description": "Allows you to easily handle you application security thanks to keycloak.",
     "keywords": [],
+    "license" : [
+        "MIT"
+    ],
     "authors": [
         {
             "name": "Benjamin Boudier",
