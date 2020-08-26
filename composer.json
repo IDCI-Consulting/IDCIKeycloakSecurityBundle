@@ -1,5 +1,5 @@
 {
-    "name": "idci/keycloak-security-bundle",
+    "name": "nti/keycloak-security-bundle",
     "type": "symfony-bundle",
     "description": "Allows you to easily handle you application security thanks to keycloak.",
     "keywords": [],
@@ -30,7 +30,7 @@
     },
     "autoload": {
         "psr-4": {
-            "IDCI\\Bundle\\KeycloakSecurityBundle\\": ""
+            "NTI\\KeycloakSecurityBundle\\": ""
         },
         "exclude-from-classmap": [
             "/Tests/"
@@ -38,7 +38,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "IDCI\\Bundle\\KeycloakSecurityBundle\\Tests\\": "Tests"
+            "NTI\\KeycloakSecurityBundle\\Tests\\": "Tests"
         }
     }
 }

@@ -12,21 +12,27 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class KeycloakController extends AbstractController
 {
+    private $defaultTargetPath;
+
+    public function __construct(string $defaultTargetPath)
+    {
+        $this->defaultTargetPath = $defaultTargetPath;
+    }
+
     public function connectAction(ClientRegistry $clientRegistry)
     {
         return $clientRegistry->getClient('keycloak')->redirect();
     }
 
-    public function connectCheckAction(Request $request, string $defaultTargetPath)
+    public function connectCheckAction(Request $request)
     {
-        return $this->redirectToRoute($defaultTargetPath);
+        return $this->redirectToRoute($this->defaultTargetPath);
     }
 
     public function logoutAction(
         Request $request,
         ClientRegistry $clientRegistry,
-        TokenStorageInterface $tokenStorage,
-        string $defaultTargetPath
+        TokenStorageInterface $tokenStorage
     ) {
         $token = $tokenStorage->getToken();
         $user = $token->getUser();
@@ -43,7 +49,7 @@ class KeycloakController extends AbstractController
 
         return new RedirectResponse($oAuth2Provider->getLogoutUrl([
             'state' => $values['session_state'],
-            'redirect_uri' => $this->generateUrl($defaultTargetPath, [], UrlGeneratorInterface::ABSOLUTE_URL),
+            'redirect_uri' => $this->generateUrl($this->defaultTargetPath, [], UrlGeneratorInterface::ABSOLUTE_URL),
         ]));
     }
 }
