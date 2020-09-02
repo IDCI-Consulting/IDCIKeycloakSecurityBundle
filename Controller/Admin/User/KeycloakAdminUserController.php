@@ -32,9 +32,9 @@ class KeycloakAdminUserController extends Controller {
         // Translate options to keycloak api standard
         $options = array(
             'email' => isset($options['filters']['email']) ? $options['filters']['email'] : null,
-            'firstName' => isset($options['filters']['email']) ? $options['filters']['firstName'] : null,
-            'lastName' => isset($options['filters']['email']) ? $options['filters']['lastName'] : null,
-            'username' => isset($options['filters']['email']) ? $options['filters']['username'] : null,
+            'firstName' => isset($options['filters']['firstName']) ? $options['filters']['firstName'] : null,
+            'lastName' => isset($options['filters']['lastName']) ? $options['filters']['lastName'] : null,
+            'username' => isset($options['filters']['username']) ? $options['filters']['username'] : null,
             'search' => isset($options['search']) ? $options['search'] : null, // Search in username, first or last name, or email
             'first' => isset($options['start']) ? $options['start'] : 0,
             'max' => isset($options['length']) ? $options['length'] : self::API_MAX_RESULTS,
