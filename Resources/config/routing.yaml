@@ -9,3 +9,8 @@ nti_security_auth_connect_check_keycloak:
 nti_security_auth_logout:
     path:       /auth/logout
     controller: NTI\KeycloakSecurityBundle\Controller\KeycloakController::logoutAction
+
+nti_keycloak_admin:
+    resource: "@KeycloakSecurityBundle/Controller/"
+    type:     annotation
+    prefix: /keycloak/admin

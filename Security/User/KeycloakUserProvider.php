@@ -44,7 +44,7 @@ class KeycloakUserProvider extends OAuthUserProvider
             function ($role) {
                 return strtoupper($role);
             },
-            $keycloakUser->getRoles()
+            $keycloakUser->getRoles($this->getKeycloakClient()->getOAuth2Provider()->getClientId())
         );
 
         return new KeycloakUser(

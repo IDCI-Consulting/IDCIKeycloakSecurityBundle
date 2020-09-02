@@ -27,3 +27,8 @@ services:
     NTI\KeycloakSecurityBundle\EventListener\ExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
+
+    nti.keycloak.admin.service:
+        public: true
+        class: NTI\KeycloakSecurityBundle\Service\KeycloakAdminService
+        arguments: ["@service_container"]

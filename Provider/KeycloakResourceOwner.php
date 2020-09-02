@@ -58,9 +58,13 @@ class KeycloakResourceOwner implements ResourceOwnerInterface
         return isset($this->response['locale']) ? $this->response['locale'] : null;
     }
 
-    public function getRoles(): array
+    public function getRoles($clientId): array
     {
-        return isset($this->response['roles']) ? $this->response['roles'] : [];
+        if(isset($this->response['roles']) && isset($this->response['roles'][$clientId])){
+            return $this->response['roles'][$clientId];
+        } else {
+            return [];
+        }
     }
 
     public function toArray(): array
