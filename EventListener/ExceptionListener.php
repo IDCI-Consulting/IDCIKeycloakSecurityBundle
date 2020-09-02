@@ -21,7 +21,7 @@ class ExceptionListener
 
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
-        $exception = $event->getException();
+        $exception = $event->getThrowable();
 
         if ($exception instanceof IdentityProviderException) {
             $event->setResponse(new RedirectResponse(
