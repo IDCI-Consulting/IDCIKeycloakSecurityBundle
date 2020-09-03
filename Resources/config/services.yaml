@@ -28,7 +28,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
 
-    nti.keycloak.admin.service:
+    nti.keycloak.admin.user.service:
         public: true
-        class: NTI\KeycloakSecurityBundle\Service\KeycloakAdminService
+        class: NTI\KeycloakSecurityBundle\Service\KeycloakAdminUserService
+        arguments: ["@service_container"]
+
+    nti.keycloak.admin.role.service:
+        public: true
+        class: NTI\KeycloakSecurityBundle\Service\KeycloakAdminRoleService
         arguments: ["@service_container"]

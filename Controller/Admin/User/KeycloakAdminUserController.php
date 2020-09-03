@@ -25,7 +25,6 @@ class KeycloakAdminUserController extends Controller {
      * @return DataTableRestResponse
      */
     public function getAllAction(Request $request) {
-
         // Get standard options
         $options = DataTableOptionsProcessor::GetOptions($request);
 
@@ -39,7 +38,7 @@ class KeycloakAdminUserController extends Controller {
             'first' => isset($options['start']) ? $options['start'] : 0,
             'max' => isset($options['length']) ? $options['length'] : self::API_MAX_RESULTS,
         );
-        $result = $this->get('nti.keycloak.admin.service')->getAll($options);
+        $result = $this->get('nti.keycloak.admin.user.service')->getAll($options);
         return new RestResponse($result);
     }
 

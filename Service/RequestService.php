@@ -17,6 +17,7 @@ class RequestService {
     const KEYCLOAK_SERVER_BASE_URL = "keycloak_server_base_url";
     const KEYCLOAK_REALM = "keycloak_realm";
     const KEYCLOAK_CLIENT_ID = "keycloak_client_id";
+    const KEYCLOAK_CLIENT_ID_CODE = "keycloak_client_id_code";
     const KEYCLOAK_CLIENT_SECRET = "keycloak_client_secret";
 
     // Authentication types
@@ -114,11 +115,13 @@ class RequestService {
      * @param $path
      * @return Response
      */
-    protected function restDelete($path){
+    protected function restDelete($path, $data = null){
         $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
         $response = null;
         try {
-            $response = $client->request('DELETE', $path, $this->headers);
+            $response = $client->request('DELETE', $path, array_merge($this->headers, array(
+                "json" => $data
+            )));
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
                 $response = $e->getResponse();
