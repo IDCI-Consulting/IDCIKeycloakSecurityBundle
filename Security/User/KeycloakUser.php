@@ -2,6 +2,7 @@
 
 namespace NTI\KeycloakSecurityBundle\Security\User;
 
+use AppBundle\Entity\User\User;
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUser;
 use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -12,6 +13,11 @@ class KeycloakUser extends OAuthUser
      * @var AccessToken
      */
     private $accessToken;
+
+    /**
+     * @var User
+     */
+    private $localUser;
 
     /**
      * @var string
@@ -47,9 +53,15 @@ class KeycloakUser extends OAuthUser
      */
     private $preferredLanguage;
 
+    /**
+     * @var \datetime
+     */
+    private $createdOn;
+
     public function __construct(
         string $username,
         array $roles,
+        User $localUser,
         AccessToken $accessToken,
         string $id,
         ?string $email = null,
@@ -57,8 +69,10 @@ class KeycloakUser extends OAuthUser
         ?string $firstName = null,
         ?string $lastName = null,
         string $accountUrl,
-        ?string $preferredLanguage = 'en'
+        ?string $preferredLanguage = 'en',
+        ?\datetime $createdOn
     ) {
+        $this->localUser = $localUser;
         $this->accessToken = $accessToken;
         $this->id = $id;
         $this->email = $email;
@@ -67,6 +81,7 @@ class KeycloakUser extends OAuthUser
         $this->lastName = $lastName;
         $this->accountUrl = $accountUrl;
         $this->preferredLanguage = $preferredLanguage;
+        $this->createdOn = $createdOn;
 
         parent::__construct($username, $roles);
     }
@@ -74,6 +89,11 @@ class KeycloakUser extends OAuthUser
     public function __toString(): string
     {
         return $this->getDisplayName();
+    }
+
+    public function getLocalUser(): ?User
+    {
+        return $this->localUser;
     }
 
     public function getAccessToken(): ?AccessToken
@@ -128,4 +148,10 @@ class KeycloakUser extends OAuthUser
 
         return true;
     }
+
+    public function getCreatedOn(): ?\datetime
+    {
+        return $this->createdOn;
+    }
+
 }

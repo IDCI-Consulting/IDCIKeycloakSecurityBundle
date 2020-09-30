@@ -61,10 +61,20 @@ class KeycloakResourceOwner implements ResourceOwnerInterface
     public function getRoles($clientId): array
     {
         if(isset($this->response['roles']) && isset($this->response['roles'][$clientId])){
+            if(isset($this->response['denied_roles']) && isset($this->response['denied_roles'][$clientId])){
+                return array_diff($this->response['roles'][$clientId], $this->response['denied_roles'][$clientId]);
+            }
+            
             return $this->response['roles'][$clientId];
         } else {
             return [];
         }
+    }
+
+    public function getCreatedOn(): ?\DateTime
+    {
+        $date = new \DateTime();
+        return isset($this->response['created_on']) ? $date->setTimestamp($this->response['created_on']/1000) : null;
     }
 
     public function toArray(): array

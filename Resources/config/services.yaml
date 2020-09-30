@@ -19,6 +19,8 @@ services:
     NTI\KeycloakSecurityBundle\Security\User\KeycloakUserProvider:
         tags:
             - { name: nti_keycloak_security.user_provider, alias: oauth }
+        arguments:
+            $container: '@service_container'
 
     NTI\KeycloakSecurityBundle\Security\User\KeycloakBearerUserProvider:
         arguments:

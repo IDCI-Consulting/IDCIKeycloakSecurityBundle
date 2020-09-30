@@ -153,7 +153,7 @@ class Keycloak extends AbstractProvider
     protected function checkResponse(ResponseInterface $response, $data)
     {
         if (!empty($data['error'])) {
-            $error = sprintf('%s: %s', $data['error'], $data['error_description']);
+            $error = sprintf('%s: %s', $data['error'], !empty($data['error_description']) ? $data['error_description'] : '');
 
             throw new IdentityProviderException($error, 0, $data);
         }

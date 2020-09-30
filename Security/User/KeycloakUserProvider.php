@@ -2,11 +2,13 @@
 
 namespace NTI\KeycloakSecurityBundle\Security\User;
 
+use AppBundle\Entity\User\User;
 use NTI\KeycloakSecurityBundle\Provider\Keycloak;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUserProvider;
 use League\OAuth2\Client\Token\AccessToken;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -16,10 +18,16 @@ class KeycloakUserProvider extends OAuthUserProvider
      * @var ClientRegistry
      */
     protected $clientRegistry;
+    
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
 
-    public function __construct(ClientRegistry $clientRegistry)
+    public function __construct(ClientRegistry $clientRegistry, ContainerInterface $container)
     {
         $this->clientRegistry = $clientRegistry;
+        $this->container = $container;
     }
 
     /**
@@ -47,9 +55,15 @@ class KeycloakUserProvider extends OAuthUserProvider
             $keycloakUser->getRoles($this->getKeycloakClient()->getOAuth2Provider()->getClientId())
         );
 
+        // Get local user & refresh its last login date
+        $em = $this->container->get('doctrine')->getManager();
+        $localUser = $em->getRepository(User::class)->findOneBy(array("email" => $keycloakUser->getEmail()));
+        $this->container->get(UserService::class)->refreshLastLogin($localUser);
+
         return new KeycloakUser(
             $keycloakUser->getPreferredUsername(),
             $roles,
+            $localUser,
             $accessToken,
             $keycloakUser->getId(),
             $keycloakUser->getEmail(),
@@ -57,7 +71,8 @@ class KeycloakUserProvider extends OAuthUserProvider
             $keycloakUser->getFirstName(),
             $keycloakUser->getLastName(),
             $provider->getResourceOwnerManageAccountUrl(),
-            $keycloakUser->getLocale()
+            $keycloakUser->getLocale(),
+            $keycloakUser->getCreatedOn()
         );
     }
 
