@@ -3,6 +3,7 @@
 namespace NTI\KeycloakSecurityBundle\Security\User;
 
 use AppBundle\Entity\User\User;
+use AppBundle\Service\User\UserService;
 use NTI\KeycloakSecurityBundle\Provider\Keycloak;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
