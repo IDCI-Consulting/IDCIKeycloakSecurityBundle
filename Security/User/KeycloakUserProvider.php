@@ -2,8 +2,6 @@
 
 namespace NTI\KeycloakSecurityBundle\Security\User;
 
-use AppBundle\Entity\User\User;
-use AppBundle\Service\User\UserService;
 use NTI\KeycloakSecurityBundle\Provider\Keycloak;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
@@ -57,9 +55,8 @@ class KeycloakUserProvider extends OAuthUserProvider
         );
 
         // Get local user & refresh its last login date
-        $em = $this->container->get('doctrine')->getManager();
-        $localUser = $em->getRepository(User::class)->findOneBy(array("email" => $keycloakUser->getEmail()));
-        $this->container->get(UserService::class)->refreshLastLogin($localUser);
+        $localUser = $this->container->get('app.user')->findOneBy(array("email" => $keycloakUser->getEmail()));
+        $this->container->get('app.user')->refreshLastLogin($localUser);
 
         return new KeycloakUser(
             $keycloakUser->getPreferredUsername(),

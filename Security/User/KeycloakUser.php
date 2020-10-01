@@ -2,7 +2,6 @@
 
 namespace NTI\KeycloakSecurityBundle\Security\User;
 
-use AppBundle\Entity\User\User;
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUser;
 use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -15,7 +14,7 @@ class KeycloakUser extends OAuthUser
     private $accessToken;
 
     /**
-     * @var User
+     * @var
      */
     private $localUser;
 
@@ -61,7 +60,7 @@ class KeycloakUser extends OAuthUser
     public function __construct(
         string $username,
         array $roles,
-        User $localUser,
+        $localUser,
         AccessToken $accessToken,
         string $id,
         ?string $email = null,
@@ -91,7 +90,7 @@ class KeycloakUser extends OAuthUser
         return $this->getDisplayName();
     }
 
-    public function getLocalUser(): ?User
+    public function getLocalUser()
     {
         return $this->localUser;
     }
@@ -152,6 +151,23 @@ class KeycloakUser extends OAuthUser
     public function getCreatedOn(): ?\datetime
     {
         return $this->createdOn;
+    }
+
+    /**
+     * Returns true if the user has the role
+     *
+     * @return bool
+     */
+    public function hasRole($role)
+    {
+        $roles = $this->getRoles();
+
+        foreach ($roles as $key => $userRole) {
+            if($userRole == $role)
+                return true;
+        }
+
+        return false;
     }
 
 }
