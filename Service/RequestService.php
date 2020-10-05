@@ -76,20 +76,20 @@ class RequestService {
      * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    protected function restPost($path, $data){
+    protected function restPost($path, $data, $type = "json"){
         $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
         $response = $client->request('POST', $path, array_merge($this->headers, array(
-            "json" => $data
+            $type => $data
         )));
         return $response->getBody()->getContents();
     }
 
-    protected function restPut($path, $data){
+    protected function restPut($path, $data, $type = "json"){
         $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
 
 
         $response = $client->request('PUT', $path, array_merge($this->headers, array(
-            "json" => $data
+            $type => $data
         )));
         return $response->getBody()->getContents();
     }
@@ -100,10 +100,10 @@ class RequestService {
      * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    protected function restPatch($path, $data){
+    protected function restPatch($path, $data, $type = "json"){
         $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
         $response = $client->request('PATCH', $path, array_merge($this->headers, array(
-            "json" => $data
+            $type => $data
         )));
         return $response->getBody()->getContents();
     }
@@ -112,12 +112,12 @@ class RequestService {
      * @param $path
      * @return Response
      */
-    protected function restDelete($path, $data = null){
+    protected function restDelete($path, $data = null, $type = "json"){
         $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
         $response = null;
         try {
             $response = $client->request('DELETE', $path, array_merge($this->headers, array(
-                "json" => $data
+                $type => $data
             )));
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
