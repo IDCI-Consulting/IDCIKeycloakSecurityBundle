@@ -25,6 +25,7 @@ services:
     NTI\KeycloakSecurityBundle\Security\User\KeycloakBearerUserProvider:
         arguments:
             $sslVerification: '%nti_keycloak_security.ssl_verification%'
+            $container: '@service_container'
 
     NTI\KeycloakSecurityBundle\EventListener\ExceptionListener:
         tags:

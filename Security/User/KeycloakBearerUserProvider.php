@@ -7,9 +7,11 @@ use NTI\KeycloakSecurityBundle\Provider\Keycloak;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUserProvider;
+use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class KeycloakBearerUserProvider extends OAuthUserProvider
 {
@@ -23,10 +25,16 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
      */
     protected $sslVerification;
 
-    public function __construct(ClientRegistry $clientRegistry, $sslVerification)
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    public function __construct(ClientRegistry $clientRegistry, $sslVerification, ContainerInterface $container)
     {
         $this->clientRegistry = $clientRegistry;
         $this->sslVerification = $sslVerification;
+        $this->container = $container;
     }
 
     /**
@@ -65,10 +73,26 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
             );
         }
 
+        // Roles
+        $roles = $jwt['resource_access'][$provider->getClientId()]['roles'];
+        if(isset($jwt['denied_roles']) && isset($jwt['denied_roles'][$provider->getClientId()])){
+            $roles = array_diff($jwt['resource_access'][$provider->getClientId()]['roles'], $jwt['denied_roles'][$provider->getClientId()]);
+        }
+
+        // Get local user & refresh its last login date
+        $localUser = $this->container->get('app.user')->findOneBy(array("email" => $jwt['email']));
+        $this->container->get('app.user')->refreshLastLogin($localUser);
+
         return new KeycloakBearerUser(
-            $jwt['client_id'],
-            $jwt['resource_access'][$provider->getClientId()]['roles'],
-            $accessToken
+            $jwt['email'],
+            $roles,
+            $localUser,
+            new AccessToken(array('access_token' => $accessToken)),
+            $jwt['sub'],
+            $jwt['email'],
+            $jwt['given_name'],
+            $jwt['family_name'],
+            $jwt['client_id']
         );
     }
 

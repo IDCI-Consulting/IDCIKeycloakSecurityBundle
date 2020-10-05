@@ -7,8 +7,6 @@ use GuzzleHttp\Exception\RequestException;
 use Monolog\Logger;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
-use AppBundle\Entity\User\User;
-use AppBundle\Service\User\UserService;
 use Symfony\Component\HttpFoundation\Request;
 
 class RequestService {
@@ -45,10 +43,9 @@ class RequestService {
 
         $this->baseUrl = $this->container->getParameter(self::KEYCLOAK_SERVER_BASE_URL);
 
-        /** @var User $user */
-        $user = $this->container->get(UserService::class)->getLoggedUser();
+        $user = $this->container->get('app.user')->getLoggedUser();
         if($user){
-            $token = $user->getAccessToken()->getToken();
+            $token = $user->getKeycloakAccessToken()->getToken();
             $this->auth = array("Authorization" => "Bearer " . $token);
 
             $request = Request::createFromGlobals();
