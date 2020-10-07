@@ -22,7 +22,7 @@ class KeycloakAdminUserController extends Controller {
 
     // REST Methods
     /**
-     * @Route("/user/getAll", name="glbs_keycloak_admin_user_get_all", options={"expose"=true}, methods={"GET"})
+     * @Route("/user/getAll", name="keycloak_admin_user_get_all", options={"expose"=true}, methods={"GET"})
      * @param Request $request
      * @return DataTableRestResponse
      */
@@ -45,7 +45,7 @@ class KeycloakAdminUserController extends Controller {
     }
 
     /**
-     * @Route("/user/{id}", name="glbs_keycloak_admin_user_get", options={"expose"=true}, methods={"GET"})
+     * @Route("/user/{id}", name="keycloak_admin_user_get", options={"expose"=true}, methods={"GET"})
      * @param Request $request
      * @param $id
      * @return DataTableRestResponse
@@ -66,7 +66,7 @@ class KeycloakAdminUserController extends Controller {
     }
 
     /**
-     * @Route("/user", name="glbs_keycloak_admin_user_post", options={"expose"=true}, methods={"POST"})
+     * @Route("/user", name="keycloak_admin_user_post", options={"expose"=true}, methods={"POST"})
      * @param Request $request
      * @return RestResponse
      */
@@ -104,7 +104,7 @@ class KeycloakAdminUserController extends Controller {
     }
 
     /**
-     * @Route("/user/{id}", name="glbs_keycloak_admin_user_put", options={"expose"=true}, methods={"PUT"})
+     * @Route("/user/{id}", name="keycloak_admin_user_put", options={"expose"=true}, methods={"PUT"})
      * @param Request $request
      * @param $id
      * @return RestResponse
@@ -150,7 +150,7 @@ class KeycloakAdminUserController extends Controller {
     }
 
     /**
-     * @Route("/user/{id}/roles", name="glbs_keycloak_admin_user_get_roles", options={"expose"=true}, methods={"GET"})
+     * @Route("/user/{id}/roles", name="keycloak_admin_user_get_roles", options={"expose"=true}, methods={"GET"})
      * @param Request $request
      * @param $id
      * @return DataTableRestResponse
@@ -171,7 +171,7 @@ class KeycloakAdminUserController extends Controller {
     }
 
     /**
-     * @Route("/user/{id}/roles/available", name="glbs_keycloak_admin_user_get_roles_available", options={"expose"=true}, methods={"GET"})
+     * @Route("/user/{id}/roles/available", name="keycloak_admin_user_get_roles_available", options={"expose"=true}, methods={"GET"})
      * @param Request $request
      * @param $id
      * @return DataTableRestResponse
@@ -192,7 +192,7 @@ class KeycloakAdminUserController extends Controller {
     }
 
     /**
-     * @Route("/user/{id}/roles/composite", name="glbs_keycloak_admin_user_get_roles_composite", options={"expose"=true}, methods={"GET"})
+     * @Route("/user/{id}/roles/composite", name="keycloak_admin_user_get_roles_composite", options={"expose"=true}, methods={"GET"})
      * @param Request $request
      * @param $id
      * @return DataTableRestResponse
@@ -213,7 +213,7 @@ class KeycloakAdminUserController extends Controller {
     }
 
     /**
-     * @Route("/user/{id}/addRoles", name="glbs_keycloak_admin_user_add_roles", options={"expose"=true}, methods={"POST"})
+     * @Route("/user/{id}/addRoles", name="keycloak_admin_user_add_roles", options={"expose"=true}, methods={"POST"})
      * @param Request $request
      * @param $id
      * @return RestResponse
@@ -242,7 +242,7 @@ class KeycloakAdminUserController extends Controller {
     }
     
     /**
-     * @Route("/user/{id}/removeRoles", name="glbs_keycloak_admin_user_remove_roles", options={"expose"=true}, methods={"DELETE"})
+     * @Route("/user/{id}/removeRoles", name="keycloak_admin_user_remove_roles", options={"expose"=true}, methods={"POST"})
      * @param Request $request
      * @param $id
      * @return RestResponse
@@ -256,7 +256,6 @@ class KeycloakAdminUserController extends Controller {
              *    array("id" => "abc123", "name" => "ROLE_TWO")
              * )
              */
-
             $data = json_decode($request->getContent(), true);
             $result = $this->get('nti.keycloak.admin.user.service')->removeRoles($id, $data);
             return new RestResponse($result);

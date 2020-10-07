@@ -19,7 +19,7 @@ class KeycloakAdminRoleController extends Controller {
 
     // REST Methods
     /**
-     * @Route("/roles/getAll", name="glbs_keycloak_admin_roles_get_all", options={"expose"=true}, methods={"GET"})
+     * @Route("/roles/getAll", name="keycloak_admin_roles_get_all", options={"expose"=true}, methods={"GET"})
      * @param Request $request
      * @return RestResponse
      */
@@ -33,7 +33,7 @@ class KeycloakAdminRoleController extends Controller {
     }
 
     /**
-     * @Route("/roles/{role}", name="glbs_keycloak_admin_roles_get", options={"expose"=true}, methods={"GET"})
+     * @Route("/roles/{role}", name="keycloak_admin_roles_get", options={"expose"=true}, methods={"GET"})
      * @param Request $request
      * @param $role
      * @return RestResponse
@@ -53,7 +53,7 @@ class KeycloakAdminRoleController extends Controller {
     }
 
     /**
-     * @Route("/roles", name="glbs_keycloak_admin_roles_post", options={"expose"=true}, methods={"POST"})
+     * @Route("/roles", name="keycloak_admin_roles_post", options={"expose"=true}, methods={"POST"})
      * @param Request $request
      * @return RestResponse
      */
@@ -84,7 +84,7 @@ class KeycloakAdminRoleController extends Controller {
     }
 
     /**
-     * @Route("/roles/{role}", name="glbs_keycloak_admin_roles_put", options={"expose"=true}, methods={"PUT"})
+     * @Route("/roles/{role}", name="keycloak_admin_roles_put", options={"expose"=true}, methods={"PUT"})
      * @param Request $request
      * @param $role
      * @return RestResponse
@@ -113,7 +113,7 @@ class KeycloakAdminRoleController extends Controller {
     }
 
     /**
-     * @Route("/roles/{role}", name="glbs_keycloak_admin_roles_delete", options={"expose"=true}, methods={"DELETE"})
+     * @Route("/roles/{role}", name="keycloak_admin_roles_delete", options={"expose"=true}, methods={"DELETE"})
      * @param Request $request
      * @param $role
      * @return RestResponse
@@ -133,7 +133,7 @@ class KeycloakAdminRoleController extends Controller {
     }
 
     /**
-     * @Route("/roles/{role}/composites", name="glbs_keycloak_admin_roles_get_composites", options={"expose"=true}, methods={"GET"})
+     * @Route("/roles/{role}/composites", name="keycloak_admin_roles_get_composites", options={"expose"=true}, methods={"GET"})
      * @param Request $request
      * @param $role
      * @return RestResponse
@@ -153,7 +153,7 @@ class KeycloakAdminRoleController extends Controller {
     }
 
     /**
-     * @Route("/roles/{role}/composites", name="glbs_keycloak_admin_roles_post_composites", options={"expose"=true}, methods={"POST"})
+     * @Route("/roles/{role}/composites", name="keycloak_admin_roles_post_composites", options={"expose"=true}, methods={"POST"})
      * @param Request $request
      * @param $role
      * @return RestResponse
@@ -178,7 +178,7 @@ class KeycloakAdminRoleController extends Controller {
     }
 
     /**
-     * @Route("/roles/{role}/composites", name="glbs_keycloak_admin_roles_delete_composites", options={"expose"=true}, methods={"DELETE"})
+     * @Route("/roles/{role}/composites", name="keycloak_admin_roles_delete_composites", options={"expose"=true}, methods={"DELETE"})
      * @param Request $request
      * @param $role
      * @return RestResponse

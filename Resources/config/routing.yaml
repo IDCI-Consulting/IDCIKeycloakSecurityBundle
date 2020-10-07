@@ -11,6 +11,11 @@ nti_security_auth_logout:
     controller: NTI\KeycloakSecurityBundle\Controller\KeycloakController::logoutAction
 
 nti_keycloak_admin:
-    resource: "@KeycloakSecurityBundle/Controller/"
+    resource: "@KeycloakSecurityBundle/Controller/Admin"
     type:     annotation
     prefix: /keycloak/admin
+
+nti_keycloak_api_admin:
+    resource: "@KeycloakSecurityBundle/Controller/ApiAdmin"
+    type:     annotation
+    prefix: /api/keycloak/admin
