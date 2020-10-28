@@ -44,6 +44,10 @@ class KeycloakAdminUserService extends RequestService {
 
         // Load user with email
         $res = $this->getAll(array('email' => $email));
+
+        if(!isset($res[0]))
+            return null;
+
         $userData = $res[0];
 
         if($roles == true){

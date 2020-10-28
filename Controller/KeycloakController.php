@@ -26,7 +26,21 @@ class KeycloakController extends AbstractController
 
     public function connectCheckAction(Request $request)
     {
-        return $this->redirectToRoute($this->defaultTargetPath);
+        // 'main' is the firewall name
+        $redirectKey = '_security.main.target_path';
+
+        // Check if the referrer session key has been set 
+        if ($this->container->get('session')->has($redirectKey)) {
+            // Set the url based on the link tried to access before being authenticated
+            $url = $this->container->get('session')->get($redirectKey);
+
+            //remove the session key
+            $this->container->get('session')->remove($redirectKey);
+        } else{
+            $url = $this->container->get('router')->generate($this->defaultTargetPath);
+        }
+
+        return new RedirectResponse($url);
     }
 
     public function logoutAction(
