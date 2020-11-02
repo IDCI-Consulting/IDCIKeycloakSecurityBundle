@@ -14,6 +14,7 @@ class KeycloakSecurityService extends RequestService {
     protected $basePath = "/auth/realms/{realm}";
     
     const GET_TOKEN_URL = "/protocol/openid-connect/token";
+    const INTROSPECT_TOKEN_URL = "/protocol/openid-connect/token/introspect";
     
     const PASSWORD_GRANT_TYPE = 'password';
     const TOKEN_EXCHANGE_GRANT_TYPE = 'urn:ietf:params:oauth:grant-type:token-exchange';
@@ -36,6 +37,26 @@ class KeycloakSecurityService extends RequestService {
 
         $result = $this->restPost($url, $options, 'form_params');
         $response = json_decode($result, true);
+        return $response;
+    }
+
+    public function introspectToken($username, $token) {
+        $url = $this->basePath.self::INTROSPECT_TOKEN_URL;
+
+        $options = array(
+            'client_id' => $this->container->getParameter(self::KEYCLOAK_CLIENT_ID),
+            'client_secret' => $this->container->getParameter(self::KEYCLOAK_CLIENT_SECRET),
+            'username' => $username,
+            'token' => $token
+        );
+
+        $result = $this->restPost($url, $options, 'form_params');
+        $response = json_decode($result, true);
+
+        if(isset($response['active']) && $response['active'] == false){
+            return false;
+        }
+
         return $response;
     }
 
