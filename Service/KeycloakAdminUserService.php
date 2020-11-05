@@ -64,6 +64,10 @@ class KeycloakAdminUserService extends RequestService {
             $userData['roles'] = array_diff($roles, $deniedRoles);
         }
 
+        foreach ($userData['attributes'] as $attribute => $value) {
+            $userData['attributes'][$attribute] = is_array($value) ? ($value[0] == 'true' ? true : ($value[0] == 'false' ? false : $value[0])) : $value;
+        }
+
         return $userData;
     }
 
