@@ -45,6 +45,8 @@ class KeycloakAdminRoleController extends Controller {
         } catch (ClientException $ex){
             if($ex->getCode() == 404)
                 return new RestResponse(null, 404, "Role not found.");
+            else if($ex->getCode() == 403)
+                return new RestResponse(null, 403, "You are not allowed to perform this action.");
             else
                 return new RestResponse(null, 500, "An unknown error occurred while loading the role. Please try again or contact support if the problem persists.");
         } catch (\Exception $ex){
@@ -76,6 +78,8 @@ class KeycloakAdminRoleController extends Controller {
                 return new RestResponse(null, 400, "An unknown error occurred while creating the role. Please check the information and try again.");
             else if($ex->getCode() == 409)
                 return new RestResponse(null, 400, "You are trying to create a role that already exists.");
+            else if($ex->getCode() == 403)
+                return new RestResponse(null, 403, "You are not allowed to perform this action.");
             else
                 return new RestResponse(null, 500, "An unknown error occurred while creating the role. Please try again or contact support if the problem persists.");
         } catch (\Exception $ex){
@@ -105,6 +109,8 @@ class KeycloakAdminRoleController extends Controller {
                 return new RestResponse(null, 400, "An unknown error occurred while updating the role. Please check the information and try again.");
             else if($ex->getCode() == 404)
                 return new RestResponse(null, 404, "Role not found.");
+            else if($ex->getCode() == 403)
+                return new RestResponse(null, 403, "You are not allowed to perform this action.");
             else
                 return new RestResponse(null, 500, "An unknown error occurred while updating the role. Please try again or contact support if the problem persists.");
         } catch (\Exception $ex){
@@ -125,6 +131,8 @@ class KeycloakAdminRoleController extends Controller {
         } catch (ClientException $ex){
             if($ex->getCode() == 404)
                 return new RestResponse(null, 404, "Role not found.");
+            else if($ex->getCode() == 403)
+                return new RestResponse(null, 403, "You are not allowed to perform this action.");
             else
                 return new RestResponse(null, 500, "An unknown error occurred while deleting the role. Please try again or contact support if the problem persists.");
         } catch (\Exception $ex){
@@ -145,6 +153,8 @@ class KeycloakAdminRoleController extends Controller {
         } catch (ClientException $ex){
             if($ex->getCode() == 404)
                 return new RestResponse(null, 404, "Role not found.");
+            else if($ex->getCode() == 403)
+                return new RestResponse(null, 403, "You are not allowed to perform this action.");
             else
                 return new RestResponse(null, 500, "An unknown error occurred while loading the role. Please try again or contact support if the problem persists.");
         } catch (\Exception $ex){

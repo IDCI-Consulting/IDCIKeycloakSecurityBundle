@@ -94,6 +94,8 @@ class KeycloakAdminUserController extends Controller {
         } catch (ClientException $ex){
             if($ex->getCode() == 400)
                 return new RestResponse(null, 400, "An unknown error occurred while creating the user. Please check the information and try again.");
+            else if($ex->getCode() == 403)
+                return new RestResponse(null, 403, "You are not allowed to perform this action.");
             else if($ex->getCode() == 409)
                 return new RestResponse(null, 400, "You are trying to create a user that already exists.");
             else
@@ -140,6 +142,8 @@ class KeycloakAdminUserController extends Controller {
         } catch (ClientException $ex){
             if($ex->getCode() == 400)
                 return new RestResponse(null, 400, "An unknown error occurred while updating the user. Please check the information and try again.");
+            else if($ex->getCode() == 403)
+                return new RestResponse(null, 403, "You are not allowed to perform this action.");
             else if($ex->getCode() == 409)
                 return new RestResponse(null, 400, "You are trying to create a user that already exists.");
             else
