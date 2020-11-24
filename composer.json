@@ -1,7 +1,7 @@
 {
     "name": "idci/keycloak-security-bundle",
     "type": "symfony-bundle",
-    "description": "Allows you to easily handle you application security thanks to keycloak.",
+    "description": "Allows you to easily handle you application security thanks to keycloak. ",
     "keywords": [],
     "authors": [
         {
