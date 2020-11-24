@@ -54,9 +54,8 @@ class KeycloakUserProvider extends OAuthUserProvider
             $keycloakUser->getRoles($this->getKeycloakClient()->getOAuth2Provider()->getClientId())
         );
 
-        // Get local user & refresh its last login date
-        $localUser = $this->container->get('app.user')->findOneBy(array("email" => $keycloakUser->getEmail()));
-        $this->container->get('app.user')->refreshLastLogin($localUser);
+        // Get local user
+        $localUser = $this->container->has('app.user') ? $this->container->get('app.user')->findOneBy(array("email" => $keycloakUser->getEmail())) : null;
 
         return new KeycloakUser(
             $keycloakUser->getPreferredUsername(),

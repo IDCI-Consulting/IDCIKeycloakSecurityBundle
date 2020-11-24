@@ -2,9 +2,10 @@
 
 namespace NTI\KeycloakSecurityBundle\Service;
 
+use Doctrine\ORM\EntityManager;
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
-use Monolog\Logger;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +26,9 @@ class RequestService {
     /** @var ContainerInterface $container */
     protected $container;
 
+    /** @var EntityManager $em */
+    private $em;
+
     /** @var array $auth */
     protected $auth;
 
@@ -34,28 +38,67 @@ class RequestService {
     /** @var string $baseUrl */
     protected $baseUrl;
 
+    protected $environment;
+    protected $username;
+    protected $password;
+
     /**
      * RequestService constructor.
      * @param ContainerInterface $container
      */
     public function __construct(ContainerInterface $container) {
         $this->container = $container;
+        $this->em = $container->get('doctrine')->getManager();
 
         $this->baseUrl = $this->container->getParameter(self::KEYCLOAK_SERVER_BASE_URL);
+        $this->environment = $this->container->getParameter("environment");
 
-        $user = $this->container->get('app.user')->getLoggedUser();
-        if($user){
-            $token = $user->getKeycloakAccessToken()->getToken();
-            $this->auth = array("Authorization" => "Bearer " . $token);
-
-            $request = Request::createFromGlobals();
-            $this->auth["IP"] = $request->server->get('HTTP_X_REAL_IP');
-        } else {
-            $this->auth = array();
+        $configuration = $this->em->getRepository('KeycloakSecurityBundle:KeycloakApiConfiguration')->findOneBy(array("environment" => $this->environment));
+        if(!$configuration)  {
+            throw new Exception("No configuration was found for the Keycloak Api Config (".strtoupper($this->environment).").");
         }
 
+        $this->username = $configuration->getEmail();
+        $this->password = $configuration->getPassword();
+        $accessToken = $configuration->getApiKey();
+
+        if(!$accessToken){
+            $token = $this->container->get('nti.keycloak.security.service')->getToken($this->username, $this->password);
+            $accessToken = $token['access_token'];
+            $configuration->setApiKey($accessToken);
+            $this->em->persist($configuration);
+            $this->em->flush();
+        }
+
+        $request = Request::createFromGlobals();
         $this->headers = array(
-            "headers" => $this->auth
+            "headers" => array(
+                "Authorization" => "Bearer " . $accessToken,
+                "IP", $request->server->get('HTTP_X_REAL_IP')
+            )
+        );
+    }
+
+    protected function refreshToken(){
+        $configuration = $this->em->getRepository('KeycloakSecurityBundle:KeycloakApiConfiguration')->findOneBy(array("environment" => $this->environment));
+        if(!$configuration)  {
+            throw new Exception("No configuration was found for the Keycloak Api Config (".strtoupper($this->environment).").");
+        }
+
+        $token = $this->container->get('nti.keycloak.security.service')->getToken($this->username, $this->password);
+        $accessToken = $token['access_token'];
+
+        $configuration->setApiKey($accessToken);
+        $this->em->persist($configuration);
+        $this->em->flush();
+
+        // Prepare request options
+        $request = Request::createFromGlobals();
+        $this->headers = array(
+            "headers" => array(
+                "Authorization" => "Bearer " . $accessToken,
+                "IP", $request->server->get('HTTP_X_REAL_IP')
+            )
         );
     }
 
@@ -65,9 +108,20 @@ class RequestService {
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function restGet($path){
-        $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
-        $response = $client->request('GET', $path, $this->headers);
-        return $response->getBody()->getContents();
+        try {
+            $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
+            $response = $client->request('GET', $path, $this->headers);
+            return $response->getBody()->getContents();
+        } catch (RequestException $e) {
+            if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
+                // Unauthorized, lets refresh the token
+                $this->refreshToken();
+                $response = $client->request('GET', $path, $this->headers);
+            }
+            return $response->getBody()->getContents();
+        } catch(\Exception $e){
+            return new Response("An unknown error occurred while processing the request.", 500, array());
+        }
     }
 
     /**
@@ -77,21 +131,37 @@ class RequestService {
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function restPost($path, $data, $type = "json"){
-        $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
-        $response = $client->request('POST', $path, array_merge($this->headers, array(
-            $type => $data
-        )));
-        return $response->getBody()->getContents();
+        try {
+            $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
+            $response = $client->request('POST', $path, array_merge($this->headers, array($type => $data)));
+            return $response->getBody()->getContents();
+        } catch (RequestException $e) {
+            if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
+                // Unauthorized, lets refresh the token
+                $this->refreshToken();
+                $response = $client->request('POST', $path, array_merge($this->headers, array($type => $data)));
+            }
+            return $response->getBody()->getContents();
+        } catch(\Exception $e){
+            return new Response("An unknown error occurred while processing the request.", 500, array());
+        }
     }
 
     protected function restPut($path, $data, $type = "json"){
-        $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
-
-
-        $response = $client->request('PUT', $path, array_merge($this->headers, array(
-            $type => $data
-        )));
-        return $response->getBody()->getContents();
+        try {
+            $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
+            $response = $client->request('PUT', $path, array_merge($this->headers, array($type => $data)));
+            return $response->getBody()->getContents();
+        } catch (RequestException $e) {
+            if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
+                // Unauthorized, lets refresh the token
+                $this->refreshToken();
+                $response = $client->request('PUT', $path, array_merge($this->headers, array($type => $data)));
+            }
+            return $response->getBody()->getContents();
+        } catch(\Exception $e){
+            return new Response("An unknown error occurred while processing the request.", 500, array());
+        }
     }
 
     /**
@@ -101,11 +171,20 @@ class RequestService {
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function restPatch($path, $data, $type = "json"){
-        $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
-        $response = $client->request('PATCH', $path, array_merge($this->headers, array(
-            $type => $data
-        )));
-        return $response->getBody()->getContents();
+        try {
+            $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
+            $response = $client->request('PATCH', $path, array_merge($this->headers, array($type => $data)));
+            return $response->getBody()->getContents();
+        } catch (RequestException $e) {
+            if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
+                // Unauthorized, lets refresh the token
+                $this->refreshToken();
+                $response = $client->request('PATCH', $path, array_merge($this->headers, array($type => $data)));
+            }
+            return $response->getBody()->getContents();
+        } catch(\Exception $e){
+            return new Response("An unknown error occurred while processing the request.", 500, array());
+        }
     }
 
     /**
@@ -113,23 +192,20 @@ class RequestService {
      * @return Response
      */
     protected function restDelete($path, $data = null, $type = "json"){
-        $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
-        $response = null;
         try {
-            $response = $client->request('DELETE', $path, array_merge($this->headers, array(
-                $type => $data
-            )));
+            $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
+            $response = $client->request('DELETE', $path, array_merge($this->headers, array($type => $data)));
+            return $response->getBody()->getContents();
         } catch (RequestException $e) {
-            if ($e->hasResponse()) {
-                $response = $e->getResponse();
+            if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
+                // Unauthorized, lets refresh the token
+                $this->refreshToken();
+                $response = $client->request('DELETE', $path, array_merge($this->headers, array($type => $data)));
             }
-        } catch (GuzzleException $e) {
-            $this->container->get('logger')->log(Logger::ERROR, $e->getTraceAsString());
+            return $response->getBody()->getContents();
+        } catch(\Exception $e){
+            return new Response("An unknown error occurred while processing the request.", 500, array());
         }
-        if($response) {
-            return new Response($response->getBody()->getContents(), $response->getStatusCode(), $response->getHeaders());
-        }
-        return new Response("An unknown error occurred while processing the request.", 500, array());
     }
 
 }

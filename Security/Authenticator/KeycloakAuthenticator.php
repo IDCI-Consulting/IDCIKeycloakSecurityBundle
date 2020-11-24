@@ -7,6 +7,7 @@ use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;
 use League\OAuth2\Client\Token\AccessToken;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,10 +28,16 @@ class KeycloakAuthenticator extends SocialAuthenticator
      */
     protected $urlGenerator;
 
-    public function __construct(ClientRegistry $clientRegistry, UrlGeneratorInterface $urlGenerator)
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    public function __construct(ClientRegistry $clientRegistry, UrlGeneratorInterface $urlGenerator, ContainerInterface $container)
     {
         $this->clientRegistry = $clientRegistry;
         $this->urlGenerator = $urlGenerator;
+        $this->container = $container;
     }
 
     public function supports(Request $request)
@@ -54,6 +61,9 @@ class KeycloakAuthenticator extends SocialAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
+        // Get local user & refresh its last login date
+        $token = $this->container->get('security.token_storage')->getToken();
+        $this->container->get('app.user')->refreshLastLogin($token->getUser()->getLocalUser());
         return null;
     }
 

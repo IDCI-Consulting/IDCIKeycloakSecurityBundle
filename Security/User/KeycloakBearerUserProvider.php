@@ -79,9 +79,8 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
             $roles = array_diff($jwt['resource_access'][$provider->getClientId()]['roles'], $jwt['denied_roles'][$provider->getClientId()]);
         }
 
-        // Get local user & refresh its last login date
-        $localUser = $this->container->get('app.user')->findOneBy(array("email" => $jwt['email']));
-        $this->container->get('app.user')->refreshLastLogin($localUser);
+        // Get local user
+        $localUser = $this->container->has('app.user') ? $this->container->get('app.user')->findOneBy(array("email" => $jwt['email'])) : null;
 
         return new KeycloakBearerUser(
             $jwt['email'],
