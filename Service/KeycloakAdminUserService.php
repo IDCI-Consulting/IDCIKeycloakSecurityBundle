@@ -61,7 +61,11 @@ class KeycloakAdminUserService extends RequestService {
             // Load roles and remove denied roles
             $roles = $this->getRolesComposite($userData['id']);
             $roles = array_map(function ($role) { return $role['name']; }, $roles );
-            $userData['roles'] = array_diff($roles, $deniedRoles);
+
+            $rolesTmp = array(); // Remove denied roles
+            foreach($roles as $val) $rolesTmp[$val] = 1;
+            foreach($deniedRoles as $val) unset($rolesTmp[$val]);
+            $userData['roles'] = array_keys($rolesTmp);
         }
 
         if(isset($userData['attributes'])){

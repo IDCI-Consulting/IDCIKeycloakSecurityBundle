@@ -62,7 +62,10 @@ class KeycloakResourceOwner implements ResourceOwnerInterface
     {
         if(isset($this->response['roles']) && isset($this->response['roles'][$clientId])){
             if(isset($this->response['denied_roles']) && isset($this->response['denied_roles'][$clientId])){
-                return array_diff($this->response['roles'][$clientId], $this->response['denied_roles'][$clientId]);
+                $roles = array(); // Remove denied roles
+                foreach($this->response['roles'][$clientId] as $val) $roles[$val] = 1;
+                foreach($this->response['denied_roles'][$clientId] as $val) unset($roles[$val]);
+                return array_keys($roles);
             }
             
             return $this->response['roles'][$clientId];

@@ -76,7 +76,10 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
         // Roles
         $roles = $jwt['resource_access'][$provider->getClientId()]['roles'];
         if(isset($jwt['denied_roles']) && isset($jwt['denied_roles'][$provider->getClientId()])){
-            $roles = array_diff($jwt['resource_access'][$provider->getClientId()]['roles'], $jwt['denied_roles'][$provider->getClientId()]);
+            $rolesTmp = array(); // Remove denied roles
+            foreach($jwt['resource_access'][$provider->getClientId()]['roles'] as $val) $rolesTmp[$val] = 1;
+            foreach($jwt['denied_roles'][$provider->getClientId()] as $val) unset($rolesTmp[$val]);
+            $roles = array_keys($rolesTmp);
         }
 
         // Get local user
