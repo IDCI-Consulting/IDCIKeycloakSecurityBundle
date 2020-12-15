@@ -17,6 +17,7 @@ class KeycloakAdminUserService extends RequestService {
     const GET_ROLES_AVAILABLE_URL = "/{id}/role-mappings/clients/{clientId}/available";
     const GET_ROLES_COMPOSITE_URL = "/{id}/role-mappings/clients/{clientId}/composite";
     const UPDATE_ROLES_URL = "/{id}/role-mappings/clients/{clientId}";
+    const RESET_PASSWORD_URL = "/{id}/execute-actions-email";
 
     public function __construct(ContainerInterface $container) {
         parent::__construct($container);
@@ -140,6 +141,15 @@ class KeycloakAdminUserService extends RequestService {
         $url = str_replace("{id}", $id, $url);
         $url = str_replace("{clientId}", $this->container->getParameter(self::KEYCLOAK_CLIENT_ID_CODE), $url);
         $result = $this->restDelete($url, $data);
+        $response = json_decode($result, true);
+        return $response;
+    }
+
+    public function resetPassword($id) {
+        $url = $this->basePath.self::RESET_PASSWORD_URL;
+        $url = str_replace("{id}", $id, $url);
+        $data = ["UPDATE_PASSWORD"];
+        $result = $this->restPut($url, $data);
         $response = json_decode($result, true);
         return $response;
     }

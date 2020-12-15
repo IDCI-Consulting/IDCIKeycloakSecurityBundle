@@ -273,4 +273,23 @@ class KeycloakAdminUserController extends Controller {
         }
     }
 
+    /**
+     * @Route("/user/{id}/resetPassword", name="keycloak_admin_user_reset_password", options={"expose"=true}, methods={"POST"})
+     * @param Request $request
+     * @param $id
+     * @return RestResponse
+     */
+    public function resetPasswordAction(Request $request, string $id) {
+        try{
+            $result = $this->get('nti.keycloak.admin.user.service')->resetPassword($id);
+            return new RestResponse($result);
+        } catch (ClientException $ex){
+            if($ex->getCode() == 404)
+                return new RestResponse(null, 400, "An error occurred while sending the reset password request. Role not found.");
+            else
+                return new RestResponse(null, 500, "An unknown error occurred while sending the reset password request. Please try again or contact support if the problem persists.");
+        } catch (\Exception $ex){
+            return new RestResponse(null, 500, "An unknown error occurred while sending the reset password request. Please try again or contact support if the problem persists.");
+        }
+    }
 }
