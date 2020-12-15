@@ -103,5 +103,15 @@ class KeycloakApiAdminUserController extends Controller {
     public function removeRolesAction(Request $request, string $id) {
         return $this->forward("NTI\KeycloakSecurityBundle\Controller\Admin\User\KeycloakAdminUserController::removeRolesAction",["request" => $request, "id" => $id]);
     }
+    
+    /**
+     * @Route("/user/{id}/resetPassword", name="keycloak_api_admin_user_reset_password", options={"expose"=true}, methods={"POST"})
+     * @param Request $request
+     * @param $id
+     * @return RestResponse
+     */
+    public function resetPasswordAction(Request $request, string $id) {
+        return $this->forward("NTI\KeycloakSecurityBundle\Controller\Admin\User\KeycloakAdminUserController::resetPasswordAction",["request" => $request, "id" => $id]);
+    }
 
 }

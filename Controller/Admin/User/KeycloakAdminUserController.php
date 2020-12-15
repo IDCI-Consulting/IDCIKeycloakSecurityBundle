@@ -7,6 +7,7 @@ use AppBundle\Util\Rest\DataTableRestResponse;
 use AppBundle\Util\Rest\RestResponse;
 use GuzzleHttp\Exception\ClientException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -290,6 +291,23 @@ class KeycloakAdminUserController extends Controller {
                 return new RestResponse(null, 500, "An unknown error occurred while sending the reset password request. Please try again or contact support if the problem persists.");
         } catch (\Exception $ex){
             return new RestResponse(null, 500, "An unknown error occurred while sending the reset password request. Please try again or contact support if the problem persists.");
+        }
+    }
+
+    /**
+     * @Route("/user/{id}/impersonate", name="keycloak_admin_impersonate", options={"expose"=true}, methods={"GET"})
+     * @param Request $request
+     * @param $id
+     * @return RestResponse
+     */
+    public function impersonateAction(Request $request, string $id) {
+        try{
+            $this->get('nti.keycloak.security.service')->impersonateUser($id);
+            $defaultTargetPath = $this->container->getParameter('nti_keycloak_security.default_target_path');
+            $redirect_route = $this->container->get('router')->generate($defaultTargetPath);
+            return new RedirectResponse($redirect_route);
+        } catch (\Exception $ex){
+            return new RestResponse(null, 500, "An unknown error occurred while impersonating the user. Please try again or contact support if the problem persists.");
         }
     }
 }
