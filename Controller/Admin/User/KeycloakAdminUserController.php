@@ -294,7 +294,7 @@ class KeycloakAdminUserController extends Controller {
     }
 
     /**
-     * @Route("/user/{id}/impersonate", name="keycloak_admin_impersonate", options={"expose"=true}, methods={"POST"})
+     * @Route("/user/{id}/impersonate", name="keycloak_admin_impersonate", options={"expose"=true}, methods={"GET"})
      * @param Request $request
      * @param $id
      * @return RestResponse
