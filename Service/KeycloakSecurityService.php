@@ -94,7 +94,7 @@ class KeycloakSecurityService extends RequestService {
         $oldToken = $tokenStorage->getToken();
         $oldUser = $oldToken->getUser();
 
-        if (!$oldUser instanceof KeycloakUser) {
+        if (!newUser instanceof KeycloakUser) {
             throw new \RuntimeException('The user must be an instance of KeycloakUser');
         }
 
