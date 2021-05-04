@@ -2,7 +2,7 @@
     "name": "idci/keycloak-security-bundle",
     "type": "symfony-bundle",
     "description": "Allows you to easily handle you application security thanks to keycloak.",
-    "license": "CeCILL-C-1",
+    "license": "CECILL-C",
     "keywords": [],
     "authors": [
         {
