@@ -2,6 +2,7 @@
 
 namespace NTI\KeycloakSecurityBundle\Service;
 
+use AppBundle\Util\StringUtils;
 use Doctrine\ORM\EntityManager;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
@@ -79,6 +80,10 @@ class RequestService {
         );
     }
 
+    /**
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     protected function refreshToken(){
         $configuration = $this->em->getRepository('KeycloakSecurityBundle:KeycloakApiConfiguration')->findOneBy(array("environment" => $this->environment));
         if(!$configuration)  {
@@ -110,7 +115,18 @@ class RequestService {
     protected function restGet($path){
         try {
             $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
+            //Check if cookies exists
+            self::_checkCookie();
             $response = $client->request('GET', $path, $this->headers);
+            //Make request and verify if response with 302
+            if($response->code === 302){
+                $this->container->get('session')->set('keycloak-cookie',$response->headers["set-cookie"]);
+                $reponse_header = array_merge($this->options,[
+                    "cookie" => $response->headers["set-cookie"],
+                    'allow_redirects' => false
+                ]);
+                $response = $client->request('GET', $path, $this->headers);
+            }
             return $response->getBody()->getContents();
         } catch (RequestException $e) {
             if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
@@ -133,7 +149,18 @@ class RequestService {
     protected function restPost($path, $data, $type = "json"){
         try {
             $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
+            //Check if cookies exists
+            self::_checkCookie();
             $response = $client->request('POST', $path, array_merge($this->headers, array($type => $data)));
+            //Make request and verify if response with 302
+            if($response->code === 302){
+                $this->container->get('session')->set('keycloak-cookie',$response->headers["set-cookie"]);
+                $reponse_header = array_merge($this->options,[
+                    "cookie" => $response->headers["set-cookie"],
+                    'allow_redirects' => false
+                ]);
+                $response = $client->request('POST', $path, array_merge($this->headers, array($type => $data)));
+            }
             return $response->getBody()->getContents();
         } catch (RequestException $e) {
             if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
@@ -147,10 +174,28 @@ class RequestService {
         }
     }
 
+    /**
+     * @param $path
+     * @param $data
+     * @param string $type
+     * @return string|Response
+     * @throws GuzzleException
+     */
     protected function restPut($path, $data, $type = "json"){
         try {
             $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
+            //Check if cookies exists
+            self::_checkCookie();
             $response = $client->request('PUT', $path, array_merge($this->headers, array($type => $data)));
+            //Make request and verify if response with 302
+            if($response->code === 302){
+                $this->container->get('session')->set('keycloak-cookie',$response->headers["set-cookie"]);
+                $reponse_header = array_merge($this->options,[
+                    "cookie" => $response->headers["set-cookie"],
+                    'allow_redirects' => false
+                ]);
+                $response = $client->request('PUT', $path, array_merge($this->headers, array($type => $data)));
+            }
             return $response->getBody()->getContents();
         } catch (RequestException $e) {
             if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
@@ -173,7 +218,18 @@ class RequestService {
     protected function restPatch($path, $data, $type = "json"){
         try {
             $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
+            //Check if cookies exists
+            self::_checkCookie();
             $response = $client->request('PATCH', $path, array_merge($this->headers, array($type => $data)));
+            //Make request and verify if response with 302
+            if($response->code === 302){
+                $this->container->get('session')->set('keycloak-cookie',$response->headers["set-cookie"]);
+                $reponse_header = array_merge($this->options,[
+                    "cookie" => $response->headers["set-cookie"],
+                    'allow_redirects' => false
+                ]);
+                $response = $client->request('PATCH', $path, array_merge($this->headers, array($type => $data)));
+            }
             return $response->getBody()->getContents();
         } catch (RequestException $e) {
             if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
@@ -194,7 +250,18 @@ class RequestService {
     protected function restDelete($path, $data = null, $type = "json"){
         try {
             $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
+            //Check if cookies exists
+            self::_checkCookie();
             $response = $client->request('DELETE', $path, array_merge($this->headers, array($type => $data)));
+            //Make request and verify if response with 302
+            if($response->code === 302){
+                $this->container->get('session')->set('keycloak-cookie',$response->headers["set-cookie"]);
+                $reponse_header = array_merge($this->options,[
+                    "cookie" => $response->headers["set-cookie"],
+                    'allow_redirects' => false
+                ]);
+                $response = $client->request('DELETE', $path, array_merge($this->headers, array($type => $data)));
+            }
             return $response->getBody()->getContents();
         } catch (RequestException $e) {
             if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
@@ -208,4 +275,20 @@ class RequestService {
         }
     }
 
+    /**
+     * @throws Exception
+     */
+    public function _checkCookie(){
+        $cookie = $this->container->get('session')->get('keycloak-cookie') ?? null;
+        if(null !== $cookie){
+            $cookieObj = StringUtils::CreateCookieFromString($cookie);
+            $now = new \DateTime();
+            if($cookieObj["expires"] > $now->getTimestamp()){
+                $this->headers = array_merge($this->headers,[
+                    "cookie" => $cookie,
+                    'allow_redirects' => false
+                ]);
+            }
+        }
+    }
 }
