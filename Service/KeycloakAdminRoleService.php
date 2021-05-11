@@ -2,10 +2,10 @@
 
 namespace NTI\KeycloakSecurityBundle\Service;
 
-use NTI\KeycloakSecurityBundle\Service\RequestService;
+use NTI\KeycloakSecurityBundle\Service\KeycloakSecurityService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class KeycloakAdminRoleService extends RequestService {
+class KeycloakAdminRoleService extends KeycloakSecurityService {
 
     protected $basePath = "/auth/admin/realms/{realm}/clients/{clientIdCode}/roles";
     

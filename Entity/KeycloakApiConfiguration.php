@@ -45,7 +45,7 @@ class KeycloakApiConfiguration
 
     /**
      * var string
-     * @ORM\Column(name="api_key", type="string", length=4096)
+     * @ORM\Column(name="api_key", type="text")
      */
     private $apiKey;
 

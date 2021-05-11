@@ -2,10 +2,10 @@
 
 namespace NTI\KeycloakSecurityBundle\Service;
 
-use NTI\KeycloakSecurityBundle\Service\RequestService;
+use NTI\KeycloakSecurityBundle\Service\KeycloakSecurityService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class KeycloakAdminUserService extends RequestService {
+class KeycloakAdminUserService extends KeycloakSecurityService {
 
     protected $basePath = "/auth/admin/realms/{realm}/users";
     
@@ -43,39 +43,42 @@ class KeycloakAdminUserService extends RequestService {
     public function getFromEmail($email, $roles = false) {
         $clientId = $this->container->getParameter(self::KEYCLOAK_CLIENT_ID);
 
-        // Load user with email
-        $res = $this->getAll(array('email' => $email));
+        try{
+            // Load user with email
+            $res = $this->getAll(array('email' => $email));
 
-        if(!isset($res[0]))
+            if(!isset($res[0])) return null;
+
+            $userData = $res[0];
+
+            if($roles == true){
+                // Parse denied roles
+                $deniedRoles = [];
+                if(isset($userData['attributes']) && isset($userData['attributes']['denied_roles'])){
+                    $deniedRoles = json_decode($userData['attributes']['denied_roles'][0], true);
+                    $deniedRoles = $deniedRoles[$clientId];
+                }
+
+                // Load roles and remove denied roles
+                $roles = $this->getRolesComposite($userData['id']);
+                $roles = array_map(function ($role) { return $role['name']; }, $roles );
+
+                $rolesTmp = array(); // Remove denied roles
+                foreach($roles as $val) $rolesTmp[$val] = 1;
+                foreach($deniedRoles as $val) unset($rolesTmp[$val]);
+                $userData['roles'] = array_keys($rolesTmp);
+            }
+
+            if(isset($userData['attributes'])){
+                foreach ($userData['attributes'] as $attribute => $value) {
+                    $userData['attributes'][$attribute] = is_array($value) ? ($value[0] == 'true' ? true : ($value[0] == 'false' ? false : $value[0])) : $value;
+                }
+            }
+
+            return $userData;
+        }catch (\Exception $ex){
             return null;
-
-        $userData = $res[0];
-
-        if($roles == true){
-            // Parse denied roles
-            $deniedRoles = [];
-            if(isset($userData['attributes']) && isset($userData['attributes']['denied_roles'])){
-                $deniedRoles = json_decode($userData['attributes']['denied_roles'][0], true);
-                $deniedRoles = $deniedRoles[$clientId];
-            }
-    
-            // Load roles and remove denied roles
-            $roles = $this->getRolesComposite($userData['id']);
-            $roles = array_map(function ($role) { return $role['name']; }, $roles );
-
-            $rolesTmp = array(); // Remove denied roles
-            foreach($roles as $val) $rolesTmp[$val] = 1;
-            foreach($deniedRoles as $val) unset($rolesTmp[$val]);
-            $userData['roles'] = array_keys($rolesTmp);
         }
-
-        if(isset($userData['attributes'])){
-            foreach ($userData['attributes'] as $attribute => $value) {
-                $userData['attributes'][$attribute] = is_array($value) ? ($value[0] == 'true' ? true : ($value[0] == 'false' ? false : $value[0])) : $value;
-            }
-        }
-
-        return $userData;
     }
 
     public function count() {
