@@ -92,7 +92,7 @@ class KeycloakSecurityService {
         $url = $this->securityPath.self::GET_TOKEN_URL;
 
         $options = array(
-            'client_id' => "admin-cli",// $this->container->getParameter(self::KEYCLOAK_CLIENT_ID),
+            'client_id' => $this->container->getParameter(self::KEYCLOAK_CLIENT_ID),
             'client_secret' => $this->container->getParameter(self::KEYCLOAK_CLIENT_SECRET),
             'username' => $username,
             'password' => $password,
