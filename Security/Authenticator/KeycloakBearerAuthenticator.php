@@ -31,16 +31,14 @@ class KeycloakBearerAuthenticator extends AbstractGuardAuthenticator
         $token = $credentials['token'];
 
         if (!$token) {
-            throw new BadCredentialsException('Token is not present in the request headers');
+            throw new BadCredentialsException('Token is missing in the request headers');
         }
 
         try {
-            $user = $userProvider->loadUserByUsername($this->formatToken($token));
+            return $userProvider->loadUserByUsername(self::cleanToken($token));
         } catch (\Exception $e) {
-            throw new BadCredentialsException(sprintf('Error when introspecting the token: %s', $e->getMessage()));
+            throw new BadCredentialsException(sprintf('Error during token introspection: %s', $e->getMessage()));
         }
-
-        return $user;
     }
 
     public function checkCredentials($credentials, UserInterface $user)
@@ -72,7 +70,7 @@ class KeycloakBearerAuthenticator extends AbstractGuardAuthenticator
         return false;
     }
 
-    protected function formatToken(string $token): string
+    public static function cleanToken(string $token): string
     {
         return trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $token));
     }

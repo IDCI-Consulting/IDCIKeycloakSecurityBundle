@@ -3,12 +3,11 @@
 namespace IDCI\Bundle\KeycloakSecurityBundle\Security\User;
 
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUser;
-use League\OAuth2\Client\Token\AccessToken;
 
 class KeycloakBearerUser extends OAuthUser
 {
     /**
-     * @var AccessToken
+     * @var string
      */
     private $accessToken;
 
