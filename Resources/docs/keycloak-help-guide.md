@@ -16,7 +16,8 @@ To create a realm from the Administration UI, go to ```Realm list > Add realm```
 
 ![Create a realm](screenshots/create-a-realm.png)
 
-He should appear in the realm list after creation.
+It should appear in the realm list after creation.
+Note: Define a Frontend URL to share token creation / introspection beetween your clients.
 
 ### Create a client
 
