@@ -47,3 +47,8 @@ services:
         public: true
         class: NTI\KeycloakSecurityBundle\Service\KeycloakSecurityService
         arguments: ["@service_container"]
+
+    nti.keycloak.api.configuration.service:
+        public: true
+        class: NTI\KeycloakSecurityBundle\Service\KeycloakApiConfigurationService
+        arguments: ["@service_container"]

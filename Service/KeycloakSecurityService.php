@@ -74,9 +74,7 @@ class KeycloakSecurityService {
         if(!$accessToken){
             $token = $this->getToken($this->username, $this->password);
             $accessToken = $token['access_token'];
-            $configuration->setApiKey($accessToken);
-            $this->em->persist($configuration);
-            $this->em->flush();
+            $this->container->get('nti.keycloak.api.configuration.service')->updateAccessToken($accessToken);
         }
 
         $request = Request::createFromGlobals();
@@ -191,9 +189,7 @@ class KeycloakSecurityService {
 
         $token = $this->getToken($this->username, $this->password);
         $accessToken = $token['access_token'];
-        $configuration->setApiKey($accessToken);
-        $this->em->persist($configuration);
-        $this->em->flush();
+        $this->container->get('nti.keycloak.api.configuration.service')->updateAccessToken($accessToken);
 
         // Prepare request options
         $request = Request::createFromGlobals();
