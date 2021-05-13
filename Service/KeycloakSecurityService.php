@@ -24,6 +24,7 @@ class KeycloakSecurityService {
         // Endpoints CraueConfigBundle configuration keys
         KEYCLOAK_SERVER_BASE_URL = "keycloak_server_base_url",
         KEYCLOAK_REALM = "keycloak_realm",
+        KEYCLOAK_ADMIN_CLIENT_ID = "keycloak_admin_client_id",
         KEYCLOAK_CLIENT_ID = "keycloak_client_id",
         KEYCLOAK_CLIENT_ID_CODE = "keycloak_client_id_code",
         KEYCLOAK_CLIENT_SECRET = "keycloak_client_secret",
@@ -90,7 +91,7 @@ class KeycloakSecurityService {
         $url = $this->securityPath.self::GET_TOKEN_URL;
 
         $options = array(
-            'client_id' => $this->container->getParameter(self::KEYCLOAK_CLIENT_ID),
+            'client_id' => $this->container->getParameter(self::KEYCLOAK_ADMIN_CLIENT_ID),
             'client_secret' => $this->container->getParameter(self::KEYCLOAK_CLIENT_SECRET),
             'username' => $username,
             'password' => $password,
@@ -108,7 +109,7 @@ class KeycloakSecurityService {
         $url = $this->baseUrl.$this->securityPath.self::INTROSPECT_TOKEN_URL;
 
         $options = array(
-            'client_id' => $this->container->getParameter(self::KEYCLOAK_CLIENT_ID),
+            'client_id' => $this->container->getParameter(self::KEYCLOAK_ADMIN_CLIENT_ID),
             'client_secret' => $this->container->getParameter(self::KEYCLOAK_CLIENT_SECRET),
             'username' => $username,
             'token' => $token
@@ -136,7 +137,7 @@ class KeycloakSecurityService {
 
         // Prepare the impersonation request. This will request a token exchange, sending the current token and receiving a new token on behalf of the new userId
         $options = array(
-            'client_id' => $this->container->getParameter(self::KEYCLOAK_CLIENT_ID),
+            'client_id' => $this->container->getParameter(self::KEYCLOAK_ADMIN_CLIENT_ID),
             'client_secret' => $this->container->getParameter(self::KEYCLOAK_CLIENT_SECRET),
             'grant_type' => $this::TOKEN_EXCHANGE_GRANT_TYPE,
             'subject_token' => $token,
