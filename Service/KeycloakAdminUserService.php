@@ -18,6 +18,7 @@ class KeycloakAdminUserService extends KeycloakSecurityService {
     const GET_ROLES_COMPOSITE_URL = "/{id}/role-mappings/clients/{clientId}/composite";
     const UPDATE_ROLES_URL = "/{id}/role-mappings/clients/{clientId}";
     const RESET_PASSWORD_URL = "/{id}/execute-actions-email";
+    const UPDATE_GROUP_USER = "/{id}/groups/{groupId}";
 
     public function __construct(ContainerInterface $container) {
         parent::__construct($container);
@@ -152,6 +153,15 @@ class KeycloakAdminUserService extends KeycloakSecurityService {
         $url = $this->basePath.self::RESET_PASSWORD_URL;
         $url = str_replace("{id}", $id, $url);
         $data = ["UPDATE_PASSWORD"];
+        $result = $this->restPut($url, $data);
+        $response = json_decode($result, true);
+        return $response;
+    }
+
+    public function updateUserGroup($id, $groupId, $data) {
+        $url = $this->basePath.self::UPDATE_GROUP_USER;
+        $url = str_replace("{id}", $id, $url);
+        $url = str_replace("{groupId}", $id, $groupId);
         $result = $this->restPut($url, $data);
         $response = json_decode($result, true);
         return $response;
