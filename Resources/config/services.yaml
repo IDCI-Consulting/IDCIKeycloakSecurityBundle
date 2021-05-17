@@ -42,6 +42,11 @@ services:
         public: true
         class: NTI\KeycloakSecurityBundle\Service\KeycloakAdminRoleService
         arguments: ["@service_container"]
+        
+    nti.keycloak.admin.group.service:
+        public: true
+        class: NTI\KeycloakSecurityBundle\Service\KeycloakAdminGroupService
+        arguments: ["@service_container"]
 
     nti.keycloak.security.service:
         public: true
