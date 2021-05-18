@@ -63,16 +63,26 @@ class KeycloakResourceOwner implements ResourceOwnerInterface
         if(isset($this->response['roles']) && isset($this->response['roles'][$clientId])){
             if(isset($this->response['denied_roles']) && isset($this->response['denied_roles'][$clientId]) && is_array($this->response['denied_roles'])){
                 $roles = array(); // Remove denied roles
-                foreach($this->response['roles'][$clientId] as $val) $roles[$val] = 1;
-                foreach($this->response['denied_roles'][$clientId] as $val) unset($roles[$val]);
+                if(is_array($this->response['roles'][$clientId])){
+                    foreach($this->response['roles'][$clientId] as $val) $roles[$val] = 1;
+                }
+
+                if(is_array($this->response['denied_roles'][$clientId])){
+                    foreach($this->response['denied_roles'][$clientId] as $val) unset($roles[$val]);
+                }
                 return array_values(array_keys($roles));
             }
             return array_values($this->response['roles'][$clientId]);
         } if(isset($this->response['role']) && isset($this->response['role'][$clientId])){
             if(isset($this->response['denied_roles']) && isset($this->response['denied_roles'][$clientId]) && is_array($this->response['denied_roles'])){
                 $roles = array(); // Remove denied roles
-                foreach($this->response['role'][$clientId] as $val) $roles[$val] = 1;
-                foreach($this->response['denied_roles'][$clientId] as $val) unset($roles[$val]);
+                if(is_array($this->response['roles'][$clientId])){
+                    foreach($this->response['roles'][$clientId] as $val) $roles[$val] = 1;
+                }
+
+                if(is_array($this->response['denied_roles'][$clientId])){
+                    foreach($this->response['denied_roles'][$clientId] as $val) unset($roles[$val]);
+                }
                 return array_values(array_keys($roles));
             }
             return array_values($this->response['role'][$clientId]);
