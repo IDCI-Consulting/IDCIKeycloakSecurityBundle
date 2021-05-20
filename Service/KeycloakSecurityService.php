@@ -109,7 +109,7 @@ class KeycloakSecurityService {
         $url = $this->baseUrl.$this->securityPath.self::INTROSPECT_TOKEN_URL;
 
         $options = array(
-            'client_id' => $this->container->getParameter(self::KEYCLOAK_ADMIN_CLIENT_ID),
+            'client_id' => $this->container->getParameter(self::KEYCLOAK_CLIENT_ID),
             'client_secret' => $this->container->getParameter(self::KEYCLOAK_CLIENT_SECRET),
             'username' => $username,
             'token' => $token

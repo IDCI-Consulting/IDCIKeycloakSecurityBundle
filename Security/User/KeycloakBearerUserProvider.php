@@ -64,22 +64,27 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
             throw new \UnexpectedValueException('The token does not exist or is not valid anymore');
         }
 
-        if (!isset($jwt['resource_access'][$provider->getClientId()])) {
-            throw new \UnexpectedValueException(
-                sprintf(
-                    'The token does not have the necessary permissions. Current ressource access : %s',
-                    json_encode($jwt['resource_access'])
-                )
-            );
+        if(isset($jwt['resource_access'])) {
+            if (!isset($jwt['resource_access'][$provider->getClientId()])) {
+                throw new \UnexpectedValueException(
+                    sprintf(
+                        'The token does not have the necessary permissions. Current ressource access : %s',
+                        json_encode($jwt['resource_access'])
+                    )
+                );
+            }
         }
 
         // Roles
-        $roles = $jwt['resource_access'][$provider->getClientId()]['roles'];
-        if(isset($jwt['denied_roles']) && isset($jwt['denied_roles'][$provider->getClientId()])){
-            $rolesTmp = array(); // Remove denied roles
-            foreach($jwt['resource_access'][$provider->getClientId()]['roles'] as $val) $rolesTmp[$val] = 1;
-            foreach($jwt['denied_roles'][$provider->getClientId()] as $val) unset($rolesTmp[$val]);
-            $roles = array_keys($rolesTmp);
+        $roles = [];
+        if(isset($jwt['resource_access'])) {
+            $roles = $jwt['resource_access'][$provider->getClientId()]['roles'];
+            if(isset($jwt['denied_roles']) && isset($jwt['denied_roles'][$provider->getClientId()])){
+                $rolesTmp = array(); // Remove denied roles
+                foreach($jwt['resource_access'][$provider->getClientId()]['roles'] as $val) $rolesTmp[$val] = 1;
+                foreach($jwt['denied_roles'][$provider->getClientId()] as $val) unset($rolesTmp[$val]);
+                $roles = array_keys($rolesTmp);
+            }
         }
 
         // Get local user
