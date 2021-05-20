@@ -137,7 +137,7 @@ class KeycloakSecurityService {
 
         // Prepare the impersonation request. This will request a token exchange, sending the current token and receiving a new token on behalf of the new userId
         $options = array(
-            'client_id' => $this->container->getParameter(self::KEYCLOAK_ADMIN_CLIENT_ID),
+            'client_id' => $this->container->getParameter(self::KEYCLOAK_CLIENT_ID),
             'client_secret' => $this->container->getParameter(self::KEYCLOAK_CLIENT_SECRET),
             'grant_type' => $this::TOKEN_EXCHANGE_GRANT_TYPE,
             'subject_token' => $token,

@@ -302,7 +302,8 @@ class KeycloakAdminUserController extends Controller {
     public function impersonateAction(Request $request, string $id) {
         try{
             $result = $this->get('nti.keycloak.security.service')->impersonateUser($id);
-            return new RestResponse($result);
+            $routeName = $this->container->hasParameter("keycloak_default_target_path") ? $this->container->getParameter("keycloak_default_target_path") : $_ENV["keycloak_default_target_path"];
+            return $this->redirectToRoute($routeName);
         } catch (\Exception $ex){
             return new RestResponse(null, 500, "An unknown error occurred while impersonating the user. Please try again or contact support if the problem persists.");
         }
