@@ -159,7 +159,7 @@ class KeycloakSecurityService {
         $oldToken = $tokenStorage->getToken();
         $oldUser = $oldToken->getUser();
 
-        if (!newUser instanceof KeycloakUser) {
+        if (!$newUser instanceof KeycloakUser) {
             throw new \RuntimeException('The user must be an instance of KeycloakUser');
         }
 
