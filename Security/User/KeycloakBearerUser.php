@@ -11,20 +11,105 @@ class KeycloakBearerUser extends OAuthUser
      */
     private $accessToken;
 
-    public function __construct(string $username, array $roles, string $accessToken)
-    {
-        $this->accessToken = $accessToken;
+    /**
+     * @var string
+     */
+    private $clientId;
 
-        parent::__construct($username, $roles);
-    }
+    /**
+     * @var string
+     */
+    private $email;
+
+    /**
+     * @var string
+     */
+    private $firstName;
+
+    /**
+     * @var string
+     */
+    private $lastName;
+
+    /**
+     * @var bool
+     */
+    private $emailVerified;
 
     public function __toString(): string
     {
         return $this->getUsername();
     }
 
+    public function setAccessToken(string $accessToken): self
+    {
+        $this->accessToken = $accessToken;
+
+        return $this;
+    }
+
     public function getAccessToken(): ?string
     {
         return $this->accessToken;
+    }
+
+    public function setClientId(string $clientId): self
+    {
+        $this->clientId = $clientId;
+
+        return $this;
+    }
+
+    public function getClientId(): ?string
+    {
+        return $this->clientId;
+    }
+
+    public function setFirstName(?string $firstName): self
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setLastName(?string $lastName): self
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function getLastName(): self
+    {
+        return $this->lastName;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmailVerified(bool $emailVerified): self
+    {
+        $this->emailVerified = $emailVerified;
+
+        return $this;
+    }
+
+    public function isEmailVerified(): bool
+    {
+        return $this->emailVerified;
     }
 }
