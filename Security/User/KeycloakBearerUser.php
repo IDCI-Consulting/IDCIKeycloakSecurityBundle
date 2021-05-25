@@ -84,7 +84,7 @@ class KeycloakBearerUser extends OAuthUser
         return $this;
     }
 
-    public function getLastName(): self
+    public function getLastName(): ?string
     {
         return $this->lastName;
     }
