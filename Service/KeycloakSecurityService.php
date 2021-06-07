@@ -2,7 +2,6 @@
 
 namespace NTI\KeycloakSecurityBundle\Service;
 
-use AppBundle\Util\StringUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\RequestException;
 use League\OAuth2\Client\Token\AccessToken;
@@ -65,7 +64,7 @@ class KeycloakSecurityService {
 
         $configuration = $this->em->getRepository('KeycloakSecurityBundle:KeycloakApiConfiguration')->findOneBy(array("environment" => $this->environment));
         if(!$configuration)  {
-            throw new Exception("No configuration was found for the Keycloak Api Config (".strtoupper($this->environment).").");
+            throw new \Exception("No configuration was found for the Keycloak Api Config (".strtoupper($this->environment).").");
         }
 
         $this->username = $configuration->getEmail();
@@ -185,7 +184,7 @@ class KeycloakSecurityService {
         $configuration = $this->em->getRepository('KeycloakSecurityBundle:KeycloakApiConfiguration')->findOneBy(array("environment" => $this->environment));
 
         if(!$configuration)  {
-            throw new Exception("No configuration was found for the Keycloak Api Config (".strtoupper($this->environment).").");
+            throw new \Exception("No configuration was found for the Keycloak Api Config (".strtoupper($this->environment).").");
         }
 
         $token = $this->getToken($this->username, $this->password);
@@ -225,11 +224,16 @@ class KeycloakSecurityService {
             return $response->getBody()->getContents();
         } catch (RequestException $e) {
             if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
-                // Unauthorized, lets refresh the token
-                $this->refreshToken();
-                $response = $client->request('GET', $path, $this->headers);
+                try{
+                    // Unauthorized, lets refresh the token
+                    $this->refreshToken();
+                    $response = $client->request('GET', $path, $this->headers);
+                    return $response->getBody()->getContents();
+                }catch(\Exception $ex){
+                    return new Response("An unknown error occurred while processing the request.", 500, array());
+                }
             }
-            return $response->getBody()->getContents();
+            return new Response("An unknown error occurred while processing the request.", 500, array());
         } catch(\Exception $e){
             return new Response("An unknown error occurred while processing the request.", 500, array());
         }
@@ -259,11 +263,16 @@ class KeycloakSecurityService {
             return $response->getBody()->getContents();
         } catch (RequestException $e) {
             if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
-                // Unauthorized, lets refresh the token
-                $this->refreshToken();
-                $response = $client->request('POST', $path, array_merge($this->headers, array($type => $data)));
+                try{
+                    // Unauthorized, lets refresh the token
+                    $this->refreshToken();
+                    $response = $client->request('POST', $path, array_merge($this->headers, array($type => $data)));
+                    return $response->getBody()->getContents();
+                }catch(\Exception $ex){
+                    return new Response("An unknown error occurred while processing the request.", 500, array());
+                }
             }
-            return $response->getBody()->getContents();
+            return new Response("An unknown error occurred while processing the request.", 500, array());
         } catch(\Exception $e){
             return new Response("An unknown error occurred while processing the request.", 500, array());
         }
@@ -294,11 +303,16 @@ class KeycloakSecurityService {
             return $response->getBody()->getContents();
         } catch (RequestException $e) {
             if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
-                // Unauthorized, lets refresh the token
-                $this->refreshToken();
-                $response = $client->request('PUT', $path, array_merge($this->headers, array($type => $data)));
+                try{
+                    // Unauthorized, lets refresh the token
+                    $this->refreshToken();
+                    $response = $client->request('PUT', $path, array_merge($this->headers, array($type => $data)));
+                    return $response->getBody()->getContents();
+                }catch(\Exception $ex){
+                    return new Response("An unknown error occurred while processing the request.", 500, array());
+                }
             }
-            return $response->getBody()->getContents();
+            return new Response("An unknown error occurred while processing the request.", 500, array());
         } catch(\Exception $e){
             return new Response("An unknown error occurred while processing the request.", 500, array());
         }
@@ -328,11 +342,16 @@ class KeycloakSecurityService {
             return $response->getBody()->getContents();
         } catch (RequestException $e) {
             if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
-                // Unauthorized, lets refresh the token
-                $this->refreshToken();
-                $response = $client->request('PATCH', $path, array_merge($this->headers, array($type => $data)));
+                try{
+                    // Unauthorized, lets refresh the token
+                    $this->refreshToken();
+                    $response = $client->request('PATCH', $path, array_merge($this->headers, array($type => $data)));
+                    return $response->getBody()->getContents();
+                }catch(\Exception $ex){
+                    return new Response("An unknown error occurred while processing the request.", 500, array());
+                }
             }
-            return $response->getBody()->getContents();
+            return new Response("An unknown error occurred while processing the request.", 500, array());
         } catch(\Exception $e){
             return new Response("An unknown error occurred while processing the request.", 500, array());
         }
@@ -360,11 +379,16 @@ class KeycloakSecurityService {
             return $response->getBody()->getContents();
         } catch (RequestException $e) {
             if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
-                // Unauthorized, lets refresh the token
-                $this->refreshToken();
-                $response = $client->request('DELETE', $path, array_merge($this->headers, array($type => $data)));
+                try{
+                    // Unauthorized, lets refresh the token
+                    $this->refreshToken();
+                    $response = $client->request('DELETE', $path, array_merge($this->headers, array($type => $data)));
+                    return $response->getBody()->getContents();
+                }catch(\Exception $ex){
+                    return new Response("An unknown error occurred while processing the request.", 500, array());
+                }
             }
-            return $response->getBody()->getContents();
+            return new Response("An unknown error occurred while processing the request.", 500, array());
         } catch(\Exception $e){
             return new Response("An unknown error occurred while processing the request.", 500, array());
         }
@@ -376,7 +400,7 @@ class KeycloakSecurityService {
     public function _checkCookie(){
         $cookie = $this->container->get('session')->get('keycloak-cookie') ?? null;
         if(null !== $cookie){
-            $cookieObj = StringUtils::CreateCookieFromString($cookie);
+            $cookieObj = self::_createCookieFromString($cookie);
             $now = new \DateTime();
             if($cookieObj["expires"] > $now->getTimestamp()){
                 $this->headers = array_merge($this->headers,[
@@ -385,5 +409,47 @@ class KeycloakSecurityService {
                 ]);
             }
         }
+    }
+
+    public static function _createCookieFromString($cookie = "", $decode = false)
+    {
+        $data = array(
+            'expires' => 0,
+            'path' => '/',
+            'domain' => null,
+            'secure' => false,
+            'httponly' => false,
+            'raw' => !$decode,
+            'samesite' => null,
+            'hasExpired'   => false
+        );
+        foreach (explode(';', $cookie) as $part) {
+            if (false === strpos($part, '=')) {
+                $key = trim($part);
+                $value = true;
+            } else {
+                list($key, $value) = explode('=', trim($part), 2);
+                $key = trim($key);
+                $value = trim($value);
+            }
+            if (!isset($data['name'])) {
+                $data['name'] = $decode ? urldecode($key) : $key;
+                $data['value'] = true === $value ? null : ($decode ? urldecode($value) : $value);
+                continue;
+            }
+            switch ($key = strtolower($key)) {
+                case 'name':
+                case 'value':
+                    break;
+                case 'expires':
+                    $data['expires'] = \DateTime::createFromFormat('D, d-M-Y H:i:s e',trim($value))->getTimestamp();
+                    break;
+                default:
+                    $data[$key] = $value;
+                    break;
+            }
+        }
+
+        return $data;
     }
 }
