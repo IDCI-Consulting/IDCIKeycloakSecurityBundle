@@ -4,6 +4,7 @@ namespace NTI\KeycloakSecurityBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ClientException;
 use League\OAuth2\Client\Token\AccessToken;
 use NTI\KeycloakSecurityBundle\Security\User\KeycloakUser;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -207,20 +208,9 @@ class KeycloakSecurityService {
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function restGet($path,$isAdmin = false){
-        $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
+        $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));        
         try {
-            //Check if cookies exists
-            self::_checkCookie();
             $response = $client->request('GET', $path, $this->headers);
-            //Make request and verify if response with 302
-            if($response->getStatusCode() === 302){
-                $this->container->get('session')->set('keycloak-cookie',$response->headers["set-cookie"]);
-                $reponse_header = array_merge($this->headers,[
-                    "cookie" => $response->headers["set-cookie"],
-                    'allow_redirects' => false
-                ]);
-                $response = $client->request('GET', $path, $this->headers);
-            }
             return $response->getBody()->getContents();
         } catch (RequestException $e) {
             if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
@@ -248,18 +238,7 @@ class KeycloakSecurityService {
     protected function restPost($path, $data, $type = "json",$isAdmin = false){
         try {
             $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
-            //Check if cookies exists
             $response = $client->request('POST', $path, array_merge($this->headers ?? [], array($type => $data)));
-            //Make request and verify if response with 302
-            if($response->getStatusCode() === 302){
-                $this->container->get('session')->set('keycloak-cookie',$response->headers["set-cookie"]);
-                $reponse_header = array_merge($this->headers,[
-                    "cookie" => $response->headers["set-cookie"],
-                    'allow_redirects' => false
-                ]);
-                $response = $client->request('POST', $path, array_merge($this->headers, array($type => $data)));
-            }
-
             return $response->getBody()->getContents();
         } catch (RequestException $e) {
             if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
@@ -269,12 +248,15 @@ class KeycloakSecurityService {
                     $response = $client->request('POST', $path, array_merge($this->headers, array($type => $data)));
                     return $response->getBody()->getContents();
                 }catch(\Exception $ex){
-                    return new Response("An unknown error occurred while processing the request.", 500, array());
+                    return new \Exception("An unknown error occurred while processing the request.", 500);
                 }
+            }else if($e->getResponse()->getStatusCode() === 409){
+                $response = json_decode($this->getJsonFromString($e->getMessage()),true);
+                throw new \Exception($response["errorMessage"],$e->getResponse()->getStatusCode());  
             }
-            return new Response("An unknown error occurred while processing the request.", 500, array());
+            return new \Exception("An unknown error occurred while processing the request.", 500);
         } catch(\Exception $e){
-            return new Response("An unknown error occurred while processing the request.", 500, array());
+            return new \Exception("An unknown error occurred while processing the request.", 500);
         }
     }
 
@@ -288,18 +270,7 @@ class KeycloakSecurityService {
     protected function restPut($path, $data, $type = "json",$isAdmin = false){
         try {
             $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
-            //Check if cookies exists
-            self::_checkCookie();
             $response = $client->request('PUT', $path, array_merge($this->headers, array($type => $data)));
-            //Make request and verify if response with 302
-            if($response->getStatusCode() === 302){
-                $this->container->get('session')->set('keycloak-cookie',$response->headers["set-cookie"]);
-                $reponse_header = array_merge($this->headers,[
-                    "cookie" => $response->headers["set-cookie"],
-                    'allow_redirects' => false
-                ]);
-                $response = $client->request('PUT', $path, array_merge($this->headers, array($type => $data)));
-            }
             return $response->getBody()->getContents();
         } catch (RequestException $e) {
             if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
@@ -327,18 +298,7 @@ class KeycloakSecurityService {
     protected function restPatch($path, $data, $type = "json",$isAdmin = false){
         try {
             $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
-            //Check if cookies exists
-            self::_checkCookie();
             $response = $client->request('PATCH', $path, array_merge($this->headers, array($type => $data)));
-            //Make request and verify if response with 302
-            if($response->getStatusCode() === 302){
-                $this->container->get('session')->set('keycloak-cookie',$response->headers["set-cookie"]);
-                $reponse_header = array_merge($this->headers,[
-                    "cookie" => $response->headers["set-cookie"],
-                    'allow_redirects' => false
-                ]);
-                $response = $client->request('PATCH', $path, array_merge($this->headers, array($type => $data)));
-            }
             return $response->getBody()->getContents();
         } catch (RequestException $e) {
             if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
@@ -364,18 +324,7 @@ class KeycloakSecurityService {
     protected function restDelete($path, $data = null, $type = "json", $isAdmin = false){
         try {
             $client = new \GuzzleHttp\Client(array('base_uri' => $this->baseUrl));
-            //Check if cookies exists
-            self::_checkCookie();
             $response = $client->request('DELETE', $path, array_merge($this->headers, array($type => $data)));
-            //Make request and verify if response with 302
-            if($response->getStatusCode() === 302){
-                $this->container->get('session')->set('keycloak-cookie',$response->headers["set-cookie"]);
-                $reponse_header = array_merge($this->headers,[
-                    "cookie" => $response->headers["set-cookie"],
-                    'allow_redirects' => false
-                ]);
-                $response = $client->request('DELETE', $path, array_merge($this->headers, array($type => $data)));
-            }
             return $response->getBody()->getContents();
         } catch (RequestException $e) {
             if($e->getResponse()->getStatusCode() === 401 || $e->getResponse()->getStatusCode() === 403){
@@ -394,62 +343,12 @@ class KeycloakSecurityService {
         }
     }
 
-    /**
-     * @throws Exception
-     */
-    public function _checkCookie(){
-        $cookie = $this->container->get('session')->get('keycloak-cookie') ?? null;
-        if(null !== $cookie){
-            $cookieObj = self::_createCookieFromString($cookie);
-            $now = new \DateTime();
-            if($cookieObj["expires"] > $now->getTimestamp()){
-                $this->headers = array_merge($this->headers,[
-                    "cookie" => $cookie,
-                    'allow_redirects' => false
-                ]);
-            }
-        }
-    }
-
-    public static function _createCookieFromString($cookie = "", $decode = false)
+    public function getJsonFromString($string)
     {
-        $data = array(
-            'expires' => 0,
-            'path' => '/',
-            'domain' => null,
-            'secure' => false,
-            'httponly' => false,
-            'raw' => !$decode,
-            'samesite' => null,
-            'hasExpired'   => false
-        );
-        foreach (explode(';', $cookie) as $part) {
-            if (false === strpos($part, '=')) {
-                $key = trim($part);
-                $value = true;
-            } else {
-                list($key, $value) = explode('=', trim($part), 2);
-                $key = trim($key);
-                $value = trim($value);
-            }
-            if (!isset($data['name'])) {
-                $data['name'] = $decode ? urldecode($key) : $key;
-                $data['value'] = true === $value ? null : ($decode ? urldecode($value) : $value);
-                continue;
-            }
-            switch ($key = strtolower($key)) {
-                case 'name':
-                case 'value':
-                    break;
-                case 'expires':
-                    $data['expires'] = \DateTime::createFromFormat('D, d-M-Y H:i:s e',trim($value))->getTimestamp();
-                    break;
-                default:
-                    $data[$key] = $value;
-                    break;
-            }
+        $pattern = '/\{(?:[^{}]|(?R))*\}/x';
+        if(preg_match_all($pattern, $string, $matches)){
+            return is_array($matches[0]) ? $matches[0][0] ?? null : null;
         }
-
-        return $data;
+        return null;
     }
 }
