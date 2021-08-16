@@ -13,8 +13,10 @@ class KeycloakAdminRoleService extends KeycloakSecurityService {
     const GET_ALL_URL = "";
     const GET_BY_ID_URL = "/{roleId}";
     const UPDATE_BY_ID_URL = "/{roleId}";
+    const DELETE_BY_ID_URL = "/{roleId}";
     const GET_BY_NAME_URL = "/{name}";
     const UPDATE_BY_NAME_URL = "/{name}";
+    const DELETE_BY_NAME_URL = "/{name}";
     const GET_BY_NAME_COMPOSITES_URL = "/{name}/composites";
     const UPDATE_BY_NAME_COMPOSITES_URL = "/{name}/composites";
     const GET_BY_ID_COMPOSITES_URL = "/{roleId}/composites";
@@ -76,8 +78,16 @@ class KeycloakAdminRoleService extends KeycloakSecurityService {
     }
 
     public function deleteRole($role) {
-        $url = $this->basePath.self::UPDATE_BY_NAME_URL;
+        $url = $this->basePath.self::DELETE_BY_NAME_URL;
         $url = str_replace("{name}", $role, $url);
+        $result = $this->restDelete($url);
+        $response = json_decode($result, true);
+        return $response;
+    }    
+
+    public function deleteRoleById($roleId) {
+        $url = $this->basePathRealm.self::DELETE_BY_ID_URL;
+        $url = str_replace("{roleId}", $roleId, $url);
         $result = $this->restDelete($url);
         $response = json_decode($result, true);
         return $response;
