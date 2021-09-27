@@ -19,6 +19,7 @@ class KeycloakAdminUserService extends KeycloakSecurityService {
     const UPDATE_ROLES_URL = "/{id}/role-mappings/clients/{clientId}";
     const RESET_PASSWORD_URL = "/{id}/execute-actions-email";
     const UPDATE_GROUP_USER = "/{id}/groups/{groupId}";
+    const DENIED_ROLES = "denied_roles";
 
     public function __construct(ContainerInterface $container) {
         parent::__construct($container);
@@ -37,7 +38,7 @@ class KeycloakAdminUserService extends KeycloakSecurityService {
         $url = $this->basePath.self::GET_URL;
         $url = str_replace("{id}", $id, $url);
         $result = $this->restGet($url);
-        $response = json_decode($result, true);
+        $response = $this->attributesDecode(json_decode($result, true));
         return $response;
     }
 
@@ -50,13 +51,12 @@ class KeycloakAdminUserService extends KeycloakSecurityService {
 
             if(!isset($res[0])) return null;
 
-            $userData = $res[0];
+            $userData = $this->attributesDecode($res[0]);
 
             if($roles == true){
                 // Parse denied roles
                 $deniedRoles = [];
                 if(isset($userData['attributes']) && isset($userData['attributes']['denied_roles'])){
-                    $deniedRoles = json_decode($userData['attributes']['denied_roles'][0], true);
                     $deniedRoles = $deniedRoles[$clientId];
                 }
 
@@ -68,12 +68,6 @@ class KeycloakAdminUserService extends KeycloakSecurityService {
                 foreach($roles as $val) $rolesTmp[$val] = 1;
                 foreach($deniedRoles as $val) unset($rolesTmp[$val]);
                 $userData['roles'] = array_keys($rolesTmp);
-            }
-
-            if(isset($userData['attributes'])){
-                foreach ($userData['attributes'] as $attribute => $value) {
-                    $userData['attributes'][$attribute] = is_array($value) ? ($value[0] == 'true' ? true : ($value[0] == 'false' ? false : $value[0])) : $value;
-                }
             }
 
             return $userData;
@@ -167,4 +161,32 @@ class KeycloakAdminUserService extends KeycloakSecurityService {
         return $response;
     }
 
+    private function attributesDecode($data = null)
+    {
+        if(array_key_exists("attributes",$data) && $data["attributes"]){
+            foreach ($data['attributes'] as $attribute => $value) {
+                if(strpos($attribute,self::DENIED_ROLES) !== false && is_array($value)){
+                    $data['attributes'][$attribute] = $this->isJSON($value[0]) ? json_decode($value[0],true) : [];
+                }else if(is_array($value)){
+                    $data['attributes'][$attribute] = $this->isBoolean($value[0]) ? filter_var($value[0], FILTER_VALIDATE_BOOLEAN, false) : ($this->isJSON($value[0]) ? json_decode($value[0],true) : ($this->isNullOrEmptyString($value[0]) ? null : $value[0]));
+                }else{
+                    $data['attributes'][$attribute] = $this->isBoolean($value) ? filter_var($value, FILTER_VALIDATE_BOOLEAN, false) : ($this->isJSON($value) ? json_decode($value,true) : ($this->isNullOrEmptyString($value) ? null : $value));
+                }
+            }
+        }
+        return $data;
+    }
+
+    private function isJSON($string){
+        return is_string($string) && is_array(json_decode($string, true)) && (json_last_error() == JSON_ERROR_NONE) ? true : false;
+    }
+
+    private function isBoolean($string){
+        if(!$string) return false;
+        return null !== filter_var($string, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    }
+
+    private function isNullOrEmptyString($string){
+        return (!isset($string) || trim($string) === "" || trim($string) == "null");
+    }
 }

@@ -72,6 +72,15 @@ class KeycloakAdminGroupService extends KeycloakSecurityService
         return $response;
     }
 
+    public function getRoles($id) {
+        $url = $this->basePath.self::GET_ROLES_URL;
+        $url = str_replace("{id}", $id, $url);
+        $url = str_replace("{clientId}", $this->container->getParameter(self::KEYCLOAK_CLIENT_ID_CODE), $url);
+        $result = $this->restGet($url);
+        $response = json_decode($result, true);
+        return $response;
+    }
+
     public function deleteGroup($id) {
         $url = $this->basePath.self::UPDATE_BY_ID_URL;
         $url = str_replace("{id}", $id, $url);
