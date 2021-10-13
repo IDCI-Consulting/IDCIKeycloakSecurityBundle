@@ -163,7 +163,7 @@ class KeycloakAdminUserService extends KeycloakSecurityService {
 
     private function attributesDecode($data = null)
     {
-        if(array_key_exists("attributes",$data) && $data["attributes"]){
+        if($data && is_array($data) && array_key_exists("attributes",$data) && $data["attributes"]){
             foreach ($data['attributes'] as $attribute => $value) {
                 if(strpos($attribute,self::DENIED_ROLES) !== false && is_array($value)){
                     $data['attributes'][$attribute] = $this->isJSON($value[0]) ? json_decode($value[0],true) : [];
