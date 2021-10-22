@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-        "php": "^7.1",
+        "php": "^7.1 || ^8.0",
         "symfony/dependency-injection": ">=4.1.12",
         "symfony/framework-bundle": ">=4.1.12",
         "symfony/routing": ">=3.0",
