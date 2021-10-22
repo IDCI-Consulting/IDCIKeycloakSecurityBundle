@@ -21,7 +21,7 @@
         "symfony/routing": ">=3.0",
         "symfony/security-bundle": ">=3.0",
         "symfony/http-foundation": ">=3.4.35",
-        "knpuniversity/oauth2-client-bundle": "~1.0",
+        "knpuniversity/oauth2-client-bundle": "~2.0",
         "guzzlehttp/guzzle": ">=6.3"
     },
     "require-dev": {
