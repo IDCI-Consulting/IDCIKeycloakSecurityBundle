@@ -85,7 +85,7 @@ class KeycloakAdminUserService extends KeycloakSecurityService {
 
     public function saveNewUser($data) {
         $url = $this->basePath;
-        $result = $this->restPost($url, $data);
+        $result = $this->restPost($url, $this->attributesEncode($data));
         $response = json_decode($result, true);
         return $response;
     }
@@ -93,7 +93,7 @@ class KeycloakAdminUserService extends KeycloakSecurityService {
     public function updateUser($id, $data) {
         $url = $this->basePath.self::UPDATE_BY_ID_URL;
         $url = str_replace("{id}", $id, $url);
-        $result = $this->restPut($url, $data);
+        $result = $this->restPut($url, $this->attributesEncode($data));
         $response = json_decode($result, true);
         return $response;
     }
@@ -159,6 +159,18 @@ class KeycloakAdminUserService extends KeycloakSecurityService {
         $result = $this->restPut($url, $data);
         $response = json_decode($result, true);
         return $response;
+    }
+
+    private function attributesEncode($data = null)
+    {
+        if($data && is_array($data) && array_key_exists("attributes",$data) && $data["attributes"]){
+            foreach ($data['attributes'] as $attribute => $value) {
+                if(is_array($value)){
+                    $data['attributes'][$attribute] = json_encode($value,true) ?? "[]";
+                }
+            }
+        }
+        return $data;
     }
 
     private function attributesDecode($data = null)
