@@ -147,7 +147,8 @@ class Keycloak extends AbstractProvider
 
     protected function getDefaultScopes(): array
     {
-        return ['name', 'email'];
+        //These paramaters are sent as 1 element of the array instead of multiple to avoid problems with the getSeparatorFunction in the league/oauth2-client library separating the scopes by a comma.
+        return ['openid email'];
     }
 
     protected function checkResponse(ResponseInterface $response, $data)
