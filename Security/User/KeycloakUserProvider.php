@@ -5,6 +5,7 @@ namespace IDCI\Bundle\KeycloakSecurityBundle\Security\User;
 use IDCI\Bundle\KeycloakSecurityBundle\Provider\Keycloak;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
+use KnpU\OAuth2ClientBundle\Security\User\OAuthUser;
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUserProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -12,21 +13,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class KeycloakUserProvider extends OAuthUserProvider
 {
-    /**
-     * @var ClientRegistry
-     */
-    protected $clientRegistry;
-
-    public function __construct(ClientRegistry $clientRegistry)
+    public function __construct(private readonly ClientRegistry $clientRegistry)
     {
-        $this->clientRegistry = $clientRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function loadUserByUsername($accessToken): UserInterface
+    public function loadUserByIdentifier(string|AccessToken $identifier): UserInterface
     {
+        $accessToken = $identifier;
         if (!$accessToken instanceof AccessToken) {
             throw new \LogicException('Could not load a KeycloakUser without an AccessToken.');
         }

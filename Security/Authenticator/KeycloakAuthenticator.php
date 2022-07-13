@@ -2,6 +2,8 @@
 
 namespace IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator;
 
+use IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUser;
+use IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUserProvider;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
@@ -15,7 +17,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 
 class KeycloakAuthenticator extends OAuth2Authenticator
 {
-    public function __construct(private readonly ClientRegistry $clientRegistry)
+    public function __construct(private readonly ClientRegistry $clientRegistry, private readonly KeycloakUserProvider $userProvider)
     {
     }
 
@@ -26,14 +28,24 @@ class KeycloakAuthenticator extends OAuth2Authenticator
 
     public function authenticate(Request $request) /*: Passport;*/
     {
-        $accessToken = $this->fetchAccessToken($this->getKeycloakClient());
+        $client = $this->getKeycloakClient();
+        $accessToken = $this->fetchAccessToken($client);
         if (null === $accessToken) {
             // The token header was empty, authentication fails with HTTP Status
             // Code 401 "Unauthorized"
             throw new CustomUserMessageAuthenticationException('No access token provided');
         }
 
-        return new SelfValidatingPassport(new UserBadge($accessToken));
+        $userProvider = $this->userProvider;
+
+        return new SelfValidatingPassport(
+            new UserBadge(
+                $accessToken->getToken(),
+                function() use ($accessToken, $userProvider) {
+                    return $userProvider->loadUserByIdentifier($accessToken);
+                }
+            )
+        );
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
