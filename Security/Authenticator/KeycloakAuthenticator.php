@@ -2,74 +2,50 @@
 
 namespace IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator;
 
-use IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUser;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
-use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;
-use League\OAuth2\Client\Token\AccessToken;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
-class KeycloakAuthenticator extends SocialAuthenticator
+class KeycloakAuthenticator extends OAuth2Authenticator
 {
-    /**
-     * @var ClientRegistry
-     */
-    protected $clientRegistry;
-
-    /**
-     * @var UrlGeneratorInterface
-     */
-    protected $urlGenerator;
-
-    public function __construct(ClientRegistry $clientRegistry, UrlGeneratorInterface $urlGenerator)
+    public function __construct(private readonly ClientRegistry $clientRegistry)
     {
-        $this->clientRegistry = $clientRegistry;
-        $this->urlGenerator = $urlGenerator;
     }
 
-    public function supports(Request $request)
+    public function supports(Request $request): ?bool
     {
         return 'idci_security_auth_connect_check_keycloak' === $request->attributes->get('_route');
     }
 
-    public function getCredentials(Request $request): ?AccessToken
+    public function authenticate(Request $request) /*: Passport;*/
     {
-        if (!$this->supports($request)) {
-            return null;
+        $accessToken = $this->fetchAccessToken($this->getKeycloakClient());
+        if (null === $accessToken) {
+            // The token header was empty, authentication fails with HTTP Status
+            // Code 401 "Unauthorized"
+            throw new CustomUserMessageAuthenticationException('No access token provided');
         }
 
-        return $this->fetchAccessToken($this->getKeycloakClient());
+        return new SelfValidatingPassport(new UserBadge($accessToken));
     }
 
-    public function getUser($credentials, UserProviderInterface $userProvider): KeycloakUser
-    {
-        return $userProvider->loadUserByUsername($credentials);
-    }
-
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         return null;
     }
 
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $message = strtr($exception->getMessageKey(), $exception->getMessageData());
 
         return new Response($message, Response::HTTP_FORBIDDEN);
-    }
-
-    public function start(Request $request, AuthenticationException $authException = null): RedirectResponse
-    {
-        return new RedirectResponse(
-            $this->urlGenerator->generate('idci_security_auth_connect_keycloak'),
-            Response::HTTP_TEMPORARY_REDIRECT
-        );
     }
 
     protected function getKeycloakClient(): OAuth2Client

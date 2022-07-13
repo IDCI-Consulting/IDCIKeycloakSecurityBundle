@@ -71,10 +71,11 @@ Here is a simple configuration that restrict access to ```/admin/*``` routes onl
 ```yaml
 # config/packages/security.yaml
 imports:
-    - { resource: '@IDCIKeycloakSecurityBundle/Resources/config/security.yaml' } # import our security provider
+    # import Keycloak security provider
+    - { resource: '@IDCIKeycloakSecurityBundle/Resources/config/security.yaml' }
 
 security:
-
+    enable_authenticator_manager: true
     firewalls:
 
         # Authorize everyone to try connecting (this route is imported from our bundle routing configuration)
@@ -86,18 +87,17 @@ security:
         # Login form authentication
         secured_area:
             pattern: ^/admin
-            guard:
-                provider: idci_keycloak_security_provider
-                authenticators:
-                    - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator
+            provider: idci_keycloak_security_provider
+            custom_authenticators:
+                - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator
+            entry_point: IDCI\Bundle\KeycloakSecurityBundle\Security\AuthenticationEntryPoint
 
         # Bearer token authentication
         api:
             pattern: ^/api
-            guard:
-                provider: idci_keycloak_bearer_security_provider
-                authenticators:
-                    - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakBearerAuthenticator
+            provider: idci_keycloak_bearer_security_provider
+            custom_authenticators:
+                - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakBearerAuthenticator
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER
