@@ -17,10 +17,10 @@ use Symfony\Component\Security\Http\Event\LogoutEvent;
 class LogoutListener
 {
     public function __construct(
-        private ClientRegistry $clientRegistry,
-        private UrlGeneratorInterface $urlGenerator,
-        private TokenStorageInterface $tokenStorage,
-        private string $defaultTargetPath,
+        private readonly ClientRegistry $clientRegistry,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly string $defaultTargetPath,
     ) {
     }
 
@@ -43,12 +43,10 @@ class LogoutListener
         $values = $user->getAccessToken()->getValues();
         $oAuth2Provider = $this->clientRegistry->getClient('keycloak')->getOAuth2Provider();
 
-        dump($values);
-        die;
-
         $logoutUrl = $oAuth2Provider->getLogoutUrl([
             'state' => $values['session_state'],
-            'id_token_hint' => $values['id_token']
+            'access_token' => $token,
+            'redirect_uri' => $this->urlGenerator->generate($this->defaultTargetPath, [], UrlGeneratorInterface::ABSOLUTE_URL)
         ]);
 
         $event->setResponse(new RedirectResponse($logoutUrl));
