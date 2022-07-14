@@ -35,12 +35,12 @@ class LogoutListener
             throw new \RuntimeException('The user must be an instance of KeycloakUser');
         }
 
-        $token = $user->getAccessToken()->getToken();
+        $token = $user->getAccessToken();
 
         $this->tokenStorage->setToken(null);
         $event->getRequest()->getSession()->invalidate();
 
-        $values = $user->getAccessToken()->getValues();
+        $values = $token->getValues();
         $oAuth2Provider = $this->clientRegistry->getClient('keycloak')->getOAuth2Provider();
 
         $logoutUrl = $oAuth2Provider->getLogoutUrl([
