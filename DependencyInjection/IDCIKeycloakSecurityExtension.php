@@ -62,7 +62,7 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
         ];
     }
 
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'idci_keycloak_security';
     }
