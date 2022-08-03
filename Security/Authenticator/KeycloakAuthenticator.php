@@ -27,7 +27,7 @@ class KeycloakAuthenticator extends OAuth2Authenticator
         return 'idci_security_auth_connect_check_keycloak' === $request->attributes->get('_route');
     }
 
-    public function authenticate(Request $request): Passport;
+    public function authenticate(Request $request): Passport
     {
         $client = $this->getKeycloakClient();
         $accessToken = $this->fetchAccessToken($client);
