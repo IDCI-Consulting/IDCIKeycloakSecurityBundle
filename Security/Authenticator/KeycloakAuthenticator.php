@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
 class KeycloakAuthenticator extends OAuth2Authenticator
@@ -26,7 +27,7 @@ class KeycloakAuthenticator extends OAuth2Authenticator
         return 'idci_security_auth_connect_check_keycloak' === $request->attributes->get('_route');
     }
 
-    public function authenticate(Request $request) /*: Passport;*/
+    public function authenticate(Request $request): Passport;
     {
         $client = $this->getKeycloakClient();
         $accessToken = $this->fetchAccessToken($client);
