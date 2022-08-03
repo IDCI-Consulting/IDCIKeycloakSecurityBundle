@@ -15,23 +15,23 @@
         }
     ],
     "require": {
-        "symfony/dependency-injection": "5.*",
-        "symfony/framework-bundle": "5.*",
-        "symfony/routing": "5.*",
-        "symfony/security-bundle": "5.*",
-        "symfony/http-foundation": "5.*",
-        "knpuniversity/oauth2-client-bundle": "2.*",
+        "symfony/dependency-injection": "^5",
+        "symfony/framework-bundle": "^5",
+        "symfony/routing": "^5",
+        "symfony/security-bundle": "^5",
+        "symfony/http-foundation": "^5",
+        "knpuniversity/oauth2-client-bundle": "^2",
         "guzzlehttp/guzzle": "7.*"
     },
     "require-dev": {
         "phpunit/phpunit": "*",
-        "symfony/expression-language": "5.*",
-        "symfony/finder": "5.*",
-        "symfony/form": "5.*",
-        "symfony/stopwatch": "5.*",
-        "symfony/twig-bundle": "5.*",
-        "symfony/validator": "5.*",
-        "symfony/yaml": "5.*"
+        "symfony/expression-language": "^5",
+        "symfony/finder": "^5",
+        "symfony/form": "^5",
+        "symfony/stopwatch": "^5",
+        "symfony/twig-bundle": "^5",
+        "symfony/validator": "^5",
+        "symfony/yaml": "^5"
     },
     "autoload": {
         "psr-4": {
