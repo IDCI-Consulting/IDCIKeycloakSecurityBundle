@@ -40,7 +40,7 @@ class KeycloakBearerAuthenticator extends OAuth2Authenticator
         }
 
         $userProvider = $this->userProvider;
-
+die('TEST: ' . $apiToken);
         return new SelfValidatingPassport(
             new UserBadge(
                 $apiToken,
@@ -66,6 +66,6 @@ class KeycloakBearerAuthenticator extends OAuth2Authenticator
 
     private static function cleanToken(string $token): string
     {
-        return trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $token));
+        return trim(preg_replace('/^(?:\s+)?Bearer\s/i', '', $token));
     }
 }
