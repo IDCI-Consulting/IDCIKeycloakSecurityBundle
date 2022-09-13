@@ -90,7 +90,7 @@ security:
             provider: idci_keycloak_security_provider
             custom_authenticators:
                 - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator
-            entry_point: IDCI\Bundle\KeycloakSecurityBundle\Security\AuthenticationEntryPoint
+            entry_point: IDCI\Bundle\KeycloakSecurityBundle\Security\Entrypoint\AuthenticationEntryPoint
 
         # Bearer token authentication
         api:
@@ -98,6 +98,7 @@ security:
             provider: idci_keycloak_bearer_security_provider
             custom_authenticators:
                 - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakBearerAuthenticator
+            entry_point: IDCI\Bundle\KeycloakSecurityBundle\Security\Entrypoint\BearerAuthenticationEntryPoint
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER

@@ -50,6 +50,7 @@ class KeycloakAuthenticator extends OAuth2Authenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        // on success, let the request continue
         return null;
     }
 
