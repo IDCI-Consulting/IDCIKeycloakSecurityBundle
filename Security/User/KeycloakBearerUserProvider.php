@@ -59,9 +59,9 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
         return (new KeycloakBearerUser($jwt['username'], $jwt['resource_access'][$provider->getClientId()]['roles']))
             ->setAccessToken($accessToken)
             ->setClientId($jwt['client_id'])
-            ->setFirstName($jwt['given_name'])
-            ->setLastName($jwt['family_name'])
-            ->setEmail($jwt['email'])
+            ->setFirstName($jwt['given_name'] ?? null)
+            ->setLastName($jwt['family_name'] ?? null)
+            ->setEmail($jwt['email'] ?? null)
             ->setEmailVerified($jwt['email_verified'])
         ;
     }
