@@ -40,7 +40,7 @@ class KeycloakBearerAuthenticator extends OAuth2Authenticator
         }
 
         $userProvider = $this->userProvider;
-die('TEST: ' . $apiToken);
+
         return new SelfValidatingPassport(
             new UserBadge(
                 $apiToken,

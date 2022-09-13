@@ -6,7 +6,6 @@ use IDCI\Bundle\KeycloakSecurityBundle\Provider\KeycloakProvider;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2ClientInterface;
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUserProvider;
-use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
@@ -22,13 +21,8 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
     ) {
     }
 
-    public function loadUserByIdentifier(string|AccessToken $identifier): UserInterface
+    public function loadUserByIdentifier(string $accessToken): UserInterface
     {
-        $accessToken = $identifier;
-        if (!$accessToken instanceof AccessToken) {
-            throw new \LogicException('Could not load a KeycloakUser without an AccessToken.');
-        }
-
         $provider = $this->getKeycloakClient()->getOAuth2Provider();
 
         if (!$provider instanceof KeycloakProvider) {
@@ -38,8 +32,10 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
         }
 
         $response = $this->client->request(Request::METHOD_POST, $provider->getTokenIntrospectionUrl(), [
-            'auth' => [$provider->getClientId(), $provider->getClientSecret()],
-            'form_params' => [
+            'body' => [
+                'client_id' => $provider->getClientId(),
+                'client_secret' => $provider->getClientSecret(),
+                'grant_type' => 'client_credentials',
                 'token' => $accessToken,
             ],
             'verify_host' => $this->sslVerification,
