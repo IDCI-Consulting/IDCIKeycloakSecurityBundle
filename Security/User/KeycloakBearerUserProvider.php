@@ -2,56 +2,51 @@
 
 namespace IDCI\Bundle\KeycloakSecurityBundle\Security\User;
 
-use GuzzleHttp\Client;
-use IDCI\Bundle\KeycloakSecurityBundle\Provider\Keycloak;
+use IDCI\Bundle\KeycloakSecurityBundle\Provider\KeycloakProvider;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
-use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
+use KnpU\OAuth2ClientBundle\Client\OAuth2ClientInterface;
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUserProvider;
+use League\OAuth2\Client\Token\AccessToken;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class KeycloakBearerUserProvider extends OAuthUserProvider
 {
-    /**
-     * @var ClientRegistry
-     */
-    protected $clientRegistry;
-
-    /**
-     * @var mixed
-     */
-    protected $sslVerification;
-
-    public function __construct(ClientRegistry $clientRegistry, $sslVerification)
-    {
-        $this->clientRegistry = $clientRegistry;
-        $this->sslVerification = $sslVerification;
+    public function __construct(
+        private readonly ClientRegistry $clientRegistry,
+        private readonly HttpClientInterface $client,
+        private readonly mixed $sslVerification
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function loadUserByUsername($accessToken): UserInterface
+    public function loadUserByIdentifier(string|AccessToken $identifier): UserInterface
     {
+        $accessToken = $identifier;
+        if (!$accessToken instanceof AccessToken) {
+            throw new \LogicException('Could not load a KeycloakUser without an AccessToken.');
+        }
+
         $provider = $this->getKeycloakClient()->getOAuth2Provider();
 
-        if (!$provider instanceof Keycloak) {
+        if (!$provider instanceof KeycloakProvider) {
             throw new \RuntimeException(
-                sprintf('The OAuth2 client provider must be an instance of %s', Keycloak::class)
+                sprintf('The OAuth2 client provider must be an instance of %s', KeycloakProvider::class)
             );
         }
 
-        $response = (new Client())->request('POST', $provider->getTokenIntrospectionUrl(), [
+        $response = $this->client->request(Request::METHOD_POST, $provider->getTokenIntrospectionUrl(), [
             'auth' => [$provider->getClientId(), $provider->getClientSecret()],
             'form_params' => [
                 'token' => $accessToken,
             ],
-            'verify' => $this->sslVerification,
+            'verify_host' => $this->sslVerification,
+            'verify_peer' => $this->sslVerification,
         ]);
 
-        $jwt = json_decode($response->getBody(), true);
-
+        $jwt = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         if (!$jwt['active']) {
             throw new \UnexpectedValueException('The token does not exist or is not valid anymore');
         }
@@ -68,9 +63,9 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
         return (new KeycloakBearerUser($jwt['username'], $jwt['resource_access'][$provider->getClientId()]['roles']))
             ->setAccessToken($accessToken)
             ->setClientId($jwt['client_id'])
-            ->setFirstName($jwt['given_name'] ?? null)
-            ->setLastName($jwt['family_name'] ?? null)
-            ->setEmail($jwt['email'] ?? null)
+            ->setFirstName($jwt['given_name'])
+            ->setLastName($jwt['family_name'])
+            ->setEmail($jwt['email'])
             ->setEmailVerified($jwt['email_verified'])
         ;
     }
@@ -82,9 +77,8 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
         }
 
         $user = $this->loadUserByUsername($user->getAccessToken());
-
         if (!$user) {
-            throw new UsernameNotFoundException();
+            throw new UserNotFoundException();
         }
 
         return $user;
@@ -95,7 +89,7 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
         return KeycloakBearerUser::class === $class;
     }
 
-    protected function getKeycloakClient(): OAuth2Client
+    protected function getKeycloakClient(): OAuth2ClientInterface
     {
         return $this->clientRegistry->getClient('keycloak');
     }

@@ -2,10 +2,9 @@
 
 namespace IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator;
 
-use IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUser;
 use IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUserProvider;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
-use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
+use KnpU\OAuth2ClientBundle\Client\OAuth2ClientInterface;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -61,7 +60,7 @@ class KeycloakAuthenticator extends OAuth2Authenticator
         return new Response($message, Response::HTTP_FORBIDDEN);
     }
 
-    protected function getKeycloakClient(): OAuth2Client
+    protected function getKeycloakClient(): OAuth2ClientInterface
     {
         return $this->clientRegistry->getClient('keycloak');
     }

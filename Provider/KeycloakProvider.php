@@ -8,7 +8,7 @@ use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
 use Psr\Http\Message\ResponseInterface;
 
-class Keycloak extends AbstractProvider
+class KeycloakProvider extends AbstractProvider
 {
     use BearerAuthorizationTrait;
 
@@ -44,14 +44,8 @@ class Keycloak extends AbstractProvider
 
     public function __construct(array $options = [], array $collaborators = [])
     {
-        $this->authServerPublicUrl = isset($options['auth_server_public_url']) ?
-            $options['auth_server_public_url'] :
-            $options['auth_server_url']
-        ;
-        $this->authServerPrivateUrl = isset($options['auth_server_private_url']) ?
-            $options['auth_server_private_url'] :
-            $options['auth_server_url']
-        ;
+        $this->authServerPublicUrl = $options['auth_server_public_url'] ?? $options['auth_server_url'];
+        $this->authServerPrivateUrl = $options['auth_server_private_url'] ?? $options['auth_server_url'];
         $this->realm = $options['realm'];
 
         parent::__construct($options, $collaborators);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace IDCI\Bundle\KeycloakSecurityBundle\Security;
+namespace IDCI\Bundle\KeycloakSecurityBundle\Security\Entrypoint;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;

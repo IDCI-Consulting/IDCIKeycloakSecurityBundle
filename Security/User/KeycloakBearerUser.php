@@ -3,11 +3,12 @@
 namespace IDCI\Bundle\KeycloakSecurityBundle\Security\User;
 
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUser;
+use League\OAuth2\Client\Token\AccessToken;
 
 class KeycloakBearerUser extends OAuthUser
 {
     /**
-     * @var string
+     * @var AccessToken
      */
     private $accessToken;
 
@@ -20,6 +21,11 @@ class KeycloakBearerUser extends OAuthUser
      * @var string
      */
     private $email;
+
+    /**
+     * @var string
+     */
+    private $displayName;
 
     /**
      * @var string
@@ -38,17 +44,17 @@ class KeycloakBearerUser extends OAuthUser
 
     public function __toString(): string
     {
-        return $this->getUsername();
+        return $this->getDisplayName();
     }
 
-    public function setAccessToken(string $accessToken): self
+    public function setAccessToken(AccessToken $accessToken): self
     {
         $this->accessToken = $accessToken;
 
         return $this;
     }
 
-    public function getAccessToken(): ?string
+    public function getAccessToken(): ?AccessToken
     {
         return $this->accessToken;
     }
@@ -63,6 +69,18 @@ class KeycloakBearerUser extends OAuthUser
     public function getClientId(): ?string
     {
         return $this->clientId;
+    }
+
+    public function setDisplayName(string $displayName): self
+    {
+        $this->displayName = $displayName;
+
+        return $this;
+    }
+
+    public function getDisplayName(): string
+    {
+        return $this->displayName;
     }
 
     public function setFirstName(?string $firstName): self

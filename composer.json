@@ -17,11 +17,11 @@
     "require": {
         "symfony/dependency-injection": "^5|^6",
         "symfony/framework-bundle": "^5|^6",
+        "symfony/http-client": "^5|^6",
         "symfony/routing": "^5|^6",
         "symfony/security-bundle": "^5|^6",
         "symfony/http-foundation": "^5|^6",
-        "knpuniversity/oauth2-client-bundle": "^2",
-        "guzzlehttp/guzzle": "7.*"
+        "knpuniversity/oauth2-client-bundle": "^2"
     },
     "require-dev": {
         "phpunit/phpunit": "*",
