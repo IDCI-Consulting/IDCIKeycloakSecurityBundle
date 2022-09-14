@@ -32,8 +32,8 @@ class KeycloakBearerAuthenticator extends OAuth2Authenticator
 
     public function authenticate(Request $request): Passport
     {
-        $apiToken = self::cleanToken($request->headers->get('Authorization'));
-        if (null === $apiToken) {
+        $apiToken = self::cleanToken($request->headers->get('Authorization') ?? '');
+        if (empty($apiToken)) {
             // The token header was empty, authentication fails with HTTP Status
             // Code 401 "Unauthorized"
             throw new CustomUserMessageAuthenticationException('No API token provided');
