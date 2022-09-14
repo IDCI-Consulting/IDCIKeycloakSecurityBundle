@@ -11,11 +11,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\Security\Http\Authenticator\InteractiveAuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
-class KeycloakAuthenticator extends OAuth2Authenticator
+class KeycloakAuthenticator extends OAuth2Authenticator implements InteractiveAuthenticatorInterface
 {
     public function __construct(private readonly ClientRegistry $clientRegistry, private readonly KeycloakUserProvider $userProvider)
     {
@@ -64,5 +65,10 @@ class KeycloakAuthenticator extends OAuth2Authenticator
     protected function getKeycloakClient(): OAuth2ClientInterface
     {
         return $this->clientRegistry->getClient('keycloak');
+    }
+
+    public function isInteractive(): bool
+    {
+        return true;
     }
 }
