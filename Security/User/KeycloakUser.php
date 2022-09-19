@@ -47,6 +47,11 @@ class KeycloakUser extends OAuthUser
      */
     private $preferredLanguage;
 
+    /**
+     * @var array
+     */
+    private $resources;
+
     public function __construct(
         string $username,
         array $roles,
@@ -57,7 +62,8 @@ class KeycloakUser extends OAuthUser
         ?string $firstName,
         ?string $lastName,
         string $accountUrl,
-        ?string $preferredLanguage = 'en'
+        ?string $preferredLanguage = 'en',
+        array $resources = []
     ) {
         $this->accessToken = $accessToken;
         $this->id = $id;
@@ -67,6 +73,7 @@ class KeycloakUser extends OAuthUser
         $this->lastName = $lastName;
         $this->accountUrl = $accountUrl;
         $this->preferredLanguage = $preferredLanguage;
+        $this->resources = $resources;
 
         parent::__construct($username, $roles);
     }
@@ -114,6 +121,16 @@ class KeycloakUser extends OAuthUser
     public function getPreferredLanguage(): ?string
     {
         return $this->preferredLanguage;
+    }
+
+    public function getResources(): array
+    {
+        return $this->resources;
+    }
+
+    public function getResource(string $name): mixed
+    {
+        return array_key_exists($name, $this->resources) ? $this->resources[$name] : null;
     }
 
     public function isEqualTo(UserInterface $user): bool

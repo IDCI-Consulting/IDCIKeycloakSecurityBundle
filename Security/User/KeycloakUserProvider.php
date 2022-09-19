@@ -25,7 +25,7 @@ class KeycloakUserProvider extends OAuthUserProvider
         }
 
         $provider = $this->getKeycloakClient()->getOAuth2Provider();
-        $keycloakUser = $this->getKeycloakClient()->fetchUserFromToken($accessToken);
+        $resourceOwner = $this->getKeycloakClient()->fetchUserFromToken($accessToken);
 
         if (!$provider instanceof KeycloakProvider) {
             throw new \RuntimeException(
@@ -37,20 +37,21 @@ class KeycloakUserProvider extends OAuthUserProvider
             function ($role) {
                 return strtoupper($role);
             },
-            $keycloakUser->getRoles()
+            $resourceOwner->getRoles()
         );
 
         return new KeycloakUser(
-            $keycloakUser->getPreferredUsername(),
+            $resourceOwner->getPreferredUsername(),
             $roles,
             $accessToken,
-            $keycloakUser->getId(),
-            $keycloakUser->getEmail(),
-            $keycloakUser->getName(),
-            $keycloakUser->getFirstName(),
-            $keycloakUser->getLastName(),
+            $resourceOwner->getId(),
+            $resourceOwner->getEmail(),
+            $resourceOwner->getName(),
+            $resourceOwner->getFirstName(),
+            $resourceOwner->getLastName(),
             $provider->getResourceOwnerManageAccountUrl(),
-            $keycloakUser->getLocale()
+            $resourceOwner->getLocale(),
+            $resourceOwner->toArray()
         );
     }
 
