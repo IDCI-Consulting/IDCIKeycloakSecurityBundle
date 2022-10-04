@@ -16,7 +16,12 @@ class KeycloakController extends AbstractController
 
     public function connectCheckAction(Request $request, string $defaultTargetPath)
     {
-        return $this->redirectToRoute($defaultTargetPath);
+        $loginReferrer = null;
+        if ($request->hasSession()) {
+            $loginReferrer = $request->getSession()->remove('loginReferrer');
+        }
+
+        return $loginReferrer ? $this->redirect($loginReferrer) : $this->redirectToRoute($defaultTargetPath);
     }
 
     public function logoutAction(Request $request, string $defaultTargetPath)

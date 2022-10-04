@@ -19,6 +19,11 @@ class AuthenticationEntryPoint implements AuthenticationEntryPointInterface
 
     public function start(Request $request, AuthenticationException $authException = null): RedirectResponse
     {
+        if ($request->hasSession()) {
+            // store URI for later redirect
+            $request->getSession()->set('loginReferrer', $request->getUri());
+        }
+
         return new RedirectResponse(
             $this->urlGenerator->generate('idci_security_auth_connect_keycloak'),
             Response::HTTP_TEMPORARY_REDIRECT
