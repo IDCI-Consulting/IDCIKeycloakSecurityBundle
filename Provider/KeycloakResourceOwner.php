@@ -17,7 +17,7 @@ class KeycloakResourceOwner implements ResourceOwnerInterface
      */
     protected $token;
 
-    public function __construct(array $response = [], AccessToken $token)
+    public function __construct(array $response, AccessToken $token)
     {
         $this->response = $response;
         $this->token = $token;
