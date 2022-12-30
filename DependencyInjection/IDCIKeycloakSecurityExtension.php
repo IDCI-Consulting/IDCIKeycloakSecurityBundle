@@ -28,9 +28,7 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
         $bundles = $container->getParameter('kernel.bundles');
 
         if (!isset($bundles['KnpUOAuth2ClientBundle'])) {
-            throw new \LogicException(
-                'You must install knpuniversity/oauth2-client-bundle in order to use IDCIKeycloakSecurityBundle'
-            );
+            throw new \LogicException('You must install knpuniversity/oauth2-client-bundle in order to use IDCIKeycloakSecurityBundle');
         }
 
         $configs = $container->getExtensionConfig($this->getAlias());
@@ -62,7 +60,7 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
         ];
     }
 
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'idci_keycloak_security';
     }
