@@ -30,7 +30,7 @@ class KeycloakAuthenticator extends OAuth2Authenticator implements InteractiveAu
 
     public function supports(Request $request): ?bool
     {
-        return 'idci_security_auth_connect_check_keycloak' === $request->attributes->get('_route');
+        return 'idci_keycloak_security_auth_connect_check' === $request->attributes->get('_route');
     }
 
     public function authenticate(Request $request): Passport
@@ -48,11 +48,6 @@ class KeycloakAuthenticator extends OAuth2Authenticator implements InteractiveAu
                 return $this->userProvider->loadUserByIdentifier($accessToken);
             })
         );
-    }
-
-    public function getUser($credentials, UserProviderInterface $userProvider): KeycloakUser
-    {
-        return $userProvider->loadUserByUsername($credentials);
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response

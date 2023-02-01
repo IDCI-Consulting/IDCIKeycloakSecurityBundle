@@ -26,7 +26,7 @@ class ExceptionListener
         if ($exception instanceof IdentityProviderException) {
             $event->setResponse(new RedirectResponse(
                 $this->urlGenerator->generate(
-                    'idci_security_auth_connect_keycloak',
+                    'idci_keycloak_security_auth_connect',
                     [],
                     UrlGeneratorInterface::ABSOLUTE_URL
                 )

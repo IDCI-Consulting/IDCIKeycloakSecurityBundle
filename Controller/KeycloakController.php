@@ -2,22 +2,19 @@
 
 namespace IDCI\Bundle\KeycloakSecurityBundle\Controller;
 
-use IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUser;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class KeycloakController extends AbstractController
 {
-    public function connectAction(ClientRegistry $clientRegistry)
+    public function connect(ClientRegistry $clientRegistry)
     {
         return $clientRegistry->getClient('keycloak')->redirect();
     }
 
-    public function connectCheckAction(Request $request, string $defaultTargetRouteName)
+    public function connectCheck(Request $request, string $defaultTargetRouteName)
     {
         $loginReferrer = null;
         if ($request->hasSession()) {
@@ -27,8 +24,13 @@ class KeycloakController extends AbstractController
         return $loginReferrer ? $this->redirect($loginReferrer) : $this->redirectToRoute($defaultTargetRouteName);
     }
 
-    public function logoutAction(Request $request, string $defaultTargetRouteName)
+    public function logout(Request $request, string $defaultTargetRouteName)
     {
         return new RedirectResponse($this->generateUrl($defaultTargetRouteName));
+    }
+
+    public function account(ClientRegistry $clientRegistry)
+    {
+        return $this->redirect($clientRegistry->getClient('keycloak')->getOAuth2Provider()->getResourceOwnerManageAccountUrl());
     }
 }

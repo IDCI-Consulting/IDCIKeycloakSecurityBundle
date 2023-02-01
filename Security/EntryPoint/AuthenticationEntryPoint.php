@@ -26,7 +26,7 @@ class AuthenticationEntryPoint implements AuthenticationEntryPointInterface
         }
 
         return new RedirectResponse(
-            $this->urlGenerator->generate('idci_security_auth_connect_keycloak'),
+            $this->urlGenerator->generate('idci_keycloak_security_auth_connect'),
             Response::HTTP_TEMPORARY_REDIRECT
         );
     }

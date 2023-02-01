@@ -104,6 +104,8 @@ security:
             entry_point: IDCI\Bundle\KeycloakSecurityBundle\Security\EntryPoint\AuthenticationEntryPoint
             custom_authenticators:
                 - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator
+            logout:
+                path: idci_keycloak_security_auth_logout
 
         # Bearer token authentication
         api:
@@ -124,3 +126,19 @@ security:
 ## Keycloak configuration
 
 If you need help to use keycloak because it is the first time you work on it, we've made a little tutorial step by step describing a basic configuration of a keycloak realm that you can found [here](./Resources/docs/keycloak-help-guide.md)
+
+## Logout
+
+To logout users, use the route 'idci_keycloak_security_auth_logout':
+
+```twig
+<a href="{{ url('idci_keycloak_security_auth_logout') }}">Logout</a>
+```
+
+## Keycloak user account space
+
+If you wants to provide a link to access keycloak user account space, use the route 'idci_keycloak_security_auth_account':
+
+```twig
+<a href="{{ url('idci_keycloak_security_auth_account') }}">Account</a>
+```

@@ -46,7 +46,7 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
                     'provider_class' => 'IDCI\Bundle\KeycloakSecurityBundle\Provider\KeycloakProvider',
                     'client_id' => $config['client_id'],
                     'client_secret' => $config['client_secret'],
-                    'redirect_route' => 'idci_security_auth_connect_check_keycloak',
+                    'redirect_route' => 'idci_keycloak_security_auth_connect_check',
                     'redirect_params' => [],
                     'provider_options' => [
                         'auth_server_private_url' => isset($config['server_private_url']) ? $config['server_private_url'] : null,
