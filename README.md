@@ -46,8 +46,8 @@ Here is a stack example configuration for docker swarm:
 ```yaml
 # config/packages/idci_keycloak_security.yaml
 idci_keycloak_security:
-    server_public_url: 'http://keycloak.docker/auth' # your keycloak url accessible via your navigator
-    server_private_url: 'http://keycloak:8080/auth' # your keycloak container reference in the network
+    server_public_url: 'http://keycloak.docker' # your keycloak url accessible via your navigator
+    server_private_url: 'http://keycloak:8080' # your keycloak container reference in the network
     realm: 'MyRealm'
     client_id: 'my-client'
     client_secret: '21d4cc5c-9ed6-4bf8-8528-6d659b66f216'
@@ -55,6 +55,13 @@ idci_keycloak_security:
 ```
 
 Make sure that your php container in the container is attached to a network with keycloak, otherwise it will not be able to resolve "http://keycloak:8080/auth" and the public_server_url must be accessible through the port 80 because keycloak verify the issuer.
+
+NOTE: The keycloak api endpoint as change, so if you used an old version, add the `/auth` to you url:
+```yaml
+idci_keycloak_security:
+    server_public_url: 'http://keycloak.docker/auth'
+    server_private_url: 'http://keycloak:8080/auth'
+```
 
 ### Route configuration
 
@@ -117,7 +124,3 @@ security:
 ## Keycloak configuration
 
 If you need help to use keycloak because it is the first time you work on it, we've made a little tutorial step by step describing a basic configuration of a keycloak realm that you can found [here](./Resources/docs/keycloak-help-guide.md)
-
-## TODO
-
-- Install bundle configuration with flex recipe.
