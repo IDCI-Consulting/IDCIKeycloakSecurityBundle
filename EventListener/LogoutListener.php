@@ -27,7 +27,7 @@ class LogoutListener
         ClientRegistry $clientRegistry,
         UrlGeneratorInterface $urlGenerator,
         TokenStorageInterface $tokenStorage,
-        string $defaultTargetRouteName,
+        string $defaultTargetRouteName
     ) {
         $this->clientRegistry = $clientRegistry;
         $this->urlGenerator = $urlGenerator;
