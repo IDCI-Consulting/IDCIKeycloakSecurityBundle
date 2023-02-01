@@ -2,20 +2,18 @@
 
 namespace IDCI\Bundle\KeycloakSecurityBundle\Security\User;
 
-use IDCI\Bundle\KeycloakSecurityBundle\Provider\Keycloak;
+use IDCI\Bundle\KeycloakSecurityBundle\Provider\KeycloakProvider;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
-use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
+use KnpU\OAuth2ClientBundle\Client\OAuth2ClientInterface;
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUserProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class KeycloakUserProvider extends OAuthUserProvider
 {
-    /**
-     * @var ClientRegistry
-     */
-    protected $clientRegistry;
+    protected ClientRegistry $clientRegistry;
 
     public function __construct(ClientRegistry $clientRegistry)
     {
@@ -25,39 +23,44 @@ class KeycloakUserProvider extends OAuthUserProvider
     /**
      * {@inheritdoc}
      */
-    public function loadUserByUsername($accessToken): UserInterface
+    public function loadUserByIdentifier(string|AccessToken $identifier): UserInterface
     {
-        if (!$accessToken instanceof AccessToken) {
+        if (!$identifier instanceof AccessToken) {
             throw new \LogicException('Could not load a KeycloakUser without an AccessToken.');
         }
 
         $provider = $this->getKeycloakClient()->getOAuth2Provider();
-        $keycloakUser = $this->getKeycloakClient()->fetchUserFromToken($accessToken);
+        $resourceOwner = $this->getKeycloakClient()->fetchUserFromToken($identifier);
 
-        if (!$provider instanceof Keycloak) {
+        if (!$provider instanceof KeycloakProvider) {
             throw new \RuntimeException(
-                sprintf('The OAuth2 client provider must be an instance of %s', Keycloak::class)
+                sprintf('The OAuth2 client provider must be an instance of %s', KeycloakProvider::class)
             );
         }
 
-        $roles = array_map(
-            function ($role) {
-                return strtoupper($role);
-            },
-            $keycloakUser->getRoles()
-        );
+        $roles = [];
+
+        if (isset($resourceOwner->getResourceAccess()[$provider->getClientId()])) {
+            $roles = array_map(
+                function ($role) {
+                    return strtoupper($role);
+                },
+                $resourceOwner->getResourceAccess()[$provider->getClientId()]['roles']
+            );
+        }
 
         return new KeycloakUser(
-            $keycloakUser->getPreferredUsername(),
+            $resourceOwner->getPreferredUsername(),
             $roles,
-            $accessToken,
-            $keycloakUser->getId(),
-            $keycloakUser->getEmail(),
-            $keycloakUser->getName(),
-            $keycloakUser->getFirstName(),
-            $keycloakUser->getLastName(),
+            $identifier,
+            $resourceOwner->getId(),
+            $resourceOwner->getEmail(),
+            $resourceOwner->getName(),
+            $resourceOwner->getFirstName(),
+            $resourceOwner->getLastName(),
             $provider->getResourceOwnerManageAccountUrl(),
-            $keycloakUser->getLocale()
+            $resourceOwner->getLocale(),
+            $resourceOwner->toArray()
         );
     }
 
@@ -78,7 +81,12 @@ class KeycloakUserProvider extends OAuthUserProvider
             );
         }
 
-        return $this->loadUserByUsername($accessToken);
+        $user = $this->loadUserByIdentifier($accessToken);
+        if (null === $user) {
+            throw new UserNotFoundException();
+        }
+
+        return $user;
     }
 
     public function supportsClass($class): bool
@@ -86,7 +94,7 @@ class KeycloakUserProvider extends OAuthUserProvider
         return KeycloakUser::class === $class;
     }
 
-    protected function getKeycloakClient(): OAuth2Client
+    protected function getKeycloakClient(): OAuth2ClientInterface
     {
         return $this->clientRegistry->getClient('keycloak');
     }

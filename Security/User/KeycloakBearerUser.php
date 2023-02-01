@@ -6,35 +6,19 @@ use KnpU\OAuth2ClientBundle\Security\User\OAuthUser;
 
 class KeycloakBearerUser extends OAuthUser
 {
-    /**
-     * @var string
-     */
-    private $accessToken;
+    private ?string $accessToken;
 
-    /**
-     * @var string
-     */
-    private $clientId;
+    private ?string $clientId;
 
-    /**
-     * @var string
-     */
-    private $email;
+    private ?string $email;
 
-    /**
-     * @var string
-     */
-    private $firstName;
+    private ?string $displayName;
 
-    /**
-     * @var string
-     */
-    private $lastName;
+    private ?string $firstName;
 
-    /**
-     * @var bool
-     */
-    private $emailVerified;
+    private ?string $lastName;
+
+    private bool $emailVerified;
 
     public function __toString(): string
     {
@@ -65,6 +49,30 @@ class KeycloakBearerUser extends OAuthUser
         return $this->clientId;
     }
 
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setDisplayName(?string $displayName): self
+    {
+        $this->displayName = $displayName;
+
+        return $this;
+    }
+
+    public function getDisplayName(): ?string
+    {
+        return $this->displayName;
+    }
+
     public function setFirstName(?string $firstName): self
     {
         $this->firstName = $firstName;
@@ -87,18 +95,6 @@ class KeycloakBearerUser extends OAuthUser
     public function getLastName(): ?string
     {
         return $this->lastName;
-    }
-
-    public function setEmail(?string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
     }
 
     public function setEmailVerified(bool $emailVerified): self

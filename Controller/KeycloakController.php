@@ -17,33 +17,18 @@ class KeycloakController extends AbstractController
         return $clientRegistry->getClient('keycloak')->redirect();
     }
 
-    public function connectCheckAction(Request $request, string $defaultTargetPath)
+    public function connectCheckAction(Request $request, string $defaultTargetRouteName)
     {
-        return $this->redirectToRoute($defaultTargetPath);
-    }
-
-    public function logoutAction(
-        Request $request,
-        ClientRegistry $clientRegistry,
-        TokenStorageInterface $tokenStorage,
-        string $defaultTargetPath
-    ) {
-        $token = $tokenStorage->getToken();
-        $user = $token->getUser();
-
-        if (!$user instanceof KeycloakUser) {
-            throw new \RuntimeException('The user must be an instance of KeycloakUser');
+        $loginReferrer = null;
+        if ($request->hasSession()) {
+            $loginReferrer = $request->getSession()->remove('loginReferrer');
         }
 
-        $tokenStorage->setToken(null);
-        $request->getSession()->invalidate();
+        return $loginReferrer ? $this->redirect($loginReferrer) : $this->redirectToRoute($defaultTargetRouteName);
+    }
 
-        $values = $user->getAccessToken()->getValues();
-        $oAuth2Provider = $clientRegistry->getClient('keycloak')->getOAuth2Provider();
-
-        return new RedirectResponse($oAuth2Provider->getLogoutUrl([
-            'state' => $values['session_state'],
-            'redirect_uri' => $this->generateUrl($defaultTargetPath, [], UrlGeneratorInterface::ABSOLUTE_URL),
-        ]));
+    public function logoutAction(Request $request, string $defaultTargetRouteName)
+    {
+        return new RedirectResponse($this->generateUrl($defaultTargetRouteName));
     }
 }

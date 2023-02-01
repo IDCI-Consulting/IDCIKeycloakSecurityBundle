@@ -3,6 +3,9 @@ IDCI Keycloak Security Bundle
 
 This Symfony bundle is an alternative solution to FOSUserBundle, working with keycloak.
 
+For symfony 2/3/4 use version 1.2.0
+For symfony 5+ use version 2.0.0 or +
+
 ## Installation
 
 With composer:
@@ -24,12 +27,14 @@ In case of you already have keycloak running locally on your machine or is runni
 ```yaml
 # config/packages/idci_keycloak_security.yaml
 idci_keycloak_security:
-    server_url: 'http://localhost:8080/auth' # your accessible keycloak url
-    # server_url: 'http://keycloak.example.com/auth' # example with public url
-    realm: 'MyRealm'
-    client_id: 'my-client'
-    client_secret: '21d4cc5c-9ed6-4bf8-8528-6d659b66f216'
-    default_target_path: 'home' # The route name you will be redirected to after sign in
+    server_url: '%env(resolve:KEYCLOAK_SERVER_BASE_URL)%'
+    server_public_url: '%env(resolve:KEYCLOAK_SERVER_PUBLIC_BASE_URL)%'
+    server_private_url: '%env(resolve:KEYCLOAK_SERVER_PRIVATE_BASE_URL)%'
+    realm: '%env(resolve:KEYCLOAK_REALM)%'
+    client_id: '%env(resolve:KEYCLOAK_CLIENT_ID)%'
+    client_secret: '%env(resolve:KEYCLOAK_CLIENT_SECRET)%'
+    default_target_route_name: 'app_home'
+    ssl_verification: true
 ```
 
 #### Docker
@@ -46,7 +51,7 @@ idci_keycloak_security:
     realm: 'MyRealm'
     client_id: 'my-client'
     client_secret: '21d4cc5c-9ed6-4bf8-8528-6d659b66f216'
-    default_target_path: 'home' # The route you will be redirected to after sign in
+    default_target_route_name: 'home' # The route you will be redirected to after sign in
 ```
 
 Make sure that your php container in the container is attached to a network with keycloak, otherwise it will not be able to resolve "http://keycloak:8080/auth" and the public_server_url must be accessible through the port 80 because keycloak verify the issuer.
@@ -71,10 +76,12 @@ Here is a simple configuration that restrict access to ```/admin/*``` routes onl
 ```yaml
 # config/packages/security.yaml
 imports:
-    - { resource: '@IDCIKeycloakSecurityBundle/Resources/config/security.yaml' } # import our security provider
+    # Import Keycloak security provider
+    - { resource: '@IDCIKeycloakSecurityBundle/Resources/config/security.yaml' }
 
 security:
 
+    enable_authenticator_manager: true
     firewalls:
 
         # Authorize everyone to try connecting (this route is imported from our bundle routing configuration)
@@ -86,18 +93,18 @@ security:
         # Login form authentication
         secured_area:
             pattern: ^/admin
-            guard:
-                provider: idci_keycloak_security_provider
-                authenticators:
-                    - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator
+            provider: idci_keycloak_security_provider
+            entry_point: IDCI\Bundle\KeycloakSecurityBundle\Security\EntryPoint\AuthenticationEntryPoint
+            custom_authenticators:
+                - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator
 
         # Bearer token authentication
         api:
             pattern: ^/api
-            guard:
-                provider: idci_keycloak_bearer_security_provider
-                authenticators:
-                    - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakBearerAuthenticator
+            provider: idci_keycloak_bearer_security_provider
+            entry_point: IDCI\Bundle\KeycloakSecurityBundle\Security\EntryPoint\BearerAuthenticationEntryPoint
+            custom_authenticators:
+                - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakBearerAuthenticator
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER

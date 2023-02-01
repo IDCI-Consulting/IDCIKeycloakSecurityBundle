@@ -8,56 +8,36 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class KeycloakUser extends OAuthUser
 {
-    /**
-     * @var AccessToken
-     */
-    private $accessToken;
+    private AccessToken $accessToken;
 
-    /**
-     * @var string
-     */
-    private $id;
+    private string $id;
 
-    /**
-     * @var string
-     */
-    private $email;
+    private ?string $email;
 
-    /**
-     * @var string
-     */
-    private $displayName;
+    private ?string $displayName;
 
-    /**
-     * @var string
-     */
-    private $firstName;
-    /**
-     * @var string
-     */
-    private $lastName;
+    private ?string $firstName;
 
-    /**
-     * @var string
-     */
-    private $accountUrl;
+    private ?string $lastName;
 
-    /**
-     * @var string
-     */
-    private $preferredLanguage;
+    private string $accountUrl;
+
+    private ?string $preferredLanguage;
+
+    private array $resources;
 
     public function __construct(
         string $username,
         array $roles,
         AccessToken $accessToken,
         string $id,
-        ?string $email = null,
-        ?string $displayName = null,
-        ?string $firstName = null,
-        ?string $lastName = null,
+        ?string $email,
+        ?string $displayName,
+        ?string $firstName,
+        ?string $lastName,
         string $accountUrl,
-        ?string $preferredLanguage = 'en'
+        ?string $preferredLanguage = 'en',
+        array $resources = []
     ) {
         $this->accessToken = $accessToken;
         $this->id = $id;
@@ -67,6 +47,7 @@ class KeycloakUser extends OAuthUser
         $this->lastName = $lastName;
         $this->accountUrl = $accountUrl;
         $this->preferredLanguage = $preferredLanguage;
+        $this->resources = $resources;
 
         parent::__construct($username, $roles);
     }
@@ -114,6 +95,16 @@ class KeycloakUser extends OAuthUser
     public function getPreferredLanguage(): ?string
     {
         return $this->preferredLanguage;
+    }
+
+    public function getResources(): array
+    {
+        return $this->resources;
+    }
+
+    public function getResource(string $name): mixed
+    {
+        return array_key_exists($name, $this->resources) ? $this->resources[$name] : null;
     }
 
     public function isEqualTo(UserInterface $user): bool
