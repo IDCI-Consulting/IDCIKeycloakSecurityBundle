@@ -23,7 +23,7 @@ class KeycloakUserProvider extends OAuthUserProvider
     /**
      * {@inheritdoc}
      */
-    public function loadUserByIdentifier(string|AccessToken $identifier): UserInterface
+    public function loadUserByIdentifier($identifier): UserInterface
     {
         if (!$identifier instanceof AccessToken) {
             throw new \LogicException('Could not load a KeycloakUser without an AccessToken.');
@@ -58,7 +58,6 @@ class KeycloakUserProvider extends OAuthUserProvider
             $resourceOwner->getName(),
             $resourceOwner->getFirstName(),
             $resourceOwner->getLastName(),
-            $provider->getResourceOwnerManageAccountUrl(),
             $resourceOwner->getLocale(),
             $resourceOwner->toArray()
         );
