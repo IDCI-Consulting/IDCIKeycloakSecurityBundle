@@ -7,6 +7,7 @@ use IDCI\Bundle\KeycloakSecurityBundle\Provider\Keycloak;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUserProvider;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -37,9 +38,7 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
         $provider = $this->getKeycloakClient()->getOAuth2Provider();
 
         if (!$provider instanceof Keycloak) {
-            throw new \RuntimeException(
-                sprintf('The OAuth2 client provider must be an instance of %s', Keycloak::class)
-            );
+            throw new \RuntimeException(sprintf('The OAuth2 client provider must be an instance of %s', Keycloak::class));
         }
 
         $response = (new Client())->request('POST', $provider->getTokenIntrospectionUrl(), [
@@ -57,12 +56,7 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
         }
 
         if (!isset($jwt['resource_access'][$provider->getClientId()])) {
-            throw new \UnexpectedValueException(sprintf(
-                'The token does not have the necessary permissions. Configure roles in the client \'%s\' of the realm \'%s\' and associate them with the user \'%s\'',
-                $provider->getClientId(),
-                $provider->realm,
-                $jwt['username']
-            ));
+            throw new \UnexpectedValueException(sprintf('The token does not have the necessary permissions. Configure roles in the client \'%s\' of the realm \'%s\' and associate them with the user \'%s\'', $provider->getClientId(), $provider->realm, $jwt['username']));
         }
 
         return (new KeycloakBearerUser($jwt['username'], $jwt['resource_access'][$provider->getClientId()]['roles']))
@@ -81,10 +75,10 @@ class KeycloakBearerUserProvider extends OAuthUserProvider
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_class($user)));
         }
 
-        $user = $this->loadUserByUsername($user->getAccessToken());
-
-        if (!$user) {
-            throw new UsernameNotFoundException();
+        try {
+            $user = $this->loadUserByUsername($user->getAccessToken());
+        } catch (\Exception $e) {
+            throw new UsernameNotFoundException(sprintf('Error during token introspection: %s', $e->getMessage()));
         }
 
         return $user;
