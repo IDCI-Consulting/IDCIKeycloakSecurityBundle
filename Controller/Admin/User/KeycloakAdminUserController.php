@@ -9,6 +9,7 @@ use GuzzleHttp\Exception\ClientException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class KeycloakAdminController
@@ -19,6 +20,13 @@ class KeycloakAdminUserController extends Controller {
 
     const API_MAX_RESULTS = 10;
     const UPDATE_PASSWORD_ACTION = "UPDATE_PASSWORD";
+
+    /** @var ContainerInterface $container */
+    protected $container;
+
+    public function __construct(ContainerInterface $container) {
+        $this->container = $container;
+    }
 
     // REST Methods
     /**
