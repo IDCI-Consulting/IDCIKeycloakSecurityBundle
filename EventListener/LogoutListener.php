@@ -37,6 +37,10 @@ class LogoutListener
 
     public function onSymfonyComponentSecurityHttpEventLogoutEvent(LogoutEvent $event)
     {
+        if (null === $event->getToken()) {
+            return;
+        }
+
         $user = $event->getToken()->getUser();
         if (null === $user) {
             return;
