@@ -16,7 +16,7 @@ $ composer require idci/keycloak-security-bundle
 
 ## Configuration
 
-If you want to set up keycloak locally you can download it [here](https://www.keycloak.org/downloads.html) and follow instructions from [the official documentation](https://www.keycloak.org/docs/3.2/server_installation/topics/installation.html). In case that you want to use keycloak in docker go directly to [configuration for Docker](#docker).
+If you want to set up keycloak locally you can download it [here](https://www.keycloak.org/downloads.html) and follow instructions from [the official documentation](https://www.keycloak.org/documentation.html). In case that you want to use keycloak in docker go directly to [configuration for Docker](#docker).
 
 ### Bundle configuration
 
