@@ -74,16 +74,25 @@ IDCIKeycloakSecurityBundle:
     prefix: /
 ```
 
+This will add the following routes to your application:
+
+```
+idci_keycloak_security_auth_connect       => /auth/connect/keycloak
+idci_keycloak_security_auth_connect_check => /auth/connect-check/keycloak
+idci_keycloak_security_auth_logout        => /auth/logout
+idci_keycloak_security_auth_account       => /auth/account
+```
+
 ### Symfony security configuration
 
-To link keycloak with symfony you must change the default security configuration in symfony.
+To link keycloak with symfony you must configure your application security file.
 
-Here is a simple configuration that restrict access to ```/admin/*``` routes only to user with role "ROLE_ADMIN" :
+Here is a simple configuration that restrict access to ```/*``` routes only to user with roles "ROLE_USER" or "ROLE_ADMIN" :
 
 ```yaml
 # config/packages/security.yaml
 imports:
-    # Import Keycloak security provider
+    # Import Keycloak security providers
     - { resource: '@IDCIKeycloakSecurityBundle/Resources/config/security.yaml' }
 
 security:
@@ -91,23 +100,12 @@ security:
     enable_authenticator_manager: true
     firewalls:
 
-        # Authorize everyone to try connecting (this route is imported from our bundle routing configuration)
+        # This route create the OAuth 2 "User Authorization Request" and must be accessible for unauthenticated users
         auth_connect:
-            pattern: ^/auth/connect/.*
+            pattern: /auth/connect/keycloak
             security: false
 
-        # This bundle is using security guard provided by symfony
-        # Login form authentication
-        secured_area:
-            pattern: ^/admin
-            provider: idci_keycloak_security_provider
-            entry_point: IDCI\Bundle\KeycloakSecurityBundle\Security\EntryPoint\AuthenticationEntryPoint
-            custom_authenticators:
-                - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator
-            logout:
-                path: idci_keycloak_security_auth_logout
-
-        # Bearer token authentication
+        # Here is an example to protect your application (API) using OAuth 2 Client Credentials Flow (JWT with Bearer token authentication)
         api:
             pattern: ^/api
             provider: idci_keycloak_bearer_security_provider
@@ -115,17 +113,51 @@ security:
             custom_authenticators:
                 - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakBearerAuthenticator
 
+        # Here is an exemple to protect your application (UI) using OAuth 2 Authorization Code Flow
+        secured_area:
+            pattern: ^/
+            provider: idci_keycloak_security_provider
+            entry_point: IDCI\Bundle\KeycloakSecurityBundle\Security\EntryPoint\AuthenticationEntryPoint
+            custom_authenticators:
+                - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator
+            logout:
+                path: idci_keycloak_security_auth_logout
+
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER
 
     access_control:
+        # This following ROLES must be configured in your Keycloak client
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/api, roles: ROLE_API }
 ```
 
+**Note**:
+If you wish to secure your application using OAuth 2 Authorization Code Flow for route starting with `/admin`, you will have to put the provided bundle routes behind the firewall, so here is an exeample on how to do this:
+
+```yaml
+
+    ...
+
+        secured_area:
+            pattern: ^/(admin|auth)
+            provider: idci_keycloak_security_provider
+            entry_point: IDCI\Bundle\KeycloakSecurityBundle\Security\EntryPoint\AuthenticationEntryPoint
+            custom_authenticators:
+                - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator
+            logout:
+                path: idci_keycloak_security_auth_logout
+
+    ...
+
+```
+
 ## Keycloak configuration
 
-If you need help to use keycloak because it is the first time you work on it, we've made a little tutorial step by step describing a basic configuration of a keycloak realm that you can found [here](./Resources/docs/keycloak-help-guide.md)
+If you need help to use keycloak because it is the first time you work on it, we've made a little tutorial step by step describing a basic configuration of a keycloak realm:
+
+ * [Keycloak older than 19.0.0](./Resources/docs/keycloak-help-guide-old.md)
+ * [Keycloak equal or newer than 19.0.0](./Resources/docs/keycloak-help-guide.md)
 
 ## Logout
 
