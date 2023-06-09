@@ -7,6 +7,7 @@ use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2ClientInterface;
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUserProvider;
 use League\OAuth2\Client\Token\AccessToken;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -15,9 +16,12 @@ class KeycloakUserProvider extends OAuthUserProvider
 {
     protected ClientRegistry $clientRegistry;
 
-    public function __construct(ClientRegistry $clientRegistry)
+    protected LoggerInterface $logger;
+
+    public function __construct(ClientRegistry $clientRegistry, LoggerInterface $logger)
     {
         $this->clientRegistry = $clientRegistry;
+        $this->logger = $logger;
     }
 
     /**
@@ -30,7 +34,14 @@ class KeycloakUserProvider extends OAuthUserProvider
         }
 
         $provider = $this->getKeycloakClient()->getOAuth2Provider();
-        $resourceOwner = $this->getKeycloakClient()->fetchUserFromToken($identifier);
+        try {
+            $resourceOwner = $this->getKeycloakClient()->fetchUserFromToken($identifier);
+        } catch (\UnexpectedValueException $e) {
+            $this->logger->warning($e->getMessage());
+            $this->logger->warning('User should have been disconnected from Keycloak server');
+
+            throw new UserNotFoundException();
+        }
 
         if (!$provider instanceof KeycloakProvider) {
             throw new \RuntimeException(

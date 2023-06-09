@@ -1,4 +1,5 @@
 # Variables
+source_tag = latest
 stack_name=keycloak
 
 keycloak_container_id = $(shell docker ps --filter name="$(stack_name)_keycloak" -q)
@@ -23,8 +24,12 @@ import:
 		-Dkeycloak.migration.strategy=OVERWRITE_EXISTING \
 		-Djboss.http.port=8888 -Djboss.https.port=9999 -Djboss.management.http.port=7777
 
+.PHONY: build-images
+build-images:
+	docker build -t local/keycloak:$(source_tag) -f .docker/Dockerfile .
+
 .PHONY: deploy
-deploy:
+deploy: build-images
 	docker stack deploy -c docker-compose.yml $(stack_name)
 
 .PHONY: undeploy

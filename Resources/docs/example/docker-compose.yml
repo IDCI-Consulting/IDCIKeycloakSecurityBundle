@@ -1,69 +1,65 @@
 ---
-version: '3.3'
+version: '3.8'
 
 services:
 
   keycloak:
-    image: jboss/keycloak:master
+    image: local/keycloak:latest
     volumes:
-      - data:/opt/jboss/keycloak
-    command: ["-b", "0.0.0.0","-Dkeycloak.profile.feature.docker=enabled"]
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     environment:
-      KEYCLOAK_USER: user
-      KEYCLOAK_PASSWORD: password
-      KEYCLOAK_HOSTNAME: keycloak.docker
-      KEYCLOAK_HTTP_PORT: 80
-      PROXY_ADDRESS_FORWARDING: "true"
-      DB_VENDOR: mariadb
-      DB_ADDR: mariadb
-      DB_DATABASE: keycloak
-      DB_USER: root
-      DB_PASSWORD: toor
+      - KEYCLOAK_HOSTNAME=keycloak.docker
+      - KEYCLOAK_PRODUCTION=true
+      - KEYCLOAK_ENABLE_HTTPS=true
+      - KEYCLOAK_EXTRA_ARGS=-Dkeycloak.profile.feature.docker=enabled
+      - KEYCLOAK_ADMIN_USER=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KEYCLOAK_DATABASE_HOST=postgres
+      - KEYCLOAK_DATABASE_PORT=5432
+      - KEYCLOAK_DATABASE_NAME=keycloak
+      - KEYCLOAK_DATABASE_USER=keycloak
+      - KEYCLOAK_DATABASE_PASSWORD=keycloak
+      - KEYCLOAK_DATABASE_SCHEMA=public
+      - KEYCLOAK_HTTP_PORT=8080
+      - KEYCLOAK_BIND_ADDRESS=0.0.0.0
     deploy:
       labels:
-        traefik.frontend.rule: "Host:keycloak.docker" # keycloak will be accesible via http://keycloak.docker (mak sure to have change /etc/hosts)
-        traefik.docker.network: reverse_proxy
-        traefik.port: 8080
+        - traefik.enable=true
+        - traefik.docker.network=traefik
+        - traefik.docker.lbswarm=true
+        - traefik.http.services.keycloak.loadbalancer.server.port=8080
+        # HTTP
+        - traefik.http.routers.keycloak.entryPoints=web
+        - traefik.http.routers.keycloak.rule=Host(`keycloak.docker`)
+        - traefik.http.routers.keycloak.middlewares=keycloak-redirect-http-https@docker
+        # Middlewares: http => https
+        - traefik.http.middlewares.keycloak-redirect-http-https.redirectscheme.scheme=https
+        - traefik.http.middlewares.keycloak-redirect-http-https.redirectscheme.permanent=true
+        # HTTPS
+        - traefik.http.routers.keycloak-https.entrypoints=websecure
+        - traefik.http.routers.keycloak-https.rule=Host(`keycloak.docker`)
+        - traefik.http.routers.keycloak-https.tls=true
+        #- traefik.http.routers.keycloak-https.tls.certresolver=letsencrypt
     networks:
-      keycloak_db: ~
-      keycloak_public: ~
-      reverse_proxy: ~
+      - traefik
+      - db
 
-  mariadb:
-    image: mariadb:10.2
-    volumes:
-      - dbdata:/var/lib/mysql
+  postgres:
+    image: postgres:15
     environment:
-      MYSQL_DATABASE: keycloak
-      MYSQL_ROOT_PASSWORD: toor
-    networks:
-      keycloak_db: ~
-
-  traefik:
-    image: traefik:latest
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=keycloak
+      - POSTGRES_DB=keycloak
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
-    command: --api --docker --docker.swarmMode --docker.watch
-    ports:
-      - "80:80"     # The HTTP port
-      - "443:443"   # The HTTPS port
-      - "8080:8080" # The Web UI (enabled by --api)
-    configs:
-      - source: traefik_config
-        target: /etc/traefik/traefik.toml
+      - postgres_data:/var/lib/postgresql/data
     networks:
-      reverse_proxy: ~
-
-configs:
-  traefik_config:
-    file: ./config/traefik.toml
+      - db
 
 volumes:
-  data:
-  dbdata:
+  postgres_data:
 
 networks:
-  keycloak_public:
-    driver: overlay
-  keycloak_db: ~ # attach your php container to this container, so it will have access to keycloak
-  reverse_proxy: ~
+  db:
+  traefik:
+    external: true
