@@ -1,0 +1,47 @@
+# Use root/example as user/password credentials
+version: '3.8'
+
+services:
+
+  traefik:
+    # The official v2 Traefik docker image
+    image: traefik:v2.4
+    labels:
+      - "app=common"
+      - "type=reverse-proxy"
+    command:
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--api.debug=true"
+      - "--providers.docker=true"
+      - "--providers.docker.watch=true"
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--providers.docker.exposedByDefault=false"
+      - "--providers.docker.swarmMode=true"
+      - "--providers.docker.network=traefik"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entryPoints.websecure.http.tls.certResolver=letsencrypt"
+      - "--certificatesresolvers.letsencrypt.acme.email=contact@idci-consulting.fr"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/certificates/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The HTTPS port
+      - "443:443"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      - certificates:/certificates/acme.json
+    networks:
+      - traefik
+
+volumes:
+  certificates:
+
+networks:
+  traefik:
+    external: true
