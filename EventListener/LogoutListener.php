@@ -37,15 +37,11 @@ class LogoutListener
 
     public function onSymfonyComponentSecurityHttpEventLogoutEvent(LogoutEvent $event)
     {
-        if (null === $event->getToken()) {
+        if (null === $event->getToken() || null === $event->getToken()->getUser()) {
             return;
         }
 
         $user = $event->getToken()->getUser();
-        if (null === $user) {
-            return;
-        }
-
         if (!$user instanceof KeycloakUser) {
             throw new \RuntimeException('The user must be an instance of KeycloakUser');
         }
