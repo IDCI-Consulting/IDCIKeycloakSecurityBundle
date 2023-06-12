@@ -113,7 +113,7 @@ security:
             custom_authenticators:
                 - IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakBearerAuthenticator
 
-        # Here is an exemple to protect your application (UI) using OAuth 2 Authorization Code Flow
+        # Here is an example to protect your application (UI) using OAuth 2 Authorization Code Flow
         secured_area:
             pattern: ^/
             provider: idci_keycloak_security_provider
@@ -133,7 +133,7 @@ security:
 ```
 
 **Note**:
-If you wish to secure your application using OAuth 2 Authorization Code Flow for route starting with `/admin`, you will have to put the provided bundle routes behind the firewall, so here is an exeample on how to do this:
+If you wish to secure your application using OAuth 2 Authorization Code Flow for route starting with `/admin`, you will have to put the provided bundle routes behind the firewall, so here is an example on how to do this:
 
 ```yaml
 
