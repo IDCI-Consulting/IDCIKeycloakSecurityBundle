@@ -1,29 +1,19 @@
 # Keycloak help guide
 
-### Create a realm
+Here are resources to help you get started with Keycloak.
 
+## Keycloak with docker
+[Here is a full configuration to easily start Keycloak with docker (in swarm mode)](./example/docker-compose.yml)
+Take a look at the [documentation](./example/README.md).
 
-### Create a client
+## Configure a Keycloak client
+[Here is a simple guide to help you to create a Keycloak client](./keycloak-help-guide-client-configuration.md)
 
+## How to setup a "Client credentials flow" with Keycloak and Symfony using this bundle
+[Here is a complet guide to help you to setup a OAuth2 'Client credentials flow'](./keycloak-help-guide-client-credentials-flow.md)
 
-### Create client roles
+## How to setup an "User authorization request flow" with Keycloak and Symfony using this bundle
+[Here is a complet guide to help you to setup a OAuth2 'User authorization request flow'](./keycloak-help-guide-user-authorization-request.md)
 
-### Create users
-
-#### Define a new password
-
-When you create a user, he doesn't have a password.
-
-To defined one, go to ```Manage > Users > View all users > admin > Credentials```
-
-![Change user password](screenshots/change-user-password.png)
-
-Note: If you want to make the password fixed you must disable the "Temporary" option.
-
-#### Affect a role
-
-Now we can affect roles we created before to the new user.
-
-To add role, go to ```Manage > Users > View all users > admin > Role Mappings```. You must specify the client the user has access to.
-
-![Affect user role](screenshots/affect-user-role.png)
+## Get an error ?
+[Here is a troubleshooting section](./keycloak-help-guide-troubleshooting.md)

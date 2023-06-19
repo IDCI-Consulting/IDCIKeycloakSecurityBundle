@@ -11,8 +11,6 @@ Synopsis + schema
 
 First of all, a realm named `demo` must exists and you have to create a client.
 
-You can use our [tutorial to help you to create your client](./keycloak-help-guide-client-configuration.md)
-
 ---
 
 # Keycloak - Configuration
@@ -21,17 +19,7 @@ You can use our [tutorial to help you to create your client](./keycloak-help-gui
 
 ### Client creation
 
-We are going to create a client with a **Client ID**:
-
-![Image](screenshots/create_api_consumer_client_first_step.png)
-
-Enabled fields **Client authentication** and **Authorization**.
-Check only standard flow for **Authentication flow**.
-Click on **Save**:
-
-![Image](screenshots/create_client_last_step.png)
-
-Your client dedicated to an Api consumer application has been created successfully!
+You can use our [tutorial to help you to create your client dedicated to an Api consumer application](./keycloak-help-guide-client-configuration.md)
 
 ### Roles creation
 
@@ -51,21 +39,7 @@ Your roles have been created successfully!
 
 ### Client creation
 
-Click on **Create client**:
-
-![Image](screenshots/create_api_provider_client_first_step.png)
-
-Fill **Client ID** and click on **Next**:
-
-![Image](screenshots/create_resource_client_first_step.png)
-
-Default to "On" fields **Client authentication** and **Authorization**.
-Check only standard flow for **Authentication flow**.
-Click on **Save**:
-
-![Image](screenshots/create_client_last_step.png)
-
-Your client dedicated to an Api provider application has been created successfully!
+You can use our [tutorial to help you to create your client dedicated to an Api provider application](./keycloak-help-guide-client-configuration.md)
 
 ### Roles creation
 
@@ -85,8 +59,7 @@ Your roles have been created successfully!
 
 ## Link Api provider and Api consumer with role "ROLE_API" of Api provider
 
-To allow ..., you need to link Api provider and Api consumer with role "ROLE_API" of Api provider.
-
+To allow you client application to request your Api, you need to configure your Api consumer with the role "ROLE_API" of the Api provider application.
 In your Api consumer, assign role "ROLE_API" of Api provider.
 
 ![Image](screenshots/screen_with_assign_role_button_for_client.png)
@@ -146,7 +119,7 @@ security:
         - { path: ^/api, roles: ROLE_API }
 ```
 
---- 
+---
 
 # Result
 

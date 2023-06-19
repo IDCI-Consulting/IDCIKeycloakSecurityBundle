@@ -171,7 +171,7 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN }
 ```
 
---- 
+---
 
 # Result
 
@@ -195,7 +195,7 @@ This route is redirected to your Keycloak auth route
 
 ![Image](screenshots/screen_route_redirect_with_keycloak_demo_prompt.png)
 
-A Keycloak prompt will be displayed. You need to fill with username and password created:
+A Keycloak login prompt will be displayed. You need to fill with username and password created:
 
 ![Image](screenshots/keycloak_demo_prompt.png)
 
