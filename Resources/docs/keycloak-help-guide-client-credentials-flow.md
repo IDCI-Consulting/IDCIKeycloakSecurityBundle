@@ -49,9 +49,7 @@ Fill **Role name** and click on **Save**:
 
 ![Image](screenshots/create_role_ROLE_API.png)
 
-Repeat these actions for ROLE_ADMIN and ROLE_USER.
-
-Your roles have been created successfully!
+Your role has been created successfully!
 
 ## Link Api provider and Api consumer with role "ROLE_API" of Api provider
 
