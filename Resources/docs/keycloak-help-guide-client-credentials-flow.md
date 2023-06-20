@@ -3,8 +3,23 @@ How to configure a client credentials flow with Keycloak, your Symfony project a
 
 ---
 
-Synopsis + schema
+Here is schema to get an overview of what you can do easily with this bundle to securized your API Symfony apllication with OAuth2.0.
 
+Client Application          Keycloak            Resource Web API (Symfony)
+        |           1          |                           |
+        | -------------------> |                           |
+        |           2          |                           |
+        | <------------------- |                           |
+        |                                 3                |
+        | -----------------------------------------------> |
+        |                                 4                |
+        | <----------------------------------------------- |
+
+
+1] Ask for a JWT token with your Client ID and your Client secret
+2] Get the JWT token
+3] Request API resource using the Bearer token in the request header
+4] Retrieve resource API data (if the token is valid and the client application has the right permissions)
 ---
 
 ## Requirements section
@@ -15,27 +30,7 @@ First of all, a realm named `demo` must exists and you have to create a client.
 
 # Keycloak - Configuration
 
-## Client's dedicated to an Api consumer application
-
-### Client creation
-
-You can use our [tutorial to help you to create your client dedicated to an Api consumer application](./keycloak-help-guide-client-configuration.md)
-
-### Roles creation
-
-We are going to create role "ROLE_API" for our Api consumer client application.
-
-Click on **Create role**:
-
-![Image](screenshots/screen_with_create_role_button.png)
-
-Fill **Role name** and click on **Save**:
-
-![Image](screenshots/create_role_ROLE_API.png)
-
-Your roles have been created successfully!
-
-## Client's dedicated to an Api provider application
+## Create a Keycloak client that will represent your Resource WEB API application
 
 ### Client creation
 
