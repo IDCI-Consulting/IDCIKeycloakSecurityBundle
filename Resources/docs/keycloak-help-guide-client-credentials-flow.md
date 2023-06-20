@@ -17,10 +17,10 @@ Client Application          Keycloak            Resource Web API (Symfony)
         | <----------------------------------------------- |
 </pre>
 
-1] Ask for a JWT token with your Client ID and your Client secret
-2] Get the JWT token
-3] Request API resource using the Bearer token in the request header
-4] Retrieve resource API data (if the token is valid and the client application has the right permissions)
+1. Ask for a JWT token with your Client ID and your Client secret
+2. Get the JWT token
+3. Request API resource using the Bearer token in the request header
+4. Retrieve resource API data (if the token is valid and the client application has the right permissions)
 ---
 
 ## Requirements section
