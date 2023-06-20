@@ -3,7 +3,34 @@ How to configure an user authorization request with Keycloak and your Symfony pr
 
 ---
 
-Synopsis + schema
+Here is schema to get an overview of what you can do easily with this bundle to securized your API Symfony apllication with OAuth2.0.
+
+<pre>
+User browser        Apllication Backoffice (Symfony)        Keycloak
+    |            1               |                              |
+    | -------------------------> |                              |
+    |            2               |                              |
+    | <------------------------- |                              |
+    |                                 3                         |
+    | --------------------------------------------------------> |
+    |                                 4                         |
+    | <-------------------------------------------------------- |
+    |            5                                              |
+    | -------------------------> |               6              |
+    |                            | ---------------------------> |
+    |                            |               7              |
+    |            8               | <--------------------------- |
+    | <------------------------- |
+</pre>
+
+1. User request a backoffice access
+2. Unauthenticated user is redirect to Keycloak
+3. Keycloak ask user crendentials (login / password)
+4. User browser is redirect to the Application backoffice with a security token
+5. User browser give the security token to the application
+6. The Symfony application check the given token  with Keycloak
+7. If the token is ok, Keycloak return user informations like username, email, roles, ... (following to the scope)
+8. The Symfony application create user session and authenticate the user
 
 ---
 
