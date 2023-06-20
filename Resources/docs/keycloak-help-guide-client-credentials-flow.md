@@ -5,16 +5,17 @@ How to configure a client credentials flow with Keycloak, your Symfony project a
 
 Here is schema to get an overview of what you can do easily with this bundle to securized your API Symfony apllication with OAuth2.0.
 
-Client Application          Keycloak            Resource Web API (Symfony)\
-        |           1          |                           |\
-        | -------------------> |                           |\
-        |           2          |                           |\
-        | <------------------- |                           |\
-        |                                 3                |\
-        | -----------------------------------------------> |\
-        |                                 4                |\
-        | <----------------------------------------------- |\
-
+<pre>
+Client Application          Keycloak            Resource Web API (Symfony)
+        |           1          |                           |
+        | -------------------> |                           |
+        |           2          |                           |
+        | <------------------- |                           |
+        |                                 3                |
+        | -----------------------------------------------> |
+        |                                 4                |
+        | <----------------------------------------------- |
+</pre>
 
 1] Ask for a JWT token with your Client ID and your Client secret
 2] Get the JWT token
