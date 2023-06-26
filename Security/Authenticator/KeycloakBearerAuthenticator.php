@@ -2,7 +2,7 @@
 
 namespace IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator;
 
-use IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakBearerUserProvider;
+use IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakBearerUserProviderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,9 +16,9 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 
 class KeycloakBearerAuthenticator extends AbstractAuthenticator
 {
-    protected KeycloakBearerUserProvider $userProvider;
+    protected KeycloakBearerUserProviderInterface $userProvider;
 
-    public function __construct(KeycloakBearerUserProvider $userProvider)
+    public function __construct(KeycloakBearerUserProviderInterface $userProvider)
     {
         $this->userProvider = $userProvider;
     }

@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class KeycloakBearerUserProvider extends OAuthUserProvider
+class KeycloakBearerUserProvider extends OAuthUserProvider implements KeycloakBearerUserProviderInterface
 {
     protected ClientRegistry $clientRegistry;
 

@@ -2,7 +2,7 @@
 
 namespace IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator;
 
-use IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUserProvider;
+use IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUserProviderInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2ClientInterface;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
@@ -20,9 +20,9 @@ class KeycloakAuthenticator extends OAuth2Authenticator implements InteractiveAu
 {
     protected ClientRegistry $clientRegistry;
 
-    protected KeycloakUserProvider $userProvider;
+    protected KeycloakUserProviderInterface $userProvider;
 
-    public function __construct(ClientRegistry $clientRegistry, KeycloakUserProvider $userProvider)
+    public function __construct(ClientRegistry $clientRegistry, KeycloakUserProviderInterface $userProvider)
     {
         $this->clientRegistry = $clientRegistry;
         $this->userProvider = $userProvider;
