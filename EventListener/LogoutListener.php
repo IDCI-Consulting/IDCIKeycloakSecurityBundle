@@ -43,7 +43,7 @@ class LogoutListener
 
         $user = $event->getToken()->getUser();
         if (!$user instanceof KeycloakUser) {
-            throw new \RuntimeException('The user must be an instance of KeycloakUser');
+            return;
         }
 
         $oAuth2Provider = $this->clientRegistry->getClient('keycloak')->getOAuth2Provider();
