@@ -61,4 +61,9 @@ class KeycloakResourceOwner implements ResourceOwnerInterface
     {
         return $this->response;
     }
+
+    public function getRoles(): array
+    {
+        return $this->response['roles'] ?? [];
+    }
 }
