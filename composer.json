@@ -1,5 +1,5 @@
 {
-    "name": "idci/keycloak-security-bundle",
+    "name": "h2entwicklung/keycloak-security-bundle",
     "type": "symfony-bundle",
     "description": "Allows you to easily handle you application security thanks to keycloak.",
     "license": "CECILL-C",
@@ -16,26 +16,30 @@
         {
             "name": "Camille SCHWARZ",
             "email": "camille54460@gmail.com"
+        },  
+        {
+            "name": "H2 invent Entwicklung",
+        "email": "entwicklung@h2-invent.com"
         }
     ],
     "require": {
-        "symfony/dependency-injection": "^5.3|^6.0",
-        "symfony/framework-bundle": "^5.3|^6.0",
-        "symfony/http-client": "^5.3|^6.0",
-        "symfony/routing": "^5.3|^6.0",
-        "symfony/security-bundle": "^5.3|^6.0",
-        "symfony/http-foundation": "^5.3|^6.0",
+        "symfony/dependency-injection": "^5.3|^7.0",
+        "symfony/framework-bundle": "^5.3|^7.0",
+        "symfony/http-client": "^5.3|^7.0",
+        "symfony/routing": "^5.3|^7.0",
+        "symfony/security-bundle": "^5.3|^7.0",
+        "symfony/http-foundation": "^5.3|^7.0",
         "knpuniversity/oauth2-client-bundle": "^2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.0",
-        "symfony/expression-language": "^5.3|^6.0",
-        "symfony/finder": "^5.3|^6.0",
-        "symfony/form": "^5.3|^6.0",
-        "symfony/stopwatch": "^5.3|^6.0",
-        "symfony/twig-bundle": "^5.3|^6.0",
-        "symfony/validator": "^5.3|^6.0",
-        "symfony/yaml": "^5.3|^6.0"
+        "phpunit/phpunit": "^7.0",
+        "symfony/expression-language": "^5.3|^7.0",
+        "symfony/finder": "^5.3|^7.0",
+        "symfony/form": "^5.3|^7.0",
+        "symfony/stopwatch": "^5.3|^7.0",
+        "symfony/twig-bundle": "^5.3|^7.0",
+        "symfony/validator": "^5.3|^7.0",
+        "symfony/yaml": "^5.3|^7.0"
     },
     "autoload": {
         "psr-4": {
