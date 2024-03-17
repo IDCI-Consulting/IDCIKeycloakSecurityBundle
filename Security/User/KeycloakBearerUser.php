@@ -6,23 +6,23 @@ use KnpU\OAuth2ClientBundle\Security\User\OAuthUser;
 
 class KeycloakBearerUser extends OAuthUser
 {
-    private ?string $accessToken;
+    private ?string $accessToken = null;
 
-    private ?string $clientId;
+    private ?string $clientId = null;
 
-    private ?string $email;
+    private ?string $email = null;
 
-    private ?string $displayName;
+    private ?string $displayName = null;
 
-    private ?string $firstName;
+    private ?string $firstName = null;
 
-    private ?string $lastName;
+    private ?string $lastName = null;
 
-    private bool $emailVerified;
+    private bool $emailVerified = false;
 
     public function __toString(): string
     {
-        return $this->getUsername();
+        return $this->getUserIdentifier();
     }
 
     public function setAccessToken(string $accessToken): self
