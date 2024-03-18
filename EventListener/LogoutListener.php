@@ -35,9 +35,9 @@ class LogoutListener
         $this->defaultTargetRouteName = $defaultTargetRouteName;
     }
 
-    public function onSymfonyComponentSecurityHttpEventLogoutEvent(LogoutEvent $event)
+    public function onSymfonyComponentSecurityHttpEventLogoutEvent(LogoutEvent $event): void
     {
-        if (null === $event->getToken() || null === $event->getToken()->getUser()) {
+        if (null === $event->getToken()?->getUser()) {
             return;
         }
 
