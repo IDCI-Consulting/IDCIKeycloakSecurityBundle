@@ -51,6 +51,16 @@ class KeycloakUserProvider extends OAuthUserProvider implements KeycloakUserProv
 
         $roles = [];
 
+        // @deprecated: For old keycloak version, keep retrieve the roles directly from the resource owner
+        if (!empty($resourceOwner->getRoles())) {
+            $roles = array_map(
+                function ($role) {
+                    return strtoupper($role);
+                },
+                $resourceOwner->getRoles()
+            );
+        }
+
         if (isset($resourceOwner->getResourceAccess()[$provider->getClientId()])) {
             $roles = array_map(
                 function ($role) {

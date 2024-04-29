@@ -57,6 +57,12 @@ class KeycloakResourceOwner implements ResourceOwnerInterface
         return $this->response['resource_access'] ?? [];
     }
 
+    // @deprecated
+    public function getRoles(): array
+    {
+        return isset($this->response['roles']) ? $this->response['roles'] : [];
+    }
+
     public function toArray(): array
     {
         return $this->response;
