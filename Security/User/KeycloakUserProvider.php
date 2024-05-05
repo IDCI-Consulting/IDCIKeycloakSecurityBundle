@@ -20,6 +20,7 @@ class KeycloakUserProvider extends OAuthUserProvider implements KeycloakUserProv
 
     public function __construct(ClientRegistry $clientRegistry, LoggerInterface $logger)
     {
+        parent::__construct();
         $this->clientRegistry = $clientRegistry;
         $this->logger = $logger;
     }

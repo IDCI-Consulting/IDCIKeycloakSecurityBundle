@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensionInterface
 {
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
@@ -23,7 +23,7 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
         $container->setParameter('idci_keycloak_security.ssl_verification', $config['ssl_verification']);
     }
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         $bundles = $container->getParameter('kernel.bundles');
 
@@ -37,7 +37,7 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
         $container->prependExtensionConfig('knpu_oauth2_client', $this->generateKeycloakAuthConfiguration($config));
     }
 
-    protected function generateKeycloakAuthConfiguration(array $config)
+    protected function generateKeycloakAuthConfiguration(array $config): array
     {
         return [
             'clients' => [
