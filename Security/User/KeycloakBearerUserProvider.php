@@ -7,6 +7,8 @@ use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2ClientInterface;
 use KnpU\OAuth2ClientBundle\Security\User\OAuthUserProvider;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Exception\TokenNotFoundException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -35,9 +37,7 @@ class KeycloakBearerUserProvider extends OAuthUserProvider implements KeycloakBe
         $provider = $this->getKeycloakClient()->getOAuth2Provider();
 
         if (!$provider instanceof KeycloakProvider) {
-            throw new \RuntimeException(
-                sprintf('The OAuth2 client provider must be an instance of %s', KeycloakProvider::class)
-            );
+            throw new \RuntimeException(sprintf('The OAuth2 client provider must be an instance of %s', KeycloakProvider::class));
         }
 
         $response = $this->httpClient->request(Request::METHOD_POST, $provider->getTokenIntrospectionUrl(), [
@@ -54,11 +54,11 @@ class KeycloakBearerUserProvider extends OAuthUserProvider implements KeycloakBe
         $jwt = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         if (!$jwt['active']) {
-            throw new \UnexpectedValueException('The token does not exist or is not valid anymore');
+            throw new TokenNotFoundException('The token does not exist or is not valid anymore');
         }
 
         if (!isset($jwt['resource_access'][$provider->getClientId()])) {
-            throw new \UnexpectedValueException(sprintf(
+            throw new AccessDeniedException(sprintf(
                 'The token does not have the necessary permissions. Configure roles in the client \'%s\' of the realm \'%s\' and associate them with the user \'%s\'',
                 $provider->getClientId(),
                 $provider->realm,
