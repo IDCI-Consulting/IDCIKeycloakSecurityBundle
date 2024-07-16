@@ -24,6 +24,7 @@ class KeycloakBearerUserProvider extends OAuthUserProvider implements KeycloakBe
 
     public function __construct(ClientRegistry $clientRegistry, HttpClientInterface $httpClient, mixed $sslVerification)
     {
+        parent::__construct();
         $this->clientRegistry = $clientRegistry;
         $this->httpClient = $httpClient;
         $this->sslVerification = $sslVerification;
