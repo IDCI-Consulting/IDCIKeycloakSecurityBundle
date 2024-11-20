@@ -2,48 +2,35 @@
 
 namespace IDCI\Bundle\KeycloakSecurityBundle\Controller;
 
-use IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUser;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class KeycloakController extends AbstractController
 {
-    public function connectAction(ClientRegistry $clientRegistry)
+    public function connect(ClientRegistry $clientRegistry)
     {
         return $clientRegistry->getClient('keycloak')->redirect();
     }
 
-    public function connectCheckAction(Request $request, string $defaultTargetPath)
+    public function connectCheck(Request $request, string $defaultTargetRouteName)
     {
-        return $this->redirectToRoute($defaultTargetPath);
-    }
-
-    public function logoutAction(
-        Request $request,
-        ClientRegistry $clientRegistry,
-        TokenStorageInterface $tokenStorage,
-        string $defaultTargetPath
-    ) {
-        $token = $tokenStorage->getToken();
-        $user = $token->getUser();
-
-        if (!$user instanceof KeycloakUser) {
-            throw new \RuntimeException('The user must be an instance of KeycloakUser');
+        $loginReferrer = null;
+        if ($request->hasSession()) {
+            $loginReferrer = $request->getSession()->remove('loginReferrer');
         }
 
-        $tokenStorage->setToken(null);
-        $request->getSession()->invalidate();
+        return $loginReferrer ? $this->redirect($loginReferrer) : $this->redirectToRoute($defaultTargetRouteName);
+    }
 
-        $values = $user->getAccessToken()->getValues();
-        $oAuth2Provider = $clientRegistry->getClient('keycloak')->getOAuth2Provider();
+    public function logout(Request $request, string $defaultTargetRouteName)
+    {
+        return new RedirectResponse($this->generateUrl($defaultTargetRouteName));
+    }
 
-        return new RedirectResponse($oAuth2Provider->getLogoutUrl([
-            'state' => $values['session_state'],
-            'redirect_uri' => $this->generateUrl($defaultTargetPath, [], UrlGeneratorInterface::ABSOLUTE_URL),
-        ]));
+    public function account(ClientRegistry $clientRegistry)
+    {
+        return $this->redirect($clientRegistry->getClient('keycloak')->getOAuth2Provider()->getResourceOwnerManageAccountUrl());
     }
 }

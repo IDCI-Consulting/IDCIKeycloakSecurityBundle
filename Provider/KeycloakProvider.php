@@ -8,7 +8,7 @@ use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
 use Psr\Http\Message\ResponseInterface;
 
-class Keycloak extends AbstractProvider
+class KeycloakProvider extends AbstractProvider
 {
     use BearerAuthorizationTrait;
 
@@ -27,31 +27,16 @@ class Keycloak extends AbstractProvider
      */
     const MODE_PRIVATE = 'private';
 
-    /**
-     * @var string
-     */
-    public $authServerPublicUrl = null;
+    public ?string $authServerPublicUrl = null;
 
-    /**
-     * @var string
-     */
-    public $authServerPrivateUrl = null;
+    public ?string $authServerPrivateUrl = null;
 
-    /**
-     * @var string
-     */
-    public $realm = null;
+    public ?string $realm = null;
 
     public function __construct(array $options = [], array $collaborators = [])
     {
-        $this->authServerPublicUrl = isset($options['auth_server_public_url']) ?
-            $options['auth_server_public_url'] :
-            $options['auth_server_url']
-        ;
-        $this->authServerPrivateUrl = isset($options['auth_server_private_url']) ?
-            $options['auth_server_private_url'] :
-            $options['auth_server_url']
-        ;
+        $this->authServerPublicUrl = $options['auth_server_public_url'] ?? $options['auth_server_url'];
+        $this->authServerPrivateUrl = $options['auth_server_private_url'] ?? $options['auth_server_url'];
         $this->realm = $options['realm'];
 
         parent::__construct($options, $collaborators);
@@ -122,6 +107,14 @@ class Keycloak extends AbstractProvider
     {
         $base = $this->getBaseLogoutUrl();
         $params = $this->getAuthorizationParameters($options);
+
+        if (isset($options['access_token'])) {
+            $accessToken = $options['access_token'];
+            $params['id_token_hint'] = $accessToken->getValues()['id_token'];
+            $params['post_logout_redirect_uri'] = $params['redirect_uri'];
+        }
+        unset($params['redirect_uri']);
+
         $query = $this->getAuthorizationQuery($params);
 
         return $this->appendQuery($base, $query);
@@ -147,7 +140,12 @@ class Keycloak extends AbstractProvider
 
     protected function getDefaultScopes(): array
     {
-        return ['name', 'email'];
+        return ['openid', 'profile', 'email', 'roles'];
+    }
+
+    protected function getScopeSeparator(): string
+    {
+        return ' ';
     }
 
     protected function checkResponse(ResponseInterface $response, $data)

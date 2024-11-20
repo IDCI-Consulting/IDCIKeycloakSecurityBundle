@@ -19,7 +19,7 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
         $loader->load('services.yaml');
 
         $container->setParameter('idci_keycloak_security.config', $config);
-        $container->setParameter('idci_keycloak_security.default_target_path', $config['default_target_path']);
+        $container->setParameter('idci_keycloak_security.default_target_route_name', $config['default_target_route_name']);
         $container->setParameter('idci_keycloak_security.ssl_verification', $config['ssl_verification']);
     }
 
@@ -28,9 +28,7 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
         $bundles = $container->getParameter('kernel.bundles');
 
         if (!isset($bundles['KnpUOAuth2ClientBundle'])) {
-            throw new \LogicException(
-                'You must install knpuniversity/oauth2-client-bundle in order to use IDCIKeycloakSecurityBundle'
-            );
+            throw new \LogicException('You must install knpuniversity/oauth2-client-bundle in order to use IDCIKeycloakSecurityBundle');
         }
 
         $configs = $container->getExtensionConfig($this->getAlias());
@@ -45,10 +43,10 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
             'clients' => [
                 'keycloak' => [
                     'type' => 'generic',
-                    'provider_class' => 'IDCI\Bundle\KeycloakSecurityBundle\Provider\Keycloak',
+                    'provider_class' => 'IDCI\Bundle\KeycloakSecurityBundle\Provider\KeycloakProvider',
                     'client_id' => $config['client_id'],
                     'client_secret' => $config['client_secret'],
-                    'redirect_route' => 'idci_security_auth_connect_check_keycloak',
+                    'redirect_route' => 'idci_keycloak_security_auth_connect_check',
                     'redirect_params' => [],
                     'provider_options' => [
                         'auth_server_private_url' => isset($config['server_private_url']) ? $config['server_private_url'] : null,
@@ -62,7 +60,7 @@ class IDCIKeycloakSecurityExtension extends Extension implements PrependExtensio
         ];
     }
 
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'idci_keycloak_security';
     }

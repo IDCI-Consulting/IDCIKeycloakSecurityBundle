@@ -1,11 +1,15 @@
-idci_security_auth_connect_keycloak:
+idci_keycloak_security_auth_connect:
     path:       /auth/connect/keycloak
-    controller: IDCI\Bundle\KeycloakSecurityBundle\Controller\KeycloakController::connectAction
+    controller: IDCI\Bundle\KeycloakSecurityBundle\Controller\KeycloakController::connect
 
-idci_security_auth_connect_check_keycloak:
+idci_keycloak_security_auth_connect_check:
     path:       /auth/connect-check/keycloak
-    controller: IDCI\Bundle\KeycloakSecurityBundle\Controller\KeycloakController::connectCheckAction
+    controller: IDCI\Bundle\KeycloakSecurityBundle\Controller\KeycloakController::connectCheck
 
-idci_security_auth_logout:
+idci_keycloak_security_auth_logout:
     path:       /auth/logout
-    controller: IDCI\Bundle\KeycloakSecurityBundle\Controller\KeycloakController::logoutAction
+    controller: IDCI\Bundle\KeycloakSecurityBundle\Controller\KeycloakController::logout
+
+idci_keycloak_security_auth_account:
+    path:       /auth/account
+    controller: IDCI\Bundle\KeycloakSecurityBundle\Controller\KeycloakController::account

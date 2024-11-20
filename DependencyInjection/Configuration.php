@@ -13,7 +13,7 @@ class Configuration implements ConfigurationInterface
 
         $treeBuilder->getRootNode()
             ->children()
-                ->scalarNode('default_target_path')
+                ->scalarNode('default_target_route_name')
                     ->isRequired()
                     ->cannotBeEmpty()
                 ->end()

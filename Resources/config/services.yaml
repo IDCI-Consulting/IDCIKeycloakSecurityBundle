@@ -11,10 +11,8 @@ services:
     IDCI\Bundle\KeycloakSecurityBundle\Controller\KeycloakController:
         public: true
         bind:
-            $defaultTargetPath: '%idci_keycloak_security.default_target_path%'
+            $defaultTargetRouteName: '%idci_keycloak_security.default_target_route_name%'
         tags: ['controller.service_arguments']
-
-    IDCI\Bundle\KeycloakSecurityBundle\Security\Authenticator\KeycloakAuthenticator:
 
     IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUserProvider:
         tags:
@@ -27,3 +25,9 @@ services:
     IDCI\Bundle\KeycloakSecurityBundle\EventListener\ExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
+
+    IDCI\Bundle\KeycloakSecurityBundle\EventListener\LogoutListener:
+        arguments:
+            $defaultTargetRouteName: '%idci_keycloak_security.default_target_route_name%'
+        tags:
+          - { name: kernel.event_listener, event: 'Symfony\Component\Security\Http\Event\LogoutEvent', priority: -10}
