@@ -50,7 +50,24 @@ class KeycloakUser extends OAuthUser
 
     public function __toString(): string
     {
-        return $this->getDisplayName();
+        $displayName = $this->getDisplayName();
+        $email = $this->getEmail();
+        $resources = $this->getResources();
+        $preferredUsername = $resources['preferred_username'] ?? null;
+ 
+        if ($displayName) {
+            return $displayName;
+        }
+ 
+        if ($email) {
+            return $email;
+        }
+ 
+        if ($preferredUsername) {
+            return $preferredUsername;
+        }
+ 
+        return 'Unknown User';
     }
 
     public function getAccessToken(): ?AccessToken
