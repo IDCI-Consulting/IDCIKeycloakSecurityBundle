@@ -8,7 +8,6 @@ use League\OAuth2\Client\Token\AccessToken;
 class KeycloakResourceOwner implements ResourceOwnerInterface
 {
     protected array $response;
-
     protected AccessToken $token;
 
     public function __construct(array $response, AccessToken $token)
@@ -55,14 +54,6 @@ class KeycloakResourceOwner implements ResourceOwnerInterface
     public function getResourceAccess(): array
     {
         return $this->response['resource_access'] ?? [];
-    }
-
-    /**
-     * @deprecated For old keycloak version support
-     */
-    public function getRoles(): array
-    {
-        return $this->response['roles'] ?? [];
     }
 
     public function toArray(): array

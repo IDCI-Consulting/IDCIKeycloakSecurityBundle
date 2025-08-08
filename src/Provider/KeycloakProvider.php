@@ -12,25 +12,12 @@ class KeycloakProvider extends AbstractProvider
 {
     use BearerAuthorizationTrait;
 
-    /**
-     * @var string
-     */
     const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'keycloak';
-
-    /**
-     * @var string use to identify the "public"" way to call the auth server
-     */
     const MODE_PUBLIC = 'public';
-
-    /**
-     * @var string use to identify the "private"" way to call the auth server
-     */
     const MODE_PRIVATE = 'private';
 
     public ?string $authServerPublicUrl = null;
-
     public ?string $authServerPrivateUrl = null;
-
     public ?string $realm = null;
 
     public function __construct(array $options = [], array $collaborators = [])
@@ -51,24 +38,17 @@ class KeycloakProvider extends AbstractProvider
         throw new \Exception('Encryption is not yet supported');
     }
 
-    /**
-     * Creates base url from provider configuration.
-     *
-     * @param string $mode ("MODE_PUBLIC" / "MODE_PRIVATE")
-     *
-     * @return string
-     */
-    public function getBaseUrl($mode = self::MODE_PUBLIC)
+    public function getBaseUrl($mode = self::MODE_PUBLIC): ?string
     {
         return self::MODE_PRIVATE === $mode ? $this->authServerPrivateUrl : $this->authServerPublicUrl;
     }
 
-    public function getBaseUrlWithRealm($mode)
+    public function getBaseUrlWithRealm($mode): string
     {
         return sprintf('%s/realms/%s', $this->getBaseUrl($mode), $this->realm);
     }
 
-    public function getResourceOwnerManageAccountUrl()
+    public function getResourceOwnerManageAccountUrl(): string
     {
         return sprintf('%s/account', $this->getBaseUrlWithRealm(self::MODE_PUBLIC));
     }
@@ -103,7 +83,7 @@ class KeycloakProvider extends AbstractProvider
         return sprintf('%s/admin/realms/%s', $this->getBaseUrl(self::MODE_PRIVATE), $this->realm);
     }
 
-    public function getLogoutUrl(array $options = [])
+    public function getLogoutUrl(array $options = []): string
     {
         $base = $this->getBaseLogoutUrl();
         $params = $this->getAuthorizationParameters($options);
@@ -128,12 +108,12 @@ class KeycloakProvider extends AbstractProvider
         return $this->createResourceOwner($response, $token);
     }
 
-    public function getClientId()
+    public function getClientId(): string
     {
         return $this->clientId;
     }
 
-    public function getClientSecret()
+    public function getClientSecret(): string
     {
         return $this->clientSecret;
     }
@@ -148,7 +128,7 @@ class KeycloakProvider extends AbstractProvider
         return ' ';
     }
 
-    protected function checkResponse(ResponseInterface $response, $data)
+    protected function checkResponse(ResponseInterface $response, $data): void
     {
         if (!empty($data['error'])) {
             $error = sprintf('%s: %s', $data['error'], $data['error_description']);
@@ -162,7 +142,7 @@ class KeycloakProvider extends AbstractProvider
         return new KeycloakResourceOwner($response, $token);
     }
 
-    protected function getAllowedClientOptions(array $options)
+    protected function getAllowedClientOptions(array $options): array
     {
         return ['timeout', 'proxy', 'verify'];
     }

@@ -4,23 +4,16 @@ namespace IDCI\Bundle\KeycloakSecurityBundle\EventListener;
 
 use IDCI\Bundle\KeycloakSecurityBundle\Security\User\KeycloakUser;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
-use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Event\LogoutEvent;
 
 class LogoutListener
 {
     private ClientRegistry $clientRegistry;
-
     private UrlGeneratorInterface $urlGenerator;
-
     private TokenStorageInterface $tokenStorage;
-
     private string $defaultTargetRouteName;
 
     public function __construct(
@@ -35,7 +28,7 @@ class LogoutListener
         $this->defaultTargetRouteName = $defaultTargetRouteName;
     }
 
-    public function onSymfonyComponentSecurityHttpEventLogoutEvent(LogoutEvent $event)
+    public function onSymfonyComponentSecurityHttpEventLogoutEvent(LogoutEvent $event): void
     {
         if (null === $event->getToken() || null === $event->getToken()->getUser()) {
             return;

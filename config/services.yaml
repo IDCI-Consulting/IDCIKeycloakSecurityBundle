@@ -5,8 +5,8 @@ services:
         public: false
 
     IDCI\Bundle\KeycloakSecurityBundle\:
-        resource: '../../*'
-        exclude: '../../{Entity,Migrations,Tests,Provider/KeycloakResourceOwner.php}'
+        resource: '../src/*'
+        exclude: '../src/{Entity,Migrations,Tests,Provider/KeycloakResourceOwner.php}'
 
     IDCI\Bundle\KeycloakSecurityBundle\Controller\KeycloakController:
         public: true
@@ -30,4 +30,4 @@ services:
         arguments:
             $defaultTargetRouteName: '%idci_keycloak_security.default_target_route_name%'
         tags:
-          - { name: kernel.event_listener, event: 'Symfony\Component\Security\Http\Event\LogoutEvent', priority: -10}
+          - { name: kernel.event_listener, event: 'Symfony\Component\Security\Http\Event\LogoutEvent', priority: -10 }

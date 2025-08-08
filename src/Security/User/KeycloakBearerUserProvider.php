@@ -17,9 +17,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class KeycloakBearerUserProvider extends OAuthUserProvider implements KeycloakBearerUserProviderInterface
 {
     protected ClientRegistry $clientRegistry;
-
     protected HttpClientInterface $httpClient;
-
     protected mixed $sslVerification;
 
     public function __construct(ClientRegistry $clientRegistry, HttpClientInterface $httpClient, mixed $sslVerification)
@@ -29,9 +27,6 @@ class KeycloakBearerUserProvider extends OAuthUserProvider implements KeycloakBe
         $this->sslVerification = $sslVerification;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadUserByIdentifier(string $accessToken): UserInterface
     {
         $provider = $this->getKeycloakClient()->getOAuth2Provider();
