@@ -8,7 +8,6 @@ use League\OAuth2\Client\Token\AccessToken;
 class KeycloakResourceOwner implements ResourceOwnerInterface
 {
     protected array $response;
-
     protected AccessToken $token;
 
     public function __construct(array $response, AccessToken $token)

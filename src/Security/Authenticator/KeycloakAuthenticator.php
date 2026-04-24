@@ -19,7 +19,6 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 class KeycloakAuthenticator extends OAuth2Authenticator implements InteractiveAuthenticatorInterface
 {
     protected ClientRegistry $clientRegistry;
-
     protected KeycloakUserProviderInterface $userProvider;
 
     public function __construct(ClientRegistry $clientRegistry, KeycloakUserProviderInterface $userProvider)

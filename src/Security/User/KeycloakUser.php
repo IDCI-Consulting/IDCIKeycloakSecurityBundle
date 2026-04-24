@@ -9,20 +9,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class KeycloakUser extends OAuthUser
 {
     private AccessToken $accessToken;
-
     private string $id;
-
     private ?string $email;
-
     private ?string $displayName;
-
     private ?string $firstName;
-
     private ?string $lastName;
-
     private ?string $preferredLanguage;
-
-    private array $resources;
+    private array $resources = [];
 
     public function __construct(
         string $username,
@@ -34,7 +27,7 @@ class KeycloakUser extends OAuthUser
         ?string $firstName,
         ?string $lastName,
         ?string $preferredLanguage = 'en',
-        array $resources = []
+        array $resources
     ) {
         $this->accessToken = $accessToken;
         $this->id = $id;
@@ -73,12 +66,12 @@ class KeycloakUser extends OAuthUser
         return $this->displayName;
     }
 
-    public function getFirstName()
+    public function getFirstName(): ?string
     {
         return $this->firstName;
     }
 
-    public function getLastName()
+    public function getLastName(): ?string
     {
         return $this->lastName;
     }
