@@ -60,6 +60,10 @@ class KeycloakUserProvider extends OAuthUserProvider implements KeycloakUserProv
             );
         }
 
+        if (empty($roles) && empty($resourceOwner->getResourceAccess())) {
+            throw new \RuntimeException('ResourceAccess is empty, ensure that in the keycloak realm configuration client scope "client roles" is available for userinfo');
+        }
+
         if (isset($resourceOwner->getResourceAccess()[$provider->getClientId()])) {
             $roles = array_map(
                 function ($role) {
