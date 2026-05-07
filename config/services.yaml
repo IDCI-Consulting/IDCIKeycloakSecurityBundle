@@ -5,8 +5,8 @@ services:
         public: false
 
     IDCI\Bundle\KeycloakSecurityBundle\:
-        resource: '../../*'
-        exclude: '../../{Entity,Migrations,Tests,Provider/KeycloakResourceOwner.php}'
+        resource: '../src/*'
+        exclude: '../src/{Entity,Migrations,Tests,Provider/KeycloakResourceOwner.php}'
 
     IDCI\Bundle\KeycloakSecurityBundle\Controller\KeycloakController:
         public: true

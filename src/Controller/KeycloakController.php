@@ -9,12 +9,12 @@ use Symfony\Component\HttpFoundation\Request;
 
 class KeycloakController extends AbstractController
 {
-    public function connect(ClientRegistry $clientRegistry)
+    public function connect(ClientRegistry $clientRegistry): RedirectResponse
     {
         return $clientRegistry->getClient('keycloak')->redirect();
     }
 
-    public function connectCheck(Request $request, string $defaultTargetRouteName)
+    public function connectCheck(Request $request, string $defaultTargetRouteName): RedirectResponse
     {
         $loginReferrer = null;
         if ($request->hasSession()) {
@@ -24,12 +24,12 @@ class KeycloakController extends AbstractController
         return $loginReferrer ? $this->redirect($loginReferrer) : $this->redirectToRoute($defaultTargetRouteName);
     }
 
-    public function logout(Request $request, string $defaultTargetRouteName)
+    public function logout(Request $request, string $defaultTargetRouteName): RedirectResponse
     {
         return new RedirectResponse($this->generateUrl($defaultTargetRouteName));
     }
 
-    public function account(ClientRegistry $clientRegistry)
+    public function account(ClientRegistry $clientRegistry): RedirectResponse
     {
         return $this->redirect($clientRegistry->getClient('keycloak')->getOAuth2Provider()->getResourceOwnerManageAccountUrl());
     }

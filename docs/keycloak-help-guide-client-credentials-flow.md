@@ -94,7 +94,7 @@ KEYCLOAK_CLIENT_SECRET=client_secret
 # config/packages/security.yaml
 imports:
     # Import Keycloak security providers
-    - { resource: '@IDCIKeycloakSecurityBundle/Resources/config/security.yaml' }
+    - { resource: '@IDCIKeycloakSecurityBundle/config/security.yaml' }
 
 security:
 

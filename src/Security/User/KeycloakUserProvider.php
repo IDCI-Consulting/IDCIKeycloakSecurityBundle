@@ -15,7 +15,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class KeycloakUserProvider extends OAuthUserProvider implements KeycloakUserProviderInterface
 {
     protected ClientRegistry $clientRegistry;
-
     protected LoggerInterface $logger;
 
     public function __construct(ClientRegistry $clientRegistry, LoggerInterface $logger)
@@ -24,9 +23,6 @@ class KeycloakUserProvider extends OAuthUserProvider implements KeycloakUserProv
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadUserByIdentifier($identifier): UserInterface
     {
         if (!$identifier instanceof AccessToken) {
