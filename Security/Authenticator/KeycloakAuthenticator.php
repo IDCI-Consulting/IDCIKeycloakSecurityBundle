@@ -37,6 +37,8 @@ class KeycloakAuthenticator extends OAuth2Authenticator implements InteractiveAu
     {
         $client = $this->getKeycloakClient();
         $accessToken = $this->fetchAccessToken($client);
+        $keycloakUser = $client->fetchUserFromToken($accessToken);
+        $username = $keycloakUser->getPreferredUsername();
         if (null === $accessToken) {
             // The token header was empty, authentication fails with HTTP Status
             // Code 401 "Unauthorized"
@@ -44,7 +46,7 @@ class KeycloakAuthenticator extends OAuth2Authenticator implements InteractiveAu
         }
 
         return new SelfValidatingPassport(
-            new UserBadge($accessToken->getToken(), function() use ($accessToken) {
+            new UserBadge($username, function() use ($accessToken) {
                 return $this->userProvider->loadUserByIdentifier($accessToken);
             })
         );
