@@ -3,8 +3,9 @@ IDCI Keycloak Security Bundle
 
 This Symfony bundle is an alternative solution to FOSUserBundle, working with keycloak.
 
-For symfony 2/3/4 use version 1.2.0
-For symfony 5+ use version 2.0.0 or +
+For Symfony 2/3/4 use version 1.*
+For Symfony 5 use version 2.*
+For Symfony 6 or + use version 3.*
 
 ## Installation
 
