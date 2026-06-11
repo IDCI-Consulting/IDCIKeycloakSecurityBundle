@@ -26,7 +26,7 @@ class KeycloakUser extends OAuthUser
         ?string $displayName,
         ?string $firstName,
         ?string $lastName,
-        ?string $preferredLanguage = 'en',
+        ?string $preferredLanguage,
         array $resources,
     ) {
         $this->accessToken = $accessToken;
@@ -35,7 +35,7 @@ class KeycloakUser extends OAuthUser
         $this->displayName = $displayName;
         $this->firstName = $firstName;
         $this->lastName = $lastName;
-        $this->preferredLanguage = $preferredLanguage;
+        $this->preferredLanguage = $preferredLanguage ?? 'en';
         $this->resources = $resources;
 
         parent::__construct($username, $roles);
