@@ -40,9 +40,7 @@ class KeycloakUserProvider extends OAuthUserProvider implements KeycloakUserProv
         }
 
         if (!$provider instanceof KeycloakProvider) {
-            throw new \RuntimeException(
-                sprintf('The OAuth2 client provider must be an instance of %s', KeycloakProvider::class)
-            );
+            throw new \RuntimeException(sprintf('The OAuth2 client provider must be an instance of %s', KeycloakProvider::class));
         }
 
         $roles = [];

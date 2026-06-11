@@ -38,7 +38,7 @@ class KeycloakBearerAuthenticator extends AbstractAuthenticator
 
         try {
             return new SelfValidatingPassport(
-                new UserBadge($authorizationHeader, function() use ($authorizationHeader) {
+                new UserBadge($authorizationHeader, function () use ($authorizationHeader) {
                     return $this->userProvider->loadUserByUsername(self::getBearerTokenFromHeader($authorizationHeader));
                 })
             );

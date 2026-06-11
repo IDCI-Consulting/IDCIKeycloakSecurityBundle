@@ -27,7 +27,7 @@ class KeycloakUser extends OAuthUser
         ?string $firstName,
         ?string $lastName,
         ?string $preferredLanguage = 'en',
-        array $resources
+        array $resources,
     ) {
         $this->accessToken = $accessToken;
         $this->id = $id;
@@ -47,19 +47,19 @@ class KeycloakUser extends OAuthUser
         $email = $this->getEmail();
         $resources = $this->getResources();
         $preferredUsername = $resources['preferred_username'] ?? null;
- 
+
         if ($displayName) {
             return $displayName;
         }
- 
+
         if ($email) {
             return $email;
         }
- 
+
         if ($preferredUsername) {
             return $preferredUsername;
         }
- 
+
         return 'Unknown User';
     }
 

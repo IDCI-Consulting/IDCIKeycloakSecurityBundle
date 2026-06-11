@@ -12,9 +12,9 @@ class KeycloakProvider extends AbstractProvider
 {
     use BearerAuthorizationTrait;
 
-    const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'keycloak';
-    const MODE_PUBLIC = 'public';
-    const MODE_PRIVATE = 'private';
+    public const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'keycloak';
+    public const MODE_PUBLIC = 'public';
+    public const MODE_PRIVATE = 'private';
 
     public ?string $authServerPublicUrl = null;
     public ?string $authServerPrivateUrl = null;

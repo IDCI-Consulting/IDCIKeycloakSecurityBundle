@@ -43,7 +43,7 @@ class KeycloakAuthenticator extends OAuth2Authenticator implements InteractiveAu
         }
 
         return new SelfValidatingPassport(
-            new UserBadge($accessToken->getToken(), function() use ($accessToken) {
+            new UserBadge($accessToken->getToken(), function () use ($accessToken) {
                 return $this->userProvider->loadUserByIdentifier($accessToken);
             })
         );

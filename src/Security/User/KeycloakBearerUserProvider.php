@@ -53,12 +53,7 @@ class KeycloakBearerUserProvider extends OAuthUserProvider implements KeycloakBe
         }
 
         if (!isset($jwt['resource_access'][$provider->getClientId()])) {
-            throw new AccessDeniedException(sprintf(
-                'The token does not have the necessary permissions. Configure roles in the client \'%s\' of the realm \'%s\' and associate them with the user \'%s\'',
-                $provider->getClientId(),
-                $provider->realm,
-                $jwt['username']
-            ));
+            throw new AccessDeniedException(sprintf('The token does not have the necessary permissions. Configure roles in the client \'%s\' of the realm \'%s\' and associate them with the user \'%s\'', $provider->getClientId(), $provider->realm, $jwt['username']));
         }
 
         return (new KeycloakBearerUser($jwt['username'], $jwt['resource_access'][$provider->getClientId()]['roles']))

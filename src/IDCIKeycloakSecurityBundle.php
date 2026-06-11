@@ -42,7 +42,6 @@ class IDCIKeycloakSecurityBundle extends AbstractBundle
         ;
     }
 
-
     public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
     {
         $container->import('../config/services.yaml');
@@ -51,6 +50,7 @@ class IDCIKeycloakSecurityBundle extends AbstractBundle
         $builder->setParameter('idci_keycloak_security.default_target_route_name', $config['default_target_route_name']);
         $builder->setParameter('idci_keycloak_security.ssl_verification', $config['ssl_verification']);
     }
+
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
     {
         if (!$builder->hasExtension('knpu_oauth2_client')) {
