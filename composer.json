@@ -28,7 +28,6 @@
         "knpuniversity/oauth2-client-bundle": "^2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.0",
         "symfony/expression-language": "^6.0|^7.0",
         "symfony/finder": "^6.0|^7.0",
         "symfony/form": "^6.0|^7.0",
