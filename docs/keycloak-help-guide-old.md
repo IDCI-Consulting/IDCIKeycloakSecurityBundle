@@ -119,7 +119,7 @@ $ path/to/keycloak/bin/standalone.sh \
 
 #### Docker
 
-We will use the Makefile provided in the [sample docker stack](./Resources/docs/example).
+We will use the Makefile provided in the [sample docker stack](./docs/example).
 
 You can export with this command:
 

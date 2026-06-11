@@ -39,7 +39,7 @@ idci_keycloak_security:
 
 #### Docker
 
-If you want to use keycloak in docker you can base your stack on this [sample](./Resources/docs/example).
+If you want to use keycloak in docker you can base your stack on this [sample](./docs/example).
 
 Here is a stack example configuration for docker swarm:
 
@@ -70,7 +70,7 @@ Create a new file in ```config/routes/``` to load pre configured bundle routes.
 ```yaml
 # config/routes/idci_keycloak_security.yaml
 IDCIKeycloakSecurityBundle:
-    resource: "@IDCIKeycloakSecurityBundle/Resources/config/routing.yaml"
+    resource: "@IDCIKeycloakSecurityBundle/config/routing.yaml"
     prefix: /
 ```
 
@@ -93,7 +93,7 @@ Here is a simple configuration that restrict access to ```/*``` routes only to u
 # config/packages/security.yaml
 imports:
     # Import Keycloak security providers
-    - { resource: '@IDCIKeycloakSecurityBundle/Resources/config/security.yaml' }
+    - { resource: '@IDCIKeycloakSecurityBundle/config/security.yaml' }
 
 security:
 
@@ -156,8 +156,8 @@ If you wish to secure your application using OAuth 2 Authorization Code Flow for
 
 If you need help to use keycloak because it is the first time you work on it, we've made a little tutorial step by step describing a basic configuration of a keycloak realm:
 
- * [Keycloak older than 19.0.0](./Resources/docs/keycloak-help-guide-old.md)
- * [Keycloak equal or newer than 19.0.0](./Resources/docs/keycloak-help-guide.md)
+ * [Keycloak older than 19.0.0](./docs/keycloak-help-guide-old.md)
+ * [Keycloak equal or newer than 19.0.0](./docs/keycloak-help-guide.md)
 
 ## Logout
 

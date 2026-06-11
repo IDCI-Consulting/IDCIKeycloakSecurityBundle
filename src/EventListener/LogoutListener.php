@@ -16,11 +16,8 @@ use Symfony\Component\Security\Http\Event\LogoutEvent;
 class LogoutListener
 {
     private ClientRegistry $clientRegistry;
-
     private UrlGeneratorInterface $urlGenerator;
-
     private TokenStorageInterface $tokenStorage;
-
     private string $defaultTargetRouteName;
 
     public function __construct(
@@ -35,7 +32,7 @@ class LogoutListener
         $this->defaultTargetRouteName = $defaultTargetRouteName;
     }
 
-    public function onSymfonyComponentSecurityHttpEventLogoutEvent(LogoutEvent $event)
+    public function onSymfonyComponentSecurityHttpEventLogoutEvent(LogoutEvent $event): void
     {
         if (null === $event->getToken() || null === $event->getToken()->getUser()) {
             return;
